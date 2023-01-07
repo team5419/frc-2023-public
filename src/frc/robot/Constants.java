@@ -4,6 +4,18 @@ import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.controller.PIDController;
 import java.lang.Math;
 public class Constants {
+    public static final class ProtoDrive {
+        public static final double trackWidth = 1.781;
+        public static final double maxAcceleration = 1.5;
+        public static final double maxVelocity = 3.0;
+        public static final double maxVoltage = 12.0;
+        public static final double kv = 2.3;
+        public static final double ka = 0.463;
+        public static final double ks = 0.191;
+        public static final double maxCentripetalAcceleration = 3.0;
+        public static final double beta = 2.0;
+        public static final double zeta = 0.7;
+    };
     public static final class Drive {
         public static final PID DrivePID = new PID(0.1, 0.0, 0.0);
         public static final PID TurnPID = new PID(8.0, 0.0, 0.0);
