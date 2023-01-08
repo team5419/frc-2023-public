@@ -34,4 +34,7 @@ public class Constants {
         public static final double wheelDiameter = wheelRadius * 2.0; // m
         public static final double wheelCircumference = wheelDiameter * Math.PI; // m
     };
+    public static final class Ports {
+        public static final int intake = 0;
+    }
 };

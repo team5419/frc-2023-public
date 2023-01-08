@@ -19,9 +19,9 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import java.util.ArrayList;
 import edu.wpi.first.math.trajectory.Trajectory;
 
-class RamseteAction extends CommandBase {
+public class RamseteAction extends CommandBase {
     private Drivetrain drivetrain;
-    private ArrayList<Pose2d> poses;
+    private Pose2d[] poses;
     private boolean reversed;
     DifferentialDriveKinematics driveKinematics;
     SimpleMotorFeedforward feedforward;
@@ -33,14 +33,14 @@ class RamseteAction extends CommandBase {
     DifferentialDriveWheelSpeeds prevSpeed;
     double prevTime;
     Timer timer;
-    public RamseteAction(Drivetrain m_drivetrain, ArrayList<Pose2d> m_poses, boolean m_reversed) {
+    public RamseteAction(Drivetrain m_drivetrain, Pose2d[] m_poses, boolean m_reversed) {
         drivetrain = m_drivetrain;
         addRequirements(drivetrain);
         poses = m_poses;
         reversed = m_reversed;
         setup();
     }
-    public RamseteAction(Drivetrain m_drivetrain, ArrayList<Pose2d> m_poses) {
+    public RamseteAction(Drivetrain m_drivetrain, Pose2d[] m_poses) {
         drivetrain = m_drivetrain;
         addRequirements(drivetrain);
         poses = m_poses;
