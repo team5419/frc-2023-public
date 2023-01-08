@@ -8,16 +8,14 @@ import edu.wpi.first.math.trajectory.constraint.CentripetalAccelerationConstrain
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.controller.RamseteController;
-import edu.wpi.first.math.spline.SplineHelper;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import java.util.ArrayList;
 import edu.wpi.first.math.trajectory.Trajectory;
+import frc.robot.subsystems.Drivetrain;
+import java.util.Arrays;
 
 public class RamseteAction extends CommandBase {
     private Drivetrain drivetrain;
@@ -63,7 +61,7 @@ public class RamseteAction extends CommandBase {
             config.addConstraint(new CentripetalAccelerationConstraint(
                 ProtoDrive.maxCentripetalAcceleration
             ));
-            trajectory = TrajectoryGenerator.generateTrajectory(poses, config);
+            trajectory = TrajectoryGenerator.generateTrajectory(Arrays.asList(poses), config);
             controller = new RamseteController(ProtoDrive.beta, ProtoDrive.zeta);
             prevSpeed = new DifferentialDriveWheelSpeeds(0.0, 0.0);
             prevTime = 0.0;
@@ -73,13 +71,13 @@ public class RamseteAction extends CommandBase {
     public void initialize() {
         timer.reset();
         timer.start();
-        drivetrain.brakeMode = true;
+        drivetrain.setBrakeMode(true);
     }
 
     public void execute() {
         double time = timer.get();
         // find the speed that the robot should be at at a specific time in the path
-        ChassisSpeeds chassisSpeed = controller.calculate(drivetrain.pose, trajectory.sample(time));
+        ChassisSpeeds chassisSpeed = controller.calculate(drivetrain.getPose(), trajectory.sample(time));
         DifferentialDriveWheelSpeeds setSpeed = driveKinematics.toWheelSpeeds(chassisSpeed);
         // calculate the feedforwards of both sides
         double leftFeedForward = feedforward.calculate(
@@ -104,8 +102,8 @@ public class RamseteAction extends CommandBase {
     }
 
     public void end(boolean interrupted) {
-        drivetrain.brakeMode = false;
-        drivetrain.drive(0.0, 0.0, false);
+        drivetrain.setBrakeMode(false);
+        drivetrain.drive(0.0, 0.0);
     }
 
     public boolean isFinished() {

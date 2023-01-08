@@ -36,5 +36,9 @@ public class Constants {
     };
     public static final class Ports {
         public static final int intake = 0;
+        public static final int leftLeader = 1;
+        public static final int leftFollower = 2;
+        public static final int rightLeader = 3;
+        public static final int rightFollower = 4;
     }
 };

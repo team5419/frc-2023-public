@@ -11,13 +11,16 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 
 public class RobotContainer {
-  private ExampleSubsystem example;
   private Intake intake;
   SendableChooser<SequentialCommandGroup> autoSelector;
+
+  Drivetrain drivetrain = new Drivetrain();
+  XboxController driver = new XboxController(0);
+
+
   public RobotContainer(ShuffleboardTab tab) {
     intake = new Intake();
-
-    example = new ExampleSubsystem();
+    drivetrain = new Drivetrain();
     autoSelector = new SendableChooser<SequentialCommandGroup>();
     autoSelector.setDefaultOption("Baseline", new Baseline());
     autoSelector.addOption("Proto Routine", new ProtoRoutine(drivetrain));
@@ -36,6 +39,6 @@ public class RobotContainer {
   }
 
   public void setDefaults() {
-    example.setDefaultCommand(new ExampleCommand()); // constantly run the example command
+    drivetrain.setDefaultCommand(new DriveCommand(driver));
   }
 }
