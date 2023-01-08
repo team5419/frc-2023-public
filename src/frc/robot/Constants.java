@@ -40,5 +40,6 @@ public class Constants {
         public static final int leftFollower = 2;
         public static final int rightLeader = 3;
         public static final int rightFollower = 4;
+        public static final int gyroPort = 5;
     }
 };
