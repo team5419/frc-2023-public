@@ -1,9 +1,16 @@
 package frc.robot;
+
+import frc.robot.modules.ModuleInfo;
 import frc.robot.classes.PID;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.controller.PIDController;
 import java.lang.Math;
+
 public class Constants {
+    public static final class Ports {
+        public static final int gyro = 0;
+    }
+
     public static final class Drive {
         public static final PID DrivePID = new PID(0.1, 0.0, 0.0);
         public static final PID TurnPID = new PID(8.0, 0.0, 0.0);
@@ -21,5 +28,12 @@ public class Constants {
         public static final double wheelRadius = 0.0508; // m
         public static final double wheelDiameter = wheelRadius * 2.0; // m
         public static final double wheelCircumference = wheelDiameter * Math.PI; // m
+
+        public static final ModuleInfo[] info = {
+                                                    new ModuleInfo(0, 4, false, true, 8, 0.0),
+                                                    new ModuleInfo(1, 5, true, true, 9, 0.0),
+                                                    new ModuleInfo(2, 6, false, true, 10, 0.0),
+                                                    new ModuleInfo(3, 7, true, true, 11, 0.0)
+                                                };
     };
 };

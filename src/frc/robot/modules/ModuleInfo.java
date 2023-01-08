@@ -1,6 +1,6 @@
 package frc.robot.modules;
 
-class ModuleInfo {
+public class ModuleInfo {
     public int driverPort;
     public int turnerPort;
     public boolean driveInverted;
