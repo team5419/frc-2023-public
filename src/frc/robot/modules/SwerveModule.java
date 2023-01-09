@@ -21,6 +21,7 @@ import com.revrobotics.CANSparkMax.IdleMode;
 import com.ctre.phoenix.sensors.CANCoder;
 import com.ctre.phoenix.sensors.CANCoderConfiguration;
 import com.ctre.phoenix.sensors.SensorTimeBase;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
 
 public class SwerveModule implements ISwerveModule {
     private TalonFX driveMotor;
@@ -86,8 +87,16 @@ public class SwerveModule implements ISwerveModule {
     return driveMotor.getSelectedSensorVelocity(0);
   }
 
+  public double getDistance() {
+    return driveMotor.getSelectedSensorPosition(0);
+  }
+
   public SwerveModuleState getState() {
     return new SwerveModuleState(Util.nativeUnitsToMetersPerSecond(getDrive()), getTurn());
+  }
+
+  public SwerveModulePosition getPosition() {
+    return new SwerveModulePosition(Util.nativeUnitsToMetersPerSecond(getDistance()), getTurn());
   }
 
   private SwerveModuleState optimize(SwerveModuleState state, Rotation2d turn, boolean slow) {

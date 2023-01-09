@@ -15,6 +15,9 @@ public class Util {
     public static double metersPerSecondToNativeUnits(double units) {
         return ((units / Drive.wheelCircumference) * Drive.ticksPerRotation) / 10.0;
     }
+    public static double deadband(double value, double tolerance) {
+        return (Math.abs(value) <= tolerance) ? 0.0 : value;
+    }
     public static void setUpMotor(TalonFX motor) {
         setUpMotor(motor, false, false);
     }

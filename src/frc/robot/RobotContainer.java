@@ -12,15 +12,24 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 
 public class RobotContainer {
   private Intake intake;
-  SendableChooser<SequentialCommandGroup> autoSelector;
-
-  Drivetrain drivetrain = new Drivetrain();
-  XboxController driver = new XboxController(0);
-
+  private IntakeDeploy deploy;
+  private Vision vision;
+  private SendableChooser<SequentialCommandGroup> autoSelector;
+  private Drivetrain drivetrain;
+  private Swerve swerve;
+  private XboxController driver;
+  private Claw claw;
 
   public RobotContainer(ShuffleboardTab tab) {
+    driver = new XboxController(0);
+    vision = new Vision(tab);
     intake = new Intake();
-    drivetrain = new Drivetrain();
+    claw = new Claw();
+
+    swerve = new Swerve(vision); /* CHOOSE ONE!!! */
+    //drivetrain = new Drivetrain(); /* ^^^ */
+
+    deploy = new IntakeDeploy();
     autoSelector = new SendableChooser<SequentialCommandGroup>();
     autoSelector.setDefaultOption("Baseline", new Baseline());
     autoSelector.addOption("Proto Routine", new ProtoRoutine(drivetrain));
@@ -31,7 +40,25 @@ public class RobotContainer {
     Trigger aButtonDriver = new Trigger(() -> { // make the A button
       return driver.getAButton();
     });
+    Trigger bButtonDriver = new Trigger(() -> {
+      return driver.getBButton();
+    });
+    Trigger xButtonDriver = new Trigger(() -> {
+      return driver.getXButton();
+    });
+    Trigger yButtonDriver = new Trigger(() -> {
+      return driver.getYButton();
+    });
+
+    Trigger aButtonCodriver = new Trigger(() -> {
+      return codriver.getAButton();
+    }); 
+    
     aButtonDriver.whileTrue(new RunIntake(intake));
+    bButtonDriver.onTrue(deploy.twoPhase());
+    xButtonDriver.onTrue(claw.twoPhase());
+    yButtonDriver.toggleOnTrue(new Balance(swerve, driver));
+    aButtonCodriver.toggleOnTrue(new Brake(swerve));
   }
 
   public Command getAutonomousCommand() {
@@ -39,6 +66,7 @@ public class RobotContainer {
   }
 
   public void setDefaults() {
-    drivetrain.setDefaultCommand(new DriveCommand(driver));
+    //drivetrain.setDefaultCommand(new DriveCommand(drivetrain, driver));
+    swerve.setDefaultCommand(new SwerveDrive(swerve, driver));
   }
 }

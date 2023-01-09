@@ -5,7 +5,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.*;
 import frc.robot.subsystems.Drivetrain;
 
-public class ProtoRoutine extends SequentialCommandGroup {
+public class ProtoRoutine extends SequentialCommandGroup { // basic routine for diff drive
     public ProtoRoutine(Drivetrain drivetrain) {
         addCommands(
             new RamseteAction(drivetrain, new Pose2d[] { 

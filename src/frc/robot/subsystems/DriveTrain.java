@@ -25,7 +25,7 @@ public class Drivetrain extends SubsystemBase {
         leftFollower = new TalonFX(Ports.leftFollower);
         rightLeader = new TalonFX(Ports.rightLeader);
         rightFollower = new TalonFX(Ports.rightFollower);
-        gyro = new PigeonIMU(Ports.gyroPort);
+        gyro = new PigeonIMU(Ports.gyro);
 
         Util.setUpMotor(leftLeader);
         Util.setUpMotor(leftFollower);
