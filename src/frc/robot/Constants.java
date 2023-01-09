@@ -45,6 +45,9 @@ public class Constants {
         public static final double speedMultiplier = 4.0;
         public static final double turnMultiplier = 2.5;
         public static final double controllerDeadband = 0.1;
+
+        public static final double pXY = 2.7;
+        public static final double pTheta = 4.0;
     };
     public static final class ClawConstants {
         public static final PID PID = new PID(1.0, 0.0, 0.0);
