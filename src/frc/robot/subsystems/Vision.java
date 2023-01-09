@@ -89,7 +89,7 @@ public class Vision extends SubsystemBase {
         }
     }
 
-    public double getHorizontalOffset() {
+    public double getHorizontalOffset() { // in settings, make sure limelight is filtering for lowest target closest to the middle
         return limelight.getEntry("tx").getDouble(0.0);
     }
 

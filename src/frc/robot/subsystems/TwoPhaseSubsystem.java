@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.commands.TwoPhaser;
+import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.Commands;
 public abstract class TwoPhaseSubsystem extends SubsystemBase {
     protected boolean on;
     public TwoPhaseSubsystem() {
@@ -11,7 +12,7 @@ public abstract class TwoPhaseSubsystem extends SubsystemBase {
         _run();
     };
     protected abstract void _run();
-    public TwoPhaser twoPhase() {
-        return new TwoPhaser(this);
+    public CommandBase twoPhase() {
+        return Commands.runOnce(() -> this.run());
     }
 }

@@ -13,12 +13,12 @@ import com.ctre.phoenix.sensors.PigeonIMU;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 
 public class Drivetrain extends SubsystemBase {
-    TalonFX leftLeader;
-    TalonFX leftFollower;
-    TalonFX rightLeader;
-    TalonFX rightFollower;
-    PigeonIMU gyro;
-    DifferentialDriveOdometry odometry;
+    private TalonFX leftLeader;
+    private TalonFX leftFollower;
+    private TalonFX rightLeader;
+    private TalonFX rightFollower;
+    private PigeonIMU gyro;
+    private DifferentialDriveOdometry odometry;
 
     public Drivetrain() {
         leftLeader = new TalonFX(Ports.leftLeader);

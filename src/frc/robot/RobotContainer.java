@@ -5,6 +5,7 @@ import frc.robot.subsystems.*;
 import edu.wpi.first.wpilibj.XboxController;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -58,7 +59,7 @@ public class RobotContainer {
     bButtonDriver.onTrue(deploy.twoPhase());
     xButtonDriver.onTrue(claw.twoPhase());
     yButtonDriver.toggleOnTrue(new Balance(swerve, driver));
-    aButtonCodriver.toggleOnTrue(new Brake(swerve));
+    aButtonCodriver.toggleOnTrue(Commands.runOnce(() -> swerve.brake()));
   }
 
   public Command getAutonomousCommand() {

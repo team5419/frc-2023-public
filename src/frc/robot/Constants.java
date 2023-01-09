@@ -68,18 +68,26 @@ public class Constants {
     public static final class AprilTags {
         public static Transform3d robotToCam = new Transform3d(
             new Translation3d(0.0, 0.0, 0.0), new Rotation3d(0.0, 0.0, 0.0));
-        public static double[] cubePositions = {
-            1.0716, // bottom cube (furthest from HP)
-            2.7480, // middle cube
-            4.4244 // top cube
-        };
-        public static double[] conePositions = {
+        public static double[] xPositions = {
             0.5128, // bottom pole
+            1.0716, // bottom cube (furthest from HP)
             1.6304, // second pole
             2.1892, // third pole
+            2.7480, // middle cube
             3.3068, // fourth pole
             3.8656, // fifth pole
+            4.4244, // top cube
             4.9832 // top pole
+        };
+        public static double[] cubeDists = {
+            1.0, // high
+            1.0, // mid
+            1.0 // low
+        };
+        public static double[] coneDists = {
+            1.0, // high
+            1.0, // mid
+            1.0 // low
         };
         public static PIDController horizontalPID = new PIDController(1.0, 0.0, 0.0);
         public static PIDController turnPID = new PIDController(1.0, 0.0, 0.0);
@@ -87,6 +95,10 @@ public class Constants {
         public static final double epsilonTurn = 1.0;
         public static final double epsilonHorizontal = 0.1;
         public static final double epsilonForward = 0.1;
+
+        public static final double coneEpsilonTurn = 1.0;
+        public static final double coneEpsilonHorizontal = 0.1;
+        public static final double coneEpsilonForward = 0.1;
         public static final double fieldLength = 15.875508;
     }
     public static final class Ports {

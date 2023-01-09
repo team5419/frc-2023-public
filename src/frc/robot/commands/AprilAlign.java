@@ -9,14 +9,16 @@ public class AprilAlign extends CommandBase {
     private boolean shouldFinish;
     private double target;
     private double distance;
-    public AprilAlign(Swerve drivetrain, Vision vision, double[] positions, double distance, int num) {
+    private boolean isCone;
+    public AprilAlign(Swerve drivetrain, Vision vision, int num, int height, boolean isCone) {
         this.drivetrain = drivetrain;
         shouldFinish = vision.team == Vision.Team.NONE;
         target = 0.0;
         this.distance = 0.0;
+        this.isCone = isCone;
         if(vision.team != Vision.Team.NONE) {
-            target = positions[vision.team == Vision.Team.RED ? num : (positions.length - num - 1)];
-            this.distance = vision.team == Vision.Team.BLUE ? distance : (AprilTags.fieldLength - distance);
+            target = AprilTags.xPositions[vision.team == Vision.Team.RED ? num : (AprilTags.xPositions.length - num - 1)]; 
+            this.distance = isCone ? AprilTags.coneDists[height] : AprilTags.cubeDists[height];
         }
         addRequirements(drivetrain);
     }
@@ -33,7 +35,9 @@ public class AprilAlign extends CommandBase {
         double forward = AprilTags.forwardPID.calculate(forwardDiff);
         drivetrain.drive(forward, left, turn);
 
-        shouldFinish = Math.abs(turnDiff) < AprilTags.epsilonTurn && Math.abs(forwardDiff) < AprilTags.epsilonForward && Math.abs(leftDiff) < AprilTags.epsilonHorizontal;
+        shouldFinish = Math.abs(turnDiff) < (isCone ? AprilTags.coneEpsilonTurn : AprilTags.epsilonTurn) &&
+         Math.abs(forwardDiff) < (isCone ? AprilTags.coneEpsilonForward : AprilTags.epsilonForward) && 
+         Math.abs(leftDiff) < (isCone ? AprilTags.coneEpsilonHorizontal : AprilTags.epsilonHorizontal);
     }
     public boolean isFinished() {
         return shouldFinish;

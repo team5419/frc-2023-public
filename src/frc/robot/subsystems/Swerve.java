@@ -13,7 +13,11 @@ public class Swerve extends SubsystemBase {
     private SwerveDrivePoseEstimator poseEstimator;
     private SwerveModule[] drivers;
     private boolean foundPosition;
+    public int currentNum;
+    public int currentHeight;
     public Swerve(Vision vision) {
+        currentNum = 0;
+        currentHeight = 0;
         this.vision = vision;
         poseEstimator = new SwerveDrivePoseEstimator(/* TBM */null, Rotation2d.fromDegrees(angle()), getPositions(), new Pose2d());
         drivers = /* TBM */ new SwerveModule[0];
