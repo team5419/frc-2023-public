@@ -4,6 +4,8 @@ import frc.robot.modules.ModuleInfo;
 import frc.robot.classes.PID;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import java.lang.Math;
 
 public class Constants {
@@ -30,10 +32,19 @@ public class Constants {
         public static final double wheelCircumference = wheelDiameter * Math.PI; // m
 
         public static final ModuleInfo[] info = {
-                                                    new ModuleInfo(0, 4, false, true, 8, 0.0),
+                                                    new ModuleInfo(0, 4, false, true, 8, 0.0), //numbers are placeholders
                                                     new ModuleInfo(1, 5, true, true, 9, 0.0),
                                                     new ModuleInfo(2, 6, false, true, 10, 0.0),
                                                     new ModuleInfo(3, 7, true, true, 11, 0.0)
                                                 };
+
+        public static final Translation2d frontLeft = new Translation2d(0.0, 0.0);
+        public static final Translation2d frontRight = new Translation2d(0.0, 0.0);
+        public static final Translation2d backLeft = new Translation2d(0.0, 0.0);
+        public static final Translation2d backRight = new Translation2d(0.0, 0.0);
+
+        public static final Translation2d[] modulePositions = {frontLeft, frontRight, backLeft, backRight};
+
+        public static final SwerveDriveKinematics kinematics = new SwerveDriveKinematics(frontLeft, frontRight, backLeft, backRight);
     };
 };
