@@ -64,5 +64,6 @@ public class Swerve extends SubsystemBase {
     }
     public double getAverageSpeed() {
         // TBM
+        return 0.0;
     }
 }

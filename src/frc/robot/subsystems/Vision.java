@@ -38,8 +38,8 @@ public class Vision extends SubsystemBase {
         team = Team.NONE;
         limelight = NetworkTableInstance.getDefault().getTable("limelight");
         layout = tab.getLayout("Vision", BuiltInLayouts.kList).withPosition(3, 0).withSize(2, 4);
-        layout.addNumber("Offset", () -> { return getHorizontalOffset(); });
-        layout.addBoolean("Sees target", () -> { return isTargetFound(); });
+        layout.addNumber("Offset", () -> getHorizontalOffset());
+        layout.addBoolean("Sees target", () -> isTargetFound());
         layout.addString("Team", () -> {
             switch(team) {
                 case RED:

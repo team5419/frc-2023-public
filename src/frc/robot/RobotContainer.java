@@ -16,7 +16,7 @@ public class RobotContainer {
   private IntakeDeploy deploy;
   private Vision vision;
   private SendableChooser<SequentialCommandGroup> autoSelector;
-  private Drivetrain drivetrain;
+  //private Drivetrain drivetrain;
   private Swerve swerve;
   private XboxController driver;
   private Claw claw;
@@ -33,27 +33,18 @@ public class RobotContainer {
     deploy = new IntakeDeploy();
     autoSelector = new SendableChooser<SequentialCommandGroup>();
     autoSelector.setDefaultOption("Baseline", new Baseline());
-    autoSelector.addOption("Proto Routine", new ProtoRoutine(drivetrain));
+    //autoSelector.addOption("Proto Routine", new ProtoRoutine(drivetrain));
+    autoSelector.addOption("Proto Routine", new SwerveRoutine(swerve));
     setDefaults();
   }
   
   public void configureButtonBindings(XboxController driver, XboxController codriver) {
-    Trigger aButtonDriver = new Trigger(() -> { // make the A button
-      return driver.getAButton();
-    });
-    Trigger bButtonDriver = new Trigger(() -> {
-      return driver.getBButton();
-    });
-    Trigger xButtonDriver = new Trigger(() -> {
-      return driver.getXButton();
-    });
-    Trigger yButtonDriver = new Trigger(() -> {
-      return driver.getYButton();
-    });
+    Trigger aButtonDriver = new Trigger(() -> driver.getAButton());
+    Trigger bButtonDriver = new Trigger(() -> driver.getBButton());
+    Trigger xButtonDriver = new Trigger(() -> driver.getXButton());
+    Trigger yButtonDriver = new Trigger(() -> driver.getYButton());
 
-    Trigger aButtonCodriver = new Trigger(() -> {
-      return codriver.getAButton();
-    }); 
+    Trigger aButtonCodriver = new Trigger(() -> codriver.getAButton());
     
     aButtonDriver.whileTrue(new RunIntake(intake));
     bButtonDriver.onTrue(deploy.twoPhase());

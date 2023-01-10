@@ -8,9 +8,11 @@ public class Balance extends CommandBase {
     private Swerve drivetrain;
     private boolean shouldFinish;
     private XboxController controller;
+    private double targetYaw;
     public Balance(Swerve drivetrain, XboxController controller) {
         this.drivetrain = drivetrain;
         this.controller = controller;
+        this.targetYaw = Math.round(drivetrain.angle() / 180.0) * 180.0;
         shouldFinish = false;
         addRequirements(drivetrain);
     }
@@ -18,15 +20,18 @@ public class Balance extends CommandBase {
         
     }
     public void execute() { 
-        double yawChange = Drive.yawBalanceController.calculate(drivetrain.angle());
-        double pitchChange = Drive.balanceController.calculate(drivetrain.anglePitch());
+        double yawDiff = targetYaw - drivetrain.angle();
+        double pitchDiff = -drivetrain.anglePitch();
+        double yawChange = Drive.yawBalanceController.calculate(yawDiff);
+        double pitchChange = -Drive.balanceController.calculate(pitchDiff);
         drivetrain.drive(pitchChange, Util.deadband(controller.getLeftX(), Drive.controllerDeadband) * Drive.speedMultiplier, yawChange);
-        shouldFinish = Math.abs(yawChange) < Drive.epsilonYawBalance && Math.abs(pitchChange) < Drive.epsilonBalance;
+        shouldFinish = Math.abs(yawDiff) < Drive.epsilonYawBalance && Math.abs(pitchDiff) < Drive.epsilonBalance;
     }
     public boolean isFinished() {
         return shouldFinish;
     }
     public void end(boolean interrupted) {
         drivetrain.drive(0.0, 0.0, 0.0);
+        // drivetrain.brake(); // maybe?
     }
 }

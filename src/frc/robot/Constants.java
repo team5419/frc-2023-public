@@ -48,6 +48,8 @@ public class Constants {
 
         public static final double pXY = 2.7;
         public static final double pTheta = 4.0;
+        public static final double epsilonXY = 0.1;
+        public static final double epsilonTheta = 1.0;
     };
     public static final class ClawConstants {
         public static final PID PID = new PID(1.0, 0.0, 0.0);
@@ -69,9 +71,10 @@ public class Constants {
         public static final double epsilonForward = 0.1;
     }
     public static final class AprilTags {
-        public static Transform3d robotToCam = new Transform3d(
-            new Translation3d(0.0, 0.0, 0.0), new Rotation3d(0.0, 0.0, 0.0));
-        public static double[] xPositions = {
+        public static Transform3d robotToCam = new Transform3d( // we can prob just leave this at 0 and use camera as a reference to our robot 
+            new Translation3d(0.0, 0.0, 0.0), new Rotation3d(0.0, 0.0, 0.0)); // however we should change angle to keep in accordance with gyro angle
+            
+        public static double[] yPositions = {
             0.5128, // bottom pole
             1.0716, // bottom cube (furthest from HP)
             1.6304, // second pole
@@ -92,17 +95,10 @@ public class Constants {
             1.0, // mid
             1.0 // low
         };
-        public static PIDController horizontalPID = new PIDController(1.0, 0.0, 0.0);
-        public static PIDController turnPID = new PIDController(1.0, 0.0, 0.0);
-        public static PIDController forwardPID = new PIDController(1.0, 0.0, 0.0);
-        public static final double epsilonTurn = 1.0;
-        public static final double epsilonHorizontal = 0.1;
-        public static final double epsilonForward = 0.1;
-
-        public static final double coneEpsilonTurn = 1.0;
-        public static final double coneEpsilonHorizontal = 0.1;
-        public static final double coneEpsilonForward = 0.1;
+        
         public static final double fieldLength = 15.875508;
+        public static final double xPosBeforeBarriers = 1.5; // to be measured
+        public static final double xEndOfChargingStation = 3.5; // to be measured
     }
     public static final class Ports {
         public static final int intake = 0;
