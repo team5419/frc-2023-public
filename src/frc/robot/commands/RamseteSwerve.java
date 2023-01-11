@@ -30,7 +30,7 @@ public class RamseteSwerve extends CommandBase {
     public void execute() { 
         double theta = drivetrain.angle();
         double targetRotation = goal.getRotation().getDegrees();
-        double target = Math.round((theta - targetRotation) / 360) * 360 + targetRotation;
+        double target = Math.round((theta - targetRotation) / 360.0) * 360.0 + targetRotation;
         Pose2d pose = drivetrain.pose();
 
         double xdiff = goal.getX() - pose.getX();

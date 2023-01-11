@@ -30,7 +30,6 @@ public class Vision extends SubsystemBase {
     };
     private NetworkTable limelight;
     private ShuffleboardLayout layout;
-    private AprilTagFieldLayout tagLayout;
     private PhotonCamera camera;
     private RobotPoseEstimator poseEstimator;
     public Team team;
@@ -50,16 +49,10 @@ public class Vision extends SubsystemBase {
                     return "None";
             }
         });
-        try {
-            tagLayout = AprilTagFieldLayout.loadFromResource("aprilTags.json");
-        } catch(Exception e) {
-            System.out.println("Unable to load april tags file!!");
-            tagLayout = null;
-        }
         camera = new PhotonCamera("photonvision");
         ArrayList<Pair<PhotonCamera, Transform3d>> camList = new ArrayList<Pair<PhotonCamera, Transform3d>>();
         camList.add(new Pair<PhotonCamera, Transform3d>(camera, AprilTags.robotToCam));
-        poseEstimator = new RobotPoseEstimator(tagLayout, PoseStrategy.CLOSEST_TO_REFERENCE_POSE, camList);
+        poseEstimator = null;
     }
 
     private Team getTeam() {
@@ -79,6 +72,9 @@ public class Vision extends SubsystemBase {
     }
 
     public Pair<Pose2d, Double> getRobotPose(Pose2d previous) {
+        if(poseEstimator == null) {
+            return null;
+        }
         poseEstimator.setReferencePose(previous);
         double time = Timer.getFPGATimestamp();
         Optional<Pair<Pose3d, Double>> result = poseEstimator.update();
@@ -117,6 +113,16 @@ public class Vision extends SubsystemBase {
     public void periodic() {
         if(team == Team.NONE) {
             team = getTeam();
+        } else if(poseEstimator == null) {
+            AprilTagFieldLayout tagLayout = null;
+            try {
+                tagLayout = AprilTagFieldLayout.loadFromResource(team == Team.RED ? "aprilTagsRed.json" : "aprilTagsBlue.json");
+            } catch(Exception e) {
+                System.out.println("Unable to load april tags file!!");
+            }
+            ArrayList<Pair<PhotonCamera, Transform3d>> camList = new ArrayList<Pair<PhotonCamera, Transform3d>>();
+            camList.add(new Pair<PhotonCamera, Transform3d>(camera, AprilTags.robotToCam));
+            poseEstimator = new RobotPoseEstimator(tagLayout, PoseStrategy.CLOSEST_TO_REFERENCE_POSE, camList);
         }
     }
 }

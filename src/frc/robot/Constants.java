@@ -95,8 +95,8 @@ public class Constants {
             1.0, // mid
             1.0 // low
         };
-        
-        public static final double fieldLength = 15.875508;
+        public static double cubeRotation = 0.0;
+        public static double coneRotation = 0.0;
         public static final double xPosBeforeBarriers = 1.5; // to be measured
         public static final double xEndOfChargingStation = 3.5; // to be measured
     }

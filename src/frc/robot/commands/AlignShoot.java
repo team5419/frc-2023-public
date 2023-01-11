@@ -8,9 +8,6 @@ import frc.robot.subsystems.Swerve;
 import frc.robot.subsystems.Vision;
 import frc.robot.Constants.AprilTags;
 public class AlignShoot extends SequentialCommandGroup {
-    private double getEffective(Vision.Team team, double value) {
-        return team == Vision.Team.RED ? (AprilTags.fieldLength - value) : value;
-    }
     public AlignShoot(Swerve drivetrain, Vision vision, Intake intake, XboxController controller, boolean useClosest) {
         Vision.Team team = vision.team;
         if(team == Vision.Team.NONE) {
@@ -19,6 +16,7 @@ public class AlignShoot extends SequentialCommandGroup {
         int num = drivetrain.currentNum;
         int height = drivetrain.currentHeight;
         Pose2d pose = drivetrain.pose();
+        double angle = drivetrain.angle();
         if(useClosest) {
             double currentY = pose.getY();
             int closestNum = 0;
@@ -29,22 +27,23 @@ public class AlignShoot extends SequentialCommandGroup {
                 }
             }
             num = closestNum;
-        } else {
-            if(team == Vision.Team.BLUE) {
-                num = AprilTags.yPositions.length - num - 1;
-            }
         }
         boolean isCone = (num - 1) % 3 != 0; 
-        double effectiveX = getEffective(team, pose.getX());
+        double targetRotation = Math.round((angle  - (isCone ? AprilTags.coneRotation : AprilTags.cubeRotation)) / 360.0);
+        targetRotation *= 360.0;
+        targetRotation += isCone ? AprilTags.coneRotation : AprilTags.cubeRotation;
+        Rotation2d converted = new Rotation2d(targetRotation);
+        double effectiveX = pose.getX();
         double targetX = isCone ? AprilTags.coneDists[height] : AprilTags.cubeDists[height];
         double targetY = AprilTags.yPositions[num];
         if(effectiveX > AprilTags.xEndOfChargingStation) { // if hasn't made it to end of charging station, drive straight to end of station to avoid collision
-            addCommands(new RamseteSwerve(drivetrain, new Pose2d(getEffective(team, AprilTags.xEndOfChargingStation), pose.getY(), new Rotation2d(0.0))));
+            addCommands(new RamseteSwerve(drivetrain, new Pose2d(AprilTags.xEndOfChargingStation, pose.getY(), converted)));
+        } else if(effectiveX < AprilTags.xPosBeforeBarriers) {
+            addCommands(new RamseteSwerve(drivetrain, new Pose2d(AprilTags.xPosBeforeBarriers, pose.getY(), converted)));
         }
-        double beforeBarrierDist = getEffective(team, AprilTags.xPosBeforeBarriers); // drive diagonally to target, but don't hit barriers between goals
-        addCommands(new RamseteSwerve(drivetrain, new Pose2d(getEffective(team, Math.max(beforeBarrierDist, targetX)), targetY, new Rotation2d(0.0))));
-        if(targetX < beforeBarrierDist) { // if not far enough, drive straight forward to goal
-            addCommands(new RamseteSwerve(drivetrain, new Pose2d(getEffective(team, targetX), targetY, new Rotation2d(0.0))));
+        addCommands(new RamseteSwerve(drivetrain, new Pose2d(Math.max(AprilTags.xPosBeforeBarriers, targetX), targetY, converted)));
+        if(targetX < AprilTags.xPosBeforeBarriers) { // if not far enough, drive straight forward to goal
+            addCommands(new RamseteSwerve(drivetrain, new Pose2d(targetX, targetY, converted)));
         }
         if(isCone) {
             addCommands(new AutoAlign(drivetrain, vision)); // if cone, use vision to fine-tune (might not be necessary)
