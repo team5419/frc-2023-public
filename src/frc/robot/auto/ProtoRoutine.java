@@ -10,7 +10,16 @@ public class ProtoRoutine extends SequentialCommandGroup { // basic routine for 
         addCommands(
             new RamseteAction(drivetrain, new Pose2d[] { 
                 new Pose2d(0.0, 0.0, new Rotation2d(0.0)),
-                new Pose2d(1.0, 0.0f, new Rotation2d(0.0))
+                new Pose2d(5.0, 0.0, new Rotation2d(0.0)),
+                new Pose2d(0.0, 0.0, new Rotation2d(0.0)),
+                new Pose2d(3.0, 0.0, new Rotation2d(0.0)),
+                new Pose2d(5.0, -1.2, new Rotation2d(0.0)),
+                new Pose2d(3.0, 0.0, new Rotation2d(0.0)),
+                new Pose2d(0.0, 0.0, new Rotation2d(0.0)),
+                new Pose2d(3.0, 0.0, new Rotation2d(0.0)),
+                new Pose2d(5.0, -2.4, new Rotation2d(0.0)),
+                new Pose2d(3.0, 0.0, new Rotation2d(0.0)),
+                new Pose2d(0.0, 0.0, new Rotation2d(0.0))
             })
         );
     }
