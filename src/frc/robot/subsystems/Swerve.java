@@ -1,38 +1,33 @@
 package frc.robot.subsystems;
 
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
-import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
-import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
-import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.math.kinematics.SwerveModulePosition;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.math.geometry.Rotation2d;
 import com.ctre.phoenix.sensors.Pigeon2;
-import com.ctre.phoenix.sensors.BasePigeonSimCollection;
-import com.ctre.phoenix.motorcontrol.can.TalonFX;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-import com.ctre.phoenix.motorcontrol.*;
-// import frc.robot.subsystems.Vision;
-import frc.robot.commands.ResetGyro;
+
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 // import frc.robot.DriveConstants;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
-import edu.wpi.first.wpilibj.motorcontrol.Talon;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.modules.SwerveModule;
-import frc.robot.modules.ISwerveModule;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+// import frc.robot.Ports;
+import frc.robot.Constants.Drive;
+import frc.robot.Constants.Ports;
 // import frc.robot.modules.SimulatedSwerveModule;
 // import frc.robot.modules.Module;
 import frc.robot.Util;
-// import frc.robot.Ports;
-import frc.robot.Constants.*;
-import java.lang.Math.*;
+// import frc.robot.subsystems.Vision;
+import frc.robot.commands.ResetGyro;
+import frc.robot.modules.ISwerveModule;
+import frc.robot.modules.SwerveModule;
 
 public class Swerve extends SubsystemBase {
     public ISwerveModule[] drivers = {
@@ -82,7 +77,7 @@ public class Swerve extends SubsystemBase {
         layout.addNumber("x position", () -> {return pose().getX();});
         layout.addNumber("y position", () -> {return pose().getY();});
     }
-
+//returns position on the field
     public Pose2d pose() {
         return odometry.getPoseMeters();
     }
@@ -105,10 +100,12 @@ public class Swerve extends SubsystemBase {
                                                                                          }, new Pose2d(0.0, 0.0, new Rotation2d(0.0)));
     }
 
+//stops the robot wheel motors
     public void stop() {
         this.drive(0.0, 0.0, 0.0);
     }
 
+//sets wheel angles to 45˚ to prevent the robot from being moved
     public void brake() {
         drivers[0].setDesiredState(new SwerveModuleState(0.0, Rotation2d.fromDegrees(45.0)), false, false, true);
         drivers[1].setDesiredState(new SwerveModuleState(0.0, Rotation2d.fromDegrees(315.0)), false, false, true);
@@ -145,7 +142,7 @@ public class Swerve extends SubsystemBase {
             drivers[i].setDesiredState(myStates[i], preventTurn, this.slowMode, pid);
         }
     }
-
+//rounds distance to target value to 0 and says, "There!"
     public double withDeadband(double movement, double deadband) {
         if(Math.abs(movement) <= deadband) return 0.0;
         if(Math.abs(movement) > 1.0) return Math.signum(movement);
