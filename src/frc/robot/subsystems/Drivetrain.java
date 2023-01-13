@@ -12,7 +12,7 @@ import frc.robot.Constants.Ports;
 import com.ctre.phoenix.sensors.PigeonIMU;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 
-public class DriveTrain extends SubsystemBase {
+public class Drivetrain extends SubsystemBase {
     private TalonFX leftLeader;
     private TalonFX leftFollower;
     private TalonFX rightLeader;
@@ -20,7 +20,7 @@ public class DriveTrain extends SubsystemBase {
     private PigeonIMU gyro;
     private DifferentialDriveOdometry odometry;
 
-    public DriveTrain() {
+    public Drivetrain() {
         leftLeader = new TalonFX(Ports.leftLeader);
         leftFollower = new TalonFX(Ports.leftFollower);
         rightLeader = new TalonFX(Ports.rightLeader);

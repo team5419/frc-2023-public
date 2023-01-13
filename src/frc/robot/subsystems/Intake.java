@@ -22,4 +22,8 @@ public class Intake extends SubsystemBase {
     public void simulationPeriodic() {
 
     }
+    public void shoot()
+    {
+       
+    }
 }
