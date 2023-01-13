@@ -6,7 +6,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 
-class Robot extends TimedRobot {
+public class Robot extends TimedRobot {
   private ShuffleboardTab tab;
   private RobotContainer robotContainer;
   private Command autoCommand;

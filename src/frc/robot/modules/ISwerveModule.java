@@ -2,7 +2,7 @@ package frc.robot.modules;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 
-interface ISwerveModule {
+public interface ISwerveModule {
     public double getDrive();
     public Rotation2d getTurn();
     public SwerveModuleState getState();
