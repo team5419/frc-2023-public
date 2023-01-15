@@ -45,6 +45,7 @@ public class RobotContainer {
     Trigger yButtonDriver = new Trigger(() -> driver.getYButton());
 
     Trigger aButtonCodriver = new Trigger(() -> codriver.getAButton());
+    Trigger bButtonCodriver = new Trigger(() -> codriver.getBButton());
     
     aButtonDriver.whileTrue(new RunIntake(intake));
     bButtonDriver.onTrue(deploy.twoPhase());
