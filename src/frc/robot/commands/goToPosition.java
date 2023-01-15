@@ -17,7 +17,7 @@ public class goToPosition extends CommandBase {
     public goToPosition(ShuffleboardTab tab){
         joystick = new XboxController(1);
         rotation = new Rotation2d(0);
-        desiredPosition = new Pose2d(14,2,rotation); // replace x and y with desired coordinates
+        desiredPosition = new Pose2d(14,2,rotation); // the desired position for the robot to move to
         vis = new Vision(tab);
         swerve = new Swerve(vis);
     }
@@ -28,11 +28,12 @@ public class goToPosition extends CommandBase {
     }
     public void execute() {
         swerve.drive(swerve.pose().getX() - desiredPosition.getX(), swerve.pose().getY() - desiredPosition.getY(),0);
+        //swerves the robot over to the desired position
     }
     public boolean isFinished() {
-       return swerve.pose() == desiredPosition;
+       return swerve.pose() == desiredPosition;//finishes command when at desired position
     }
     public void end(boolean interrupted) {
-       swerve.brake();
+       swerve.brake();// brakes the swerve when command is finished
     }
 }
