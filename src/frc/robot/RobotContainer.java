@@ -20,10 +20,12 @@ public class RobotContainer {
   private Swerve swerve;
   private XboxController driver;
   private Claw claw;
+  private ShuffleboardTab tab;
 
-  public RobotContainer(ShuffleboardTab tab) {
+  public RobotContainer(ShuffleboardTab _tab) {
+    tab = _tab;
     driver = new XboxController(0);
-    vision = new Vision(tab);
+    vision = new Vision(_tab);
     intake = new Intake();
     claw = new Claw();
 
@@ -46,7 +48,9 @@ public class RobotContainer {
 
     Trigger aButtonCodriver = new Trigger(() -> codriver.getAButton());
     Trigger bButtonCodriver = new Trigger(() -> codriver.getBButton());
+    Trigger yButtonCodriver = new Trigger(()-> codriver.getYButton());
     
+    yButtonCodriver.onTrue(new goToPosition(tab));
     aButtonDriver.whileTrue(new RunIntake(intake));
     bButtonDriver.onTrue(deploy.twoPhase());
     xButtonDriver.onTrue(claw.twoPhase());
