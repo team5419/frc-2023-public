@@ -25,7 +25,7 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 
 public class SwerveModule implements ISwerveModule {
     private TalonFX driveMotor;
-    private CANSparkMax turnMotor;
+    private TalonFX turnMotor;
     private CANCoder turnEncoder;
     private double offset;
     private double lastTurnOutput;
@@ -35,14 +35,18 @@ public class SwerveModule implements ISwerveModule {
         this.lastTurnOutput = 0.0;
         this.lastPercentOutput = 0.0;
         this.driveMotor = new TalonFX(info.driverPort, "canivore");
-        this.turnMotor = new CANSparkMax(info.turnerPort, MotorType.kBrushless);
-          turnMotor.restoreFactoryDefaults();
-          turnMotor.setIdleMode(IdleMode.kCoast);
+        this.turnMotor = new TalonFX(info.turnerPort, "canivore");
+          turnMotor.configFactoryDefault(100);
+          turnMotor.setNeutralMode(NeutralMode.Coast);
           turnMotor.setInverted(info.turnInverted);
-          turnMotor.setSmartCurrentLimit(30);
-          turnMotor.setClosedLoopRampRate(1.0);
-          turnMotor.setControlFramePeriodMs(50);
-          turnMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 50);
+          turnMotor.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 30.0, 0.0, 0.0), 100);
+          turnMotor.configClosedloopRamp(1.0);
+          turnMotor.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 10, 100);
+          turnMotor.setControlFramePeriod(ControlFrame.Control_3_General, 10);
+          turnMotor.config_kP( 0, Drive.TurnPID.p , 100 );
+            turnMotor.config_kI( 0, Drive.TurnPID.i , 100 );
+            turnMotor.config_kD( 0, Drive.TurnPID.d , 100 );
+            turnMotor.config_kF( 0, 0.0 , 100 );
         this.turnEncoder = new CANCoder(info.cancoderPort, "canivore");
         CANCoderConfiguration config = new CANCoderConfiguration();
         config.sensorCoefficient = Math.PI / 2048.0;
@@ -122,13 +126,12 @@ public class SwerveModule implements ISwerveModule {
     }
     
     if(preventTurn) {
-      turnMotor.setVoltage(0.0);
+      turnMotor.set(ControlMode.PercentOutput, 0.0); // try velocity if this doesn't work
       return;
     }
     double newTurnOutput = Drive.turnController.calculate(turn.getRadians(), state.angle.getRadians());
     this.lastTurnOutput = state.angle.getRadians();
-    
-    turnMotor.setVoltage(newTurnOutput);
+    turnMotor.set(ControlMode.PercentOutput, newTurnOutput);
   }
 
   public void simulationPeriodic(double dt) {}
@@ -140,7 +143,7 @@ public class SwerveModule implements ISwerveModule {
 
   public void setBrakeMode(boolean on) {
     driveMotor.setNeutralMode(on ? NeutralMode.Brake : NeutralMode.Coast);
-    turnMotor.setIdleMode(on ? IdleMode.kBrake : IdleMode.kCoast); 
+    turnMotor.setNeutralMode(on ? NeutralMode.Brake : NeutralMode.Coast);
   }
 
   public void test() {

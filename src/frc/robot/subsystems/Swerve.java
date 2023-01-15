@@ -14,10 +14,8 @@ import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.modules.SwerveModule;
-import frc.robot.modules.ISwerveModule;
 import frc.robot.Constants.Drive;
 import frc.robot.Constants.Ports;
 import frc.robot.Util; 
@@ -51,15 +49,15 @@ public class Swerve extends SubsystemBase {
         foundPosition = false;
 
         ShuffleboardTab tab = Shuffleboard.getTab("Drivetrain");
-        ShuffleboardLayout layout = tab.getLayout("Main", BuiltInLayouts.kList).withPosition(0, 0).withSize(1, 5)
+        ShuffleboardLayout layout = tab.getLayout("Main", BuiltInLayouts.kList).withPosition(0, 0).withSize(1, 5);
         layout.addNumber("gyro", () -> this.angle());
         layout.addBoolean("slow mode", () -> this.slowMode);
         layout.add("reset gyro", new ResetGyro(this));
         layout.addNumber("x position", () -> pose().getX());
         layout.addNumber("y position", () -> pose().getY());
-        layout.addNumber("forward m/s", previousMove.vxMetersPerSecond);
-        layout.addNumber("sideways m/s", previousMove.vyMetersPerSecond);
-        layout.addNumber("turning (rad)", previousMove.omegaRadiansPerSecond);
+        layout.addNumber("forward m/s", () -> previousMove.vxMetersPerSecond);
+        layout.addNumber("sideways m/s", () -> previousMove.vyMetersPerSecond);
+        layout.addNumber("turning (rad)", () -> previousMove.omegaRadiansPerSecond);
     }
     private SwerveModulePosition[] getPositions() {
         SwerveModulePosition[] arr = new SwerveModulePosition[drivers.length];
@@ -73,6 +71,7 @@ public class Swerve extends SubsystemBase {
         for(int i = 0; i < moduleState.length; i++) {
             moduleState[i] = drivers[i].getState();
         }
+        return moduleState;
     }
     public void resetOdometry(Pose2d pose) {
         poseEstimator.resetPosition(Rotation2d.fromDegrees(this.angle()), getPositions(), pose);
@@ -105,10 +104,10 @@ public class Swerve extends SubsystemBase {
         return foundPosition ? poseEstimator.getEstimatedPosition() : new Pose2d();
     }
     public double angle() {
-        return 0.0;
+        return gyro.getYaw();
     }
     public double anglePitch() {
-        return 0.0;
+        return gyro.getPitch();
     }
     public void brake() {
         drivers[0].setDesiredState(new SwerveModuleState(0.0, Rotation2d.fromDegrees(45.0)), false, false, true);
@@ -117,7 +116,7 @@ public class Swerve extends SubsystemBase {
         drivers[3].setDesiredState(new SwerveModuleState(0.0, Rotation2d.fromDegrees(225.0)), false, false, true);
     }
     public void stop() {
-        this.drive(0.0, 0.0, 0.0);
+        this.drive(0.0, 0.0, 0.0, true, false);
     }
     public double getAverageSpeed() {
         double total = 0.0;

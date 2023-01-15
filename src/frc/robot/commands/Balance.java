@@ -24,14 +24,14 @@ public class Balance extends CommandBase {
         double pitchDiff = -drivetrain.anglePitch();
         double yawChange = Drive.yawBalanceController.calculate(yawDiff);
         double pitchChange = -Drive.balanceController.calculate(pitchDiff);
-        drivetrain.drive(pitchChange, Util.deadband(controller.getLeftX(), Drive.controllerDeadband) * Drive.speedMultiplier, yawChange);
+        drivetrain.drive(pitchChange, Util.deadband(controller.getLeftX(), Drive.controllerDeadband) * Drive.speedMultiplier, yawChange, true, true);
         shouldFinish = Math.abs(yawDiff) < Drive.epsilonYawBalance && Math.abs(pitchDiff) < Drive.epsilonBalance;
     }
     public boolean isFinished() {
         return shouldFinish;
     }
     public void end(boolean interrupted) {
-        drivetrain.drive(0.0, 0.0, 0.0);
+        drivetrain.stop();
         // drivetrain.brake(); // maybe?
     }
 }

@@ -99,6 +99,12 @@ public class RamseteAction extends CommandBase {
             leftFeedForward,
             rightFeedForward
         );
+    
+         System.out.println("m/s: " + setSpeed.rightMetersPerSecond);
+         System.out.println("m/s: " + prevSpeed.rightMetersPerSecond);
+        // System.out.println(drivetrain.getAngle());
+        // System.out.println("x: " + drivetrain.getPose().getX());
+        // System.out.println("y: " + drivetrain.getPose().getY());
     }
 
     public void end(boolean interrupted) {

@@ -23,6 +23,9 @@ public class Constants {
         public static final double maxCentripetalAcceleration = 3.0;
         public static final double beta = 2.0;
         public static final double zeta = 0.7;
+        public static final double stupidTurn = 0.3;
+        public static final double stupidThrottle = 0.1;
+        public static final double ticksPerRotation = 2048.0 * 10.3333;
     };
     public static final class Drive {
         public static final PID DrivePID = new PID(0.1, 0.0, 0.0);
@@ -36,8 +39,10 @@ public class Constants {
         public static final PIDController turnController = new PIDController(TurnPID.p, TurnPID.i, TurnPID.d);
 
         public static final double driveGearRatio = 6.75;
+        public static final double turnGearRatio = 12.8;
         public static final double driveCPR = 2048.0;
         public static final double ticksPerRotation = (driveCPR * driveGearRatio);
+        public static final double turnTicksPerRotation = (driveCPR * turnGearRatio);
         public static final double wheelRadius = 0.0508; // m
         public static final double wheelDiameter = wheelRadius * 2.0; // m
         public static final double wheelCircumference = wheelDiameter * Math.PI; // m
@@ -121,7 +126,7 @@ public class Constants {
         public static final double xEndOfChargingStation = 3.5; // to be measured
     }
     public static final class Ports {
-        public static final int intake = 0;
+        public static final int intake = 7;
         public static final int leftLeader = 1;
         public static final int leftFollower = 2;
         public static final int rightLeader = 3;

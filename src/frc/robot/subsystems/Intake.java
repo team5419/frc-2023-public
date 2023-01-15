@@ -1,20 +1,20 @@
 package frc.robot.subsystems;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.can.TalonFX;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+
 import frc.robot.Constants.Ports;
 import frc.robot.Util;
-import frc.robot.classes.PID;
 
 public class Intake extends SubsystemBase {
-    private TalonFX motor;
+    private CANSparkMax motor;
     public Intake() {
-        motor = new TalonFX(Ports.intake);
-        Util.setUpMotor(motor, new PID(0.0, 0.0, 0.0), false, 0.1);
+        motor = new CANSparkMax(Ports.intake, MotorType.kBrushless);
+        Util.setUpMotor(motor, true, false);
     }
     public void run(double percent) {
-        motor.set(ControlMode.PercentOutput, percent);
+        motor.set(percent);
     }
     public void periodic() {
 

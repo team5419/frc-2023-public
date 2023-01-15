@@ -23,7 +23,7 @@ public class AutoAlign extends CommandBase {
         double left = Limelight.horizontalPID.calculate(leftDiff);
         double forwardDiff = Limelight.desiredDistance - vision.getHorizontalDistance();
         double forward = Limelight.forwardPID.calculate(forwardDiff);
-        drivetrain.drive(forward, left, turn);
+        drivetrain.drive(forward, left, turn, false, true);
 
         shouldFinish = Math.abs(turnDiff) < Limelight.epsilonTurn && Math.abs(forwardDiff) < Limelight.epsilonForward && Math.abs(leftDiff) < Limelight.epsilonHorizontal;
     }
@@ -31,6 +31,6 @@ public class AutoAlign extends CommandBase {
         return shouldFinish;
     }
     public void end(boolean interrupted) {
-        drivetrain.drive(0.0, 0.0, 0.0);
+        drivetrain.stop();
     }
 }

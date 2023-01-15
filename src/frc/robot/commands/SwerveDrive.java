@@ -22,12 +22,12 @@ public class SwerveDrive extends CommandBase {
         drivetrain.drive(
             Util.deadband(driver.getLeftY(), Drive.controllerDeadband) * Drive.speedMultiplier,
             Util.deadband(driver.getLeftX(), Drive.controllerDeadband) * Drive.speedMultiplier, 
-            Util.deadband(driver.getRightX(), Drive.controllerDeadband) * Drive.turnMultiplier);
+            Util.deadband(driver.getRightX(), Drive.controllerDeadband) * Drive.turnMultiplier, true, false);
     }
     public boolean isFinished() {
         return false;
     }
     public void end(boolean interrupted) {
-        drivetrain.drive(0.0, 0.0, 0.0);
+        drivetrain.stop();
     }
 }

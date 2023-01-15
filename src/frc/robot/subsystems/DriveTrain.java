@@ -9,6 +9,8 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.Ports;
+
+import com.ctre.phoenix.sensors.Pigeon2;
 import com.ctre.phoenix.sensors.PigeonIMU;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 
@@ -17,20 +19,22 @@ public class Drivetrain extends SubsystemBase {
     private TalonFX leftFollower;
     private TalonFX rightLeader;
     private TalonFX rightFollower;
-    private PigeonIMU gyro;
     private DifferentialDriveOdometry odometry;
+    public Pigeon2 gyro;
 
     public Drivetrain() {
         leftLeader = new TalonFX(Ports.leftLeader);
         leftFollower = new TalonFX(Ports.leftFollower);
         rightLeader = new TalonFX(Ports.rightLeader);
         rightFollower = new TalonFX(Ports.rightFollower);
-        gyro = new PigeonIMU(Ports.gyro);
+        gyro = new Pigeon2(Ports.gyro);
+        gyro.configFactoryDefault(100);
+        gyro.setYaw(0.0, 100);
 
         Util.setUpMotor(leftLeader);
         Util.setUpMotor(leftFollower);
-        Util.setUpMotor(rightLeader);
-        Util.setUpMotor(rightFollower);
+        Util.setUpMotor(rightLeader, false, true);
+        Util.setUpMotor(rightFollower, false, true);
         leftFollower.follow(leftLeader);
         rightFollower.follow(rightLeader);
 
@@ -56,20 +60,20 @@ public class Drivetrain extends SubsystemBase {
     }
     public void setVelocity(double leftVelocity, double rightVelocity, double leftFF, double rightFF) {
         leftLeader.set(
-            ControlMode.Velocity, Util.metersPerSecondToNativeUnits(leftVelocity),
+            ControlMode.Velocity, Util.metersPerSecondToNativeUnitsProto(leftVelocity),
             DemandType.ArbitraryFeedForward, leftFF / 12.0
         );
         rightLeader.set(
-            ControlMode.Velocity, Util.metersPerSecondToNativeUnits(rightVelocity),
+            ControlMode.Velocity, Util.metersPerSecondToNativeUnitsProto(rightVelocity),
             DemandType.ArbitraryFeedForward, rightFF / 12.0
         );
     }
 
     public double getAngle() {
-        return -gyro.getFusedHeading();
+        return gyro.getYaw();
     }
 
-    public double getLeftDistance() {
+    public double getLeftDistance() { // -1 because we're quirky
         return Util.nativeUnitsToMetersPerSecond(leftLeader.getSelectedSensorPosition(0));
     }
     public double getRightDistance() {

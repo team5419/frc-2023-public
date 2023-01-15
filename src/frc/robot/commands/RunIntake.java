@@ -29,7 +29,6 @@ public class RunIntake extends CommandBase {
         intake.run(speed);
     }
     public void execute() {
-
     }
     public boolean isFinished() {
         return time != 0.0 && timer.get() >= time;

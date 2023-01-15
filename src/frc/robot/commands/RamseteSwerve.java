@@ -48,7 +48,7 @@ public class RamseteSwerve extends CommandBase {
         double dtheta = -1 * Drive.pTheta * (Math.PI / 180.0) * Util.deadband(target - theta, Drive.epsilonTheta);
 
         //System.out.println("theta: ${DriveConstants.pTheta * (Math.PI / 180) * (target - theta)}");
-        drivetrain.drive(dx, dy, dtheta);
+        drivetrain.drive(dx, dy, dtheta, true, true);
 
         isFinished = dx == 0 && dy == 0 && dtheta == 0 && drivetrain.getAverageSpeed() < 0.1;
     }
@@ -56,6 +56,6 @@ public class RamseteSwerve extends CommandBase {
         return isFinished;
     }
     public void end(boolean interrupted) {
-        drivetrain.drive(0.0, 0.0, 0.0);
+        drivetrain.stop();
     }
 }

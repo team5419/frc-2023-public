@@ -1,6 +1,8 @@
 package frc.robot;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
-
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMax.IdleMode;
+import com.revrobotics.CANSparkMaxLowLevel.PeriodicFrame;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.StatusFrame;
 import com.ctre.phoenix.motorcontrol.ControlFrame;
@@ -8,12 +10,19 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import frc.robot.classes.PID;
 
 import frc.robot.Constants.Drive;
+import frc.robot.Constants.ProtoDrive;
 public class Util {
     public static double nativeUnitsToMetersPerSecond(double units) {
         return (units / Drive.ticksPerRotation) * Drive.wheelCircumference * 10.0;
     }
     public static double metersPerSecondToNativeUnits(double units) {
         return ((units / Drive.wheelCircumference) * Drive.ticksPerRotation) / 10.0;
+    }
+    public static double metersPerSecondToNativeUnitsProto(double units) {
+        return ((units / Drive.wheelCircumference) * ProtoDrive.ticksPerRotation) / 10.0;
+    }
+    public static double degreesToNativeUnits(double units) {
+        return (units / 360.0) * Drive.turnTicksPerRotation;
     }
     public static double deadband(double value, double tolerance) {
         return (Math.abs(value) <= tolerance) ? 0.0 : value;
@@ -47,5 +56,14 @@ public class Util {
         motor.setNeutralMode(brake ? NeutralMode.Brake : NeutralMode.Coast);
 
         motor.configClosedLoopPeakOutput(0, maxOutput, 100);
+    }
+    public static void setUpMotor(CANSparkMax motor, boolean inverted, boolean brake) {
+        motor.restoreFactoryDefaults();
+        motor.setIdleMode(brake ? IdleMode.kBrake : IdleMode.kCoast);
+        motor.setInverted(inverted);
+        motor.setSmartCurrentLimit(40);
+        motor.setClosedLoopRampRate(1.0);
+        motor.setControlFramePeriodMs(50);
+        motor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 50);
     }
 }
