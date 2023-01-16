@@ -13,6 +13,11 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 
 public class RobotContainer {
   private Intake intake;
+  private ConeIntake _coneIntake = new ConeIntake(true);
+  private ConeIntake _coneOuttake = new ConeIntake(false);
+  private CIntake couttake = new CIntake(_coneIntake);
+  private CIntake cintake = new CIntake(_coneOuttake);
+
   private IntakeDeploy deploy;
   private Vision vision;
   private SendableChooser<SequentialCommandGroup> autoSelector;
@@ -45,12 +50,21 @@ public class RobotContainer {
     Trigger yButtonDriver = new Trigger(() -> driver.getYButton());
 
     Trigger aButtonCodriver = new Trigger(() -> codriver.getAButton());
+    Trigger bButtonCodriver = new Trigger(() -> codriver.getBButton());
+    Trigger xButtonCodriver = new Trigger(() -> codriver.getXButton());
+
+
+
     
     aButtonDriver.whileTrue(new RunIntake(intake));
     bButtonDriver.onTrue(deploy.twoPhase());
     xButtonDriver.onTrue(claw.twoPhase());
     yButtonDriver.toggleOnTrue(new Balance(swerve, driver));
     aButtonCodriver.toggleOnTrue(Commands.runOnce(() -> swerve.brake()));
+    bButtonCodriver.whileTrue(cintake);
+    bButtonCodriver.whileTrue(couttake);
+
+
   }
 
   public Command getAutonomousCommand() {

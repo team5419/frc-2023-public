@@ -100,6 +100,12 @@ public class Constants {
         public static final double xPosBeforeBarriers = 1.5; // to be measured
         public static final double xEndOfChargingStation = 3.5; // to be measured
     }
+
+    public static final class Intake{
+        public static final double outputPercentage = 1.0;
+        public static final double reversePercentage = -outputPercentage; 
+    }
+
     public static final class Ports {
         public static final int intake = 0;
         public static final int leftLeader = 1;
@@ -108,5 +114,6 @@ public class Constants {
         public static final int rightFollower = 4;
         public static final int gyro = 5;
         public static final int claw = 6;
+        public static final int cone = 7;
     }
 };
