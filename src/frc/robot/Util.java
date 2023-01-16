@@ -15,6 +15,12 @@ public class Util {
     public static double nativeUnitsToMetersPerSecond(double units) {
         return (units / Drive.ticksPerRotation) * Drive.wheelCircumference * 10.0;
     }
+    public static double nativeUnitsToMeters(double units) {
+        return (units / Drive.ticksPerRotation) * Drive.wheelCircumference;
+    }
+    public static double nativeUnitsToMetersProto(double units) {
+        return (units / ProtoDrive.ticksPerRotation) * Drive.wheelCircumference;
+    }
     public static double metersPerSecondToNativeUnits(double units) {
         return ((units / Drive.wheelCircumference) * Drive.ticksPerRotation) / 10.0;
     }

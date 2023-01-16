@@ -3,6 +3,7 @@ import frc.robot.Constants.ProtoDrive;
 import edu.wpi.first.math.trajectory.constraint.DifferentialDriveVoltageConstraint;
 import edu.wpi.first.math.trajectory.constraint.DifferentialDriveKinematicsConstraint;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
+import edu.wpi.first.math.trajectory.Trajectory.State;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.constraint.CentripetalAccelerationConstraint;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
@@ -77,8 +78,12 @@ public class RamseteAction extends CommandBase {
     public void execute() {
         double time = timer.get();
         // find the speed that the robot should be at at a specific time in the path
-        ChassisSpeeds chassisSpeed = controller.calculate(drivetrain.getPose(), trajectory.sample(time));
+        State sample = trajectory.sample(time);
+        Pose2d currentPose = drivetrain.getPose();
+        //System.out.println(currentPose.getX());
+        ChassisSpeeds chassisSpeed = controller.calculate(currentPose, sample);
         DifferentialDriveWheelSpeeds setSpeed = driveKinematics.toWheelSpeeds(chassisSpeed);
+        //System.out.println(setSpeed.leftMetersPerSecond - setSpeed.rightMetersPerSecond);
         // calculate the feedforwards of both sides
         double leftFeedForward = feedforward.calculate(
             setSpeed.leftMetersPerSecond,
@@ -88,7 +93,6 @@ public class RamseteAction extends CommandBase {
             setSpeed.rightMetersPerSecond,
             (setSpeed.rightMetersPerSecond - prevSpeed.rightMetersPerSecond) / (time - prevTime)
         );
-
         prevSpeed = setSpeed;
         prevTime = time;
 
@@ -100,14 +104,15 @@ public class RamseteAction extends CommandBase {
             rightFeedForward
         );
     
-         System.out.println("m/s: " + setSpeed.rightMetersPerSecond);
-         System.out.println("m/s: " + prevSpeed.rightMetersPerSecond);
+        //  System.out.println("m/s: " + setSpeed.rightMetersPerSecond);
+        //  System.out.println("m/s: " + prevSpeed.rightMetersPerSecond);
         // System.out.println(drivetrain.getAngle());
         // System.out.println("x: " + drivetrain.getPose().getX());
         // System.out.println("y: " + drivetrain.getPose().getY());
     }
 
     public void end(boolean interrupted) {
+        System.out.println(drivetrain.getAngle());
         drivetrain.setBrakeMode(false);
         drivetrain.drive(0.0, 0.0);
     }

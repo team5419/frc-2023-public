@@ -29,7 +29,7 @@ public class Constants {
     };
     public static final class Drive {
         public static final PID DrivePID = new PID(0.1, 0.0, 0.0);
-        public static final PID TurnPID = new PID(8.0, 0.0, 0.0);
+        public static final PID TurnPID = new PID(8.0 / 12.0, 0.0, 0.0);
         public static final double slow = 0.2;
         public static final double maxVelocity = 4.0;
         public static final double kv = (2.1737 / 12);
@@ -61,10 +61,10 @@ public class Constants {
         public static final double epsilonXY = 0.1;
         public static final double epsilonTheta = 1.0;
         public static final ModuleInfo[] info = {
-            new ModuleInfo(0, 4, false, true, 8, 0.0), //numbers are placeholders
-            new ModuleInfo(1, 5, true, true, 9, 0.0),
-            new ModuleInfo(2, 6, false, true, 10, 0.0),
-            new ModuleInfo(3, 7, true, true, 11, 0.0)
+            new ModuleInfo(8, 9, false, true, 10, 0.0), //numbers are placeholders
+            new ModuleInfo(11, 12, true, true, 13, 0.0),
+            new ModuleInfo(14, 15, false, true, 16, 0.0),
+            new ModuleInfo(17, 18, true, true, 19, 0.0)
         };
 
         public static final Translation2d frontLeft = new Translation2d(0.0, 0.0);

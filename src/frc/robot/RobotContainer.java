@@ -16,8 +16,8 @@ public class RobotContainer {
   private IntakeDeploy deploy;
   private Vision vision;
   private SendableChooser<SequentialCommandGroup> autoSelector;
-  private Drivetrain drivetrain;
-  //private Swerve swerve;
+  //private Drivetrain drivetrain;
+  private Swerve swerve;
   private XboxController driver;
   private XboxController codriver;
   private Claw claw;
@@ -29,8 +29,8 @@ public class RobotContainer {
     intake = new Intake();
     claw = new Claw();
 
-    //swerve = new Swerve(vision); /* CHOOSE ONE!!! */
-    drivetrain = new Drivetrain(); /* ^^^ */
+    swerve = new Swerve(vision); /* CHOOSE ONE!!! */
+    //drivetrain = new Drivetrain(); /* ^^^ */
 
     deploy = new IntakeDeploy();
     autoSelector = new SendableChooser<SequentialCommandGroup>();
@@ -57,12 +57,12 @@ public class RobotContainer {
   }
 
   public Command getAutonomousCommand() {
-    //return autoSelector.getSelected();
-    return new ProtoRoutine(drivetrain);
+    return autoSelector.getSelected();
+    //return new ProtoRoutine(drivetrain);
   }
 
   public void setDefaults() {
-    drivetrain.setDefaultCommand(new DriveCommand(drivetrain, driver));
-    //swerve.setDefaultCommand(new SwerveDrive(swerve, driver));
+    //drivetrain.setDefaultCommand(new DriveCommand(drivetrain, driver));
+    swerve.setDefaultCommand(new SwerveDrive(swerve, driver));
   }
 }

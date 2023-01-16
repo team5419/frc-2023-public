@@ -11,7 +11,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.Ports;
 
 import com.ctre.phoenix.sensors.Pigeon2;
-import com.ctre.phoenix.sensors.PigeonIMU;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 
 public class Drivetrain extends SubsystemBase {
@@ -48,7 +47,7 @@ public class Drivetrain extends SubsystemBase {
     }
 
     public void periodic() {
-        // update the odometry of the field with new gyro and encoder values
+        //System.out.println(getLeftDistance());
         odometry.update(Rotation2d.fromDegrees(getAngle()), getLeftDistance(), getRightDistance());
     }
     public void simulationPeriodic() {
@@ -70,14 +69,14 @@ public class Drivetrain extends SubsystemBase {
     }
 
     public double getAngle() {
-        return gyro.getYaw();
+        return -gyro.getYaw();
     }
 
     public double getLeftDistance() { // -1 because we're quirky
-        return Util.nativeUnitsToMetersPerSecond(leftLeader.getSelectedSensorPosition(0));
+        return Util.nativeUnitsToMetersProto(leftLeader.getSelectedSensorPosition(0));
     }
     public double getRightDistance() {
-        return Util.nativeUnitsToMetersPerSecond(rightLeader.getSelectedSensorPosition(0));
+        return Util.nativeUnitsToMetersProto(rightLeader.getSelectedSensorPosition(0));
     }
 
     public void setBrakeMode(boolean brakeMode) {

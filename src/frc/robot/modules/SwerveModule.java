@@ -14,10 +14,6 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import edu.wpi.first.math.geometry.Rotation2d;
 import com.ctre.phoenix.motorcontrol.DemandType;
 import frc.robot.Util;
-import com.revrobotics.CANSparkMaxLowLevel.PeriodicFrame;
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-import com.revrobotics.CANSparkMax.IdleMode;
 import com.ctre.phoenix.sensors.CANCoder;
 import com.ctre.phoenix.sensors.CANCoderConfiguration;
 import com.ctre.phoenix.sensors.SensorTimeBase;
@@ -100,7 +96,7 @@ public class SwerveModule implements ISwerveModule {
   }
 
   public SwerveModulePosition getPosition() {
-    return new SwerveModulePosition(Util.nativeUnitsToMetersPerSecond(getDistance()), getTurn());
+    return new SwerveModulePosition(Util.nativeUnitsToMeters(getDistance()), getTurn());
   }
 
   private SwerveModuleState optimize(SwerveModuleState state, Rotation2d turn, boolean slow) {
