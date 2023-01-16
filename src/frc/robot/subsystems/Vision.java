@@ -33,29 +33,44 @@ public class Vision extends SubsystemBase {
     private PhotonCamera camera;
     private RobotPoseEstimator poseEstimator;
     public Team team;
-    public Vision(ShuffleboardTab tab) {
+    public Vision(ShuffleboardTab tab, boolean _limelight, boolean _photon) {
         team = Team.NONE;
-        limelight = NetworkTableInstance.getDefault().getTable("limelight");
         layout = tab.getLayout("Vision", BuiltInLayouts.kList).withPosition(3, 0).withSize(2, 4);
-        layout.addNumber("Offset", () -> getHorizontalOffset());
-        layout.addBoolean("Sees target", () -> isTargetFound());
-        layout.addString("Team", () -> {
-            switch(team) {
-                case RED:
-                    return "Red";
-                case BLUE:
-                    return "Blue";
-                default:
-                    return "None";
-            }
-        });
-        camera = new PhotonCamera("photonvision");
-        ArrayList<Pair<PhotonCamera, Transform3d>> camList = new ArrayList<Pair<PhotonCamera, Transform3d>>();
-        camList.add(new Pair<PhotonCamera, Transform3d>(camera, AprilTags.robotToCam));
+        if(_limelight) {
+            limelight = NetworkTableInstance.getDefault().getTable("limelight");            
+            layout.addNumber("Offset", () -> getHorizontalOffset());
+            layout.addBoolean("Sees target", () -> isTargetFound());
+        } else {
+            limelight = null;
+        }
+        if(_photon) {
+            layout.addString("Team", () -> {
+                switch(team) {
+                    case RED:
+                        return "Red";
+                    case BLUE:
+                        return "Blue";
+                    default:
+                        return "None";
+                }
+            });
+            camera = new PhotonCamera("photonvision");
+            ArrayList<Pair<PhotonCamera, Transform3d>> camList = new ArrayList<Pair<PhotonCamera, Transform3d>>();
+            camList.add(new Pair<PhotonCamera, Transform3d>(camera, AprilTags.robotToCam));
+        } else {
+            camera = null;
+        }
         poseEstimator = null;
     }
 
+    public boolean usesCamera() {
+        return camera != null;
+    }
+
     private Team getTeam() {
+        if(camera == null) {
+            return Team.NONE;
+        }
         PhotonPipelineResult result = camera.getLatestResult();
         if(!result.hasTargets()) {
             return Team.NONE;
@@ -86,34 +101,43 @@ public class Vision extends SubsystemBase {
     }
 
     public double getHorizontalOffset() { // in settings, make sure limelight is filtering for lowest target closest to the middle
-        return limelight.getEntry("tx").getDouble(0.0);
+        return limelight == null ? 0.0 : limelight.getEntry("tx").getDouble(0.0);
     }
 
     public double getVerticalOffset() {
-        return limelight.getEntry("ty").getDouble(0.0);
+        return limelight == null ? 0.0 : limelight.getEntry("ty").getDouble(0.0);
     }
 
     public double getHorizontalDistance() { 
+        if(limelight == null) {
+            return 0.0;
+        }
         return (Limelight.lowTargetHeight - Limelight.cameraHeight) / Math.tan(Math.toRadians(Limelight.cameraAngle + getVerticalOffset()));
     }
 
     // check if the limelight is picking up on the target
     public boolean isTargetFound() {
-        return limelight.getEntry("tv").getDouble(0.0) > 0.0 && getVerticalOffset() != 0.0;
+        return limelight != null && limelight.getEntry("tv").getDouble(0.0) > 0.0 && getVerticalOffset() != 0.0;
     }
 
     public void on() {
+        if(limelight == null) {
+            return;
+        }
         limelight.getEntry("ledMode").setNumber(3);
     }
 
     public void off() {
+        if(limelight == null) {
+            return;
+        }
         limelight.getEntry("ledMode").setNumber(1);
     }
 
     public void periodic() {
         if(team == Team.NONE) {
             team = getTeam();
-        } else if(poseEstimator == null) {
+        } else if(poseEstimator == null && camera != null) {
             AprilTagFieldLayout tagLayout = null;
             try {
                 tagLayout = AprilTagFieldLayout.loadFromResource(team == Team.RED ? "aprilTagsRed.json" : "aprilTagsBlue.json");

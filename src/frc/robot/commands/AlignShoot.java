@@ -9,10 +9,6 @@ import frc.robot.subsystems.Vision;
 import frc.robot.Constants.AprilTags;
 public class AlignShoot extends SequentialCommandGroup {
     public AlignShoot(Swerve drivetrain, Vision vision, Intake intake, XboxController controller, boolean useClosest) {
-        Vision.Team team = vision.team;
-        if(team == Vision.Team.NONE) {
-            return;
-        }
         int num = drivetrain.currentNum;
         int height = drivetrain.currentHeight;
         Pose2d pose = drivetrain.pose();
@@ -32,7 +28,7 @@ public class AlignShoot extends SequentialCommandGroup {
         double targetRotation = Math.round((angle  - (isCone ? AprilTags.coneRotation : AprilTags.cubeRotation)) / 360.0);
         targetRotation *= 360.0;
         targetRotation += isCone ? AprilTags.coneRotation : AprilTags.cubeRotation;
-        Rotation2d converted = new Rotation2d(targetRotation);
+        Rotation2d converted = Rotation2d.fromDegrees(targetRotation);
         double effectiveX = pose.getX();
         double targetX = isCone ? AprilTags.coneDists[height] : AprilTags.cubeDists[height];
         double targetY = AprilTags.yPositions[num];

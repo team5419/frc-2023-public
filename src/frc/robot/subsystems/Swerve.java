@@ -24,29 +24,34 @@ import frc.robot.commands.ResetGyro;
 public class Swerve extends SubsystemBase {
     private Vision vision;
     private SwerveDrivePoseEstimator poseEstimator;
-    public SwerveModule[] drivers = {
-        new SwerveModule(Drive.info[0], 0),
-        new SwerveModule(Drive.info[1], 1),
-        new SwerveModule(Drive.info[2], 2),
-        new SwerveModule(Drive.info[3], 3)
-     };
+    public SwerveModule[] drivers;
     public Pigeon2 gyro;
     private boolean foundPosition;
     public int currentNum;
     public int currentHeight;
     private ChassisSpeeds previousMove;
     public boolean slowMode;
-    public Swerve(Vision vision) {
+    public Swerve(Vision vision, boolean pigeon) {
+        drivers = new SwerveModule[Drive.info.length];
+        for(int i = 0; i < drivers.length; i++)  {
+            drivers[i] = new SwerveModule(Drive.info[i], i);
+        }
         slowMode = false;
         previousMove = new ChassisSpeeds();
-        gyro = new Pigeon2(Ports.gyro);
-        gyro.configFactoryDefault(100);
-        gyro.setYaw(0.0, 100);
+        if(pigeon) {
+            gyro = new Pigeon2(Ports.gyro, "canivore");
+            gyro.configFactoryDefault(100);
+            gyro.setYaw(0.0, 100);
+        } else {
+            gyro = null;
+        }
+        
         currentNum = 0;
         currentHeight = 0;
         this.vision = vision;
-        poseEstimator = new SwerveDrivePoseEstimator(/* TBM */null, Rotation2d.fromDegrees(angle()), getPositions(), new Pose2d());
-        foundPosition = false;
+        Rotation2d tation = Rotation2d.fromDegrees(angle());
+        poseEstimator = new SwerveDrivePoseEstimator(Drive.kinematics, tation, getPositions(), new Pose2d(0.0, 0.0, tation));
+        foundPosition = !vision.usesCamera(); // if no camera, just start at zero
 
         ShuffleboardTab tab = Shuffleboard.getTab("Drivetrain");
         ShuffleboardLayout layout = tab.getLayout("Main", BuiltInLayouts.kList).withPosition(0, 0).withSize(1, 5);
@@ -104,10 +109,10 @@ public class Swerve extends SubsystemBase {
         return foundPosition ? poseEstimator.getEstimatedPosition() : new Pose2d();
     }
     public double angle() {
-        return gyro.getYaw();
+        return gyro == null ? 0.0 : gyro.getYaw();
     }
     public double anglePitch() {
-        return gyro.getPitch();
+        return gyro == null ? 0.0 : gyro.getPitch();
     }
     public void brake() {
         drivers[0].setDesiredState(new SwerveModuleState(0.0, Rotation2d.fromDegrees(45.0)), false, false, true);

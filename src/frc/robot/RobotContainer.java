@@ -25,11 +25,11 @@ public class RobotContainer {
   public RobotContainer(ShuffleboardTab tab) {
     driver = new XboxController(0);
     codriver = new XboxController(1);
-    vision = new Vision(tab);
+    vision = new Vision(tab, false, false);
     intake = new Intake();
     claw = new Claw();
 
-    swerve = new Swerve(vision); /* CHOOSE ONE!!! */
+    swerve = new Swerve(vision, true); /* CHOOSE ONE!!! */
     //drivetrain = new Drivetrain(); /* ^^^ */
 
     deploy = new IntakeDeploy();

@@ -38,7 +38,7 @@ public class Drivetrain extends SubsystemBase {
         rightFollower.follow(rightLeader);
 
         // constructs object with angle from gyro (assuming starting position is (0,0))
-        odometry = new DifferentialDriveOdometry(new Rotation2d(getAngle()), getLeftDistance(), getRightDistance());
+        odometry = new DifferentialDriveOdometry(Rotation2d.fromDegrees(getAngle()), getLeftDistance(), getRightDistance());
     }
 
     

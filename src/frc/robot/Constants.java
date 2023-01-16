@@ -61,16 +61,16 @@ public class Constants {
         public static final double epsilonXY = 0.1;
         public static final double epsilonTheta = 1.0;
         public static final ModuleInfo[] info = {
-            new ModuleInfo(8, 9, false, true, 10, 0.0), //numbers are placeholders
-            new ModuleInfo(11, 12, true, true, 13, 0.0),
-            new ModuleInfo(14, 15, false, true, 16, 0.0),
-            new ModuleInfo(17, 18, true, true, 19, 0.0)
+            new ModuleInfo(1, 2, false, true, 9, 3.48213), //numbers are placeholders
+            new ModuleInfo(7, 8, true, true, 12, 0.35895),
+            new ModuleInfo(3, 4, false, true, 10, 1.2149),
+            new ModuleInfo(5, 6, true, true, 11, 0.91578)
         };
 
-        public static final Translation2d frontLeft = new Translation2d(0.0, 0.0);
-        public static final Translation2d frontRight = new Translation2d(0.0, 0.0);
-        public static final Translation2d backLeft = new Translation2d(0.0, 0.0);
-        public static final Translation2d backRight = new Translation2d(0.0, 0.0);
+        public static final Translation2d frontLeft = new Translation2d(0.2794, 0.2794);
+        public static final Translation2d frontRight = new Translation2d(0.2794, -0.2794);
+        public static final Translation2d backLeft = new Translation2d(-0.2794, 0.2794);
+        public static final Translation2d backRight = new Translation2d(-0.2794, -0.2794);
 
         public static final Translation2d[] modulePositions = {frontLeft, frontRight, backLeft, backRight};
 
@@ -97,7 +97,7 @@ public class Constants {
     }
     public static final class AprilTags {
         public static Transform3d robotToCam = new Transform3d( // we can prob just leave this at 0 and use camera as a reference to our robot 
-            new Translation3d(0.0, 0.0, 0.0), new Rotation3d(0.0, 0.0, 0.0)); // however we should change angle to keep in accordance with gyro angle
+            new Translation3d(0.0, 0.0, 0.0), new Rotation3d(0.0, 0.0, Math.PI)); // however we should change angle to keep in accordance with gyro angle
             
         public static double[] yPositions = {
             0.5128, // bottom pole
@@ -126,12 +126,12 @@ public class Constants {
         public static final double xEndOfChargingStation = 3.5; // to be measured
     }
     public static final class Ports {
-        public static final int intake = 7;
+        public static final int intake = 14;
         public static final int leftLeader = 1;
         public static final int leftFollower = 2;
         public static final int rightLeader = 3;
         public static final int rightFollower = 4;
-        public static final int gyro = 5;
-        public static final int claw = 6;
+        public static final int gyro = 13;
+        public static final int claw = 15;
     }
 };

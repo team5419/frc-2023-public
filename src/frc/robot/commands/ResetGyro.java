@@ -9,6 +9,7 @@ public class ResetGyro extends CommandBase {
 
     public ResetGyro(Swerve _swerve) {
         swerve = _swerve;
+        angle = 0.0;
     }
 
     public ResetGyro(Swerve _swerve, double _angle) {
@@ -21,7 +22,9 @@ public class ResetGyro extends CommandBase {
     public void execute() {}
 
     public void end(boolean interrupted) {
-        swerve.gyro.setYaw(angle);
+        if(swerve.gyro != null) {
+            swerve.gyro.setYaw(angle, 100);
+        }
     }
 
     public boolean isFinished() {
