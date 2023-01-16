@@ -1,5 +1,5 @@
 package frc.robot;
-import frc.robot.auto.*;
+//import frc.robot.auto.*;
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
 import edu.wpi.first.wpilibj.XboxController;
@@ -13,28 +13,27 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 
 public class RobotContainer {
   private Intake intake;
-  private IntakeDeploy deploy;
-  private Vision vision;
+  //private IntakeDeploy deploy;
+  //private Vision vision;
   private SendableChooser<SequentialCommandGroup> autoSelector;
   //private Drivetrain drivetrain;
-  private Swerve swerve;
+  //private Swerve swerve;
   private XboxController driver;
   private XboxController codriver;
-  private Claw claw;
+  //private Claw claw;
 
-  public RobotContainer(ShuffleboardTab tab) {
+  public RobotContainer(ShuffleboardTab _tab) {
     driver = new XboxController(0);
     codriver = new XboxController(1);
-    vision = new Vision(tab);
-    intake = new Intake();
-    claw = new Claw();
+    //vision = new Vision(tab);
+    intake = new Intake(_tab);
 
-    swerve = new Swerve(vision); /* CHOOSE ONE!!! */
+    //swerve = new Swerve(vision); /* CHOOSE ONE!!! */
     //drivetrain = new Drivetrain(); /* ^^^ */
 
-    deploy = new IntakeDeploy();
-    autoSelector = new SendableChooser<SequentialCommandGroup>();
-    autoSelector.setDefaultOption("Baseline", new Baseline());
+    //deploy = new IntakeDeploy();
+    //autoSelector = new SendableChooser<SequentialCommandGroup>();
+    //autoSelector.setDefaultOption("Baseline", new Baseline());
     //autoSelector.addOption("Proto Routine", new ProtoRoutine(drivetrain));
     //autoSelector.addOption("Proto Routine", new SwerveRoutine(swerve));
     setDefaults();
@@ -49,20 +48,21 @@ public class RobotContainer {
 
     Trigger aButtonCodriver = new Trigger(() -> codriver.getAButton());
     
-    aButtonDriver.whileTrue(new RunIntake(intake));
-    bButtonDriver.onTrue(deploy.twoPhase());
-    xButtonDriver.onTrue(claw.twoPhase());
+    aButtonDriver.toggleOnTrue(new RunIntake(intake, .5));
+    bButtonDriver.toggleOnTrue(new RunIntake(intake, -1.0));
+    //bButtonDriver.onTrue(deploy.twoPhase());
+    //xButtonDriver.onTrue(claw.twoPhase());
     //yButtonDriver.toggleOnTrue(new Balance(swerve, driver));
     //aButtonCodriver.toggleOnTrue(Commands.runOnce(() -> swerve.brake()));
   }
 
-  public Command getAutonomousCommand() {
-    return autoSelector.getSelected();
-    //return new ProtoRoutine(drivetrain);
-  }
+  // public Command getAutonomousCommand() {
+  //   //return autoSelector.getSelected();
+  //   //return new ProtoRoutine(drivetrain);
+  // }
 
   public void setDefaults() {
     //drivetrain.setDefaultCommand(new DriveCommand(drivetrain, driver));
-    swerve.setDefaultCommand(new SwerveDrive(swerve, driver));
+    //swerve.setDefaultCommand(new SwerveDrive(swerve, driver));
   }
 }

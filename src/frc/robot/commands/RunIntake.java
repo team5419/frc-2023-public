@@ -2,12 +2,14 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Intake;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 
 public class RunIntake extends CommandBase {
     private Intake intake;
     private double speed;
     private double time;
     private Timer timer;
+    private ShuffleboardTab tab;
     public RunIntake(Intake intake, double speed, double time) {
         this.intake = intake;
         this.speed = speed;
@@ -15,9 +17,9 @@ public class RunIntake extends CommandBase {
         timer = new Timer();
         addRequirements(intake);
     }
-    public RunIntake(Intake intake) {
+    public RunIntake(Intake intake, double _speed) {
         this.intake = intake;
-        speed = 1.0;
+        speed = _speed;
         time = 0.0;
         timer = new Timer();
     }
