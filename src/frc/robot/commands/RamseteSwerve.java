@@ -34,7 +34,9 @@ public class RamseteSwerve extends CommandBase {
         Pose2d pose = drivetrain.pose();
 
         double xdiff = goal.getX() - pose.getX();
+        //System.out.println(xdiff);
         double ydiff = goal.getY() - pose.getY();
+        //System.out.println(ydiff);
 
         double dx = Drive.pXY * Util.deadband(xdiff, Drive.epsilonXY);
         double dy = Drive.pXY * Util.deadband(ydiff, Drive.epsilonXY);
@@ -45,8 +47,8 @@ public class RamseteSwerve extends CommandBase {
             dy *= (Drive.maxVelocity / magnitude);
         }
 
-        double dtheta = -1 * Drive.pTheta * (Math.PI / 180.0) * Util.deadband(target - theta, Drive.epsilonTheta);
-
+        double dtheta = 1 * Drive.pTheta * (Math.PI / 180.0) * Util.deadband(target - theta, Drive.epsilonTheta);
+        System.out.println(dtheta);
         //System.out.println("theta: ${DriveConstants.pTheta * (Math.PI / 180) * (target - theta)}");
         drivetrain.drive(dx, dy, dtheta, true, true);
 

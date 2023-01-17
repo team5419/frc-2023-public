@@ -8,7 +8,7 @@ import frc.robot.subsystems.Swerve;
 public class SwerveRoutine extends SequentialCommandGroup { // basic routine for diff drive
     public SwerveRoutine(Swerve drivetrain) {
         addCommands(
-            new RamseteSwerve(drivetrain, 1.0, 1.0, 0.0)
+            new RamseteSwerve(drivetrain, 0.0, 0.0, 45.0)
         );
     }
 }

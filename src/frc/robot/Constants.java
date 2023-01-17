@@ -31,10 +31,10 @@ public class Constants {
         public static final PID DrivePID = new PID(0.1, 0.0, 0.0);
         public static final PID TurnPID = new PID(8.0 / 12.0, 0.0, 0.0);
         public static final double slow = 0.2;
-        public static final double maxVelocity = 4.0;
-        public static final double kv = (2.1737 / 12);
-        public static final double ka = (0.29281 / 12);
-        public static final double ks = (0.63566 / 12);
+        public static final double maxVelocity = 4.0;  
+        public static final double kv = 2.298;//(2.1737 / 12); // 2.298
+        public static final double ka = 0.17118;//(0.29281 / 12); // 0.17118
+        public static final double ks = 0.10352;//(0.63566 / 12); // 0.10352
         public static final SimpleMotorFeedforward feedForward = new SimpleMotorFeedforward(ks, kv, ka);
         public static final PIDController turnController = new PIDController(TurnPID.p, TurnPID.i, TurnPID.d);
 
@@ -56,15 +56,15 @@ public class Constants {
         public static final double turnMultiplier = 2.5;
         public static final double controllerDeadband = 0.1;
 
-        public static final double pXY = 2.7;
-        public static final double pTheta = 4.0;
+        public static final double pXY = 0.27;
+        public static final double pTheta = 0.4;
         public static final double epsilonXY = 0.1;
         public static final double epsilonTheta = 1.0;
         public static final ModuleInfo[] info = {
-            new ModuleInfo(1, 2, false, true, 9, 3.48213), //numbers are placeholders
-            new ModuleInfo(7, 8, true, true, 12, 0.35895),
-            new ModuleInfo(3, 4, false, true, 10, 1.2149),
-            new ModuleInfo(5, 6, true, true, 11, 0.91578)
+            new ModuleInfo(1, 2, true, true, 9, 3.48213), //numbers are placeholders
+            new ModuleInfo(7, 8, false, true, 12, 0.35895),
+            new ModuleInfo(3, 4, true, true, 10, 1.2149),
+            new ModuleInfo(5, 6, false, true, 11, 0.91578)
         };
 
         public static final Translation2d frontLeft = new Translation2d(0.2794, 0.2794);
@@ -75,6 +75,7 @@ public class Constants {
         public static final Translation2d[] modulePositions = {frontLeft, frontRight, backLeft, backRight};
 
         public static final SwerveDriveKinematics kinematics = new SwerveDriveKinematics(frontLeft, frontRight, backLeft, backRight);
+        public static final double unitsPerMeter = 1.2511;
     };
     public static final class ClawConstants {
         public static final PID PID = new PID(1.0, 0.0, 0.0);

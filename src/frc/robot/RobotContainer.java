@@ -34,9 +34,10 @@ public class RobotContainer {
 
     deploy = new IntakeDeploy();
     autoSelector = new SendableChooser<SequentialCommandGroup>();
+    tab.add("Auto selector", autoSelector);
     autoSelector.setDefaultOption("Baseline", new Baseline());
-    //autoSelector.addOption("Proto Routine", new ProtoRoutine(drivetrain));
-    //autoSelector.addOption("Proto Routine", new SwerveRoutine(swerve));
+    //sautoSelector.addOption("Proto Routine", new ProtoRoutine(drivetrain));
+    autoSelector.addOption("Proto Routine", new SwerveRoutine(swerve));
     setDefaults();
     configureButtonBindings(driver, codriver);
   }
@@ -48,10 +49,10 @@ public class RobotContainer {
     Trigger yButtonDriver = new Trigger(() -> driver.getYButton());
 
     Trigger aButtonCodriver = new Trigger(() -> codriver.getAButton());
-    
-    aButtonDriver.whileTrue(new RunIntake(intake));
-    bButtonDriver.onTrue(deploy.twoPhase());
-    xButtonDriver.onTrue(claw.twoPhase());
+    aButtonDriver.whileTrue(Commands.runEnd(() -> { swerve.slowMode = true; }, () -> { swerve.slowMode = false; }));
+    // aButtonDriver.whileTrue(new RunIntake(intake));
+    // bButtonDriver.onTrue(deploy.twoPhase());
+    // xButtonDriver.onTrue(claw.twoPhase());
     //yButtonDriver.toggleOnTrue(new Balance(swerve, driver));
     //aButtonCodriver.toggleOnTrue(Commands.runOnce(() -> swerve.brake()));
   }

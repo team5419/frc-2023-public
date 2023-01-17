@@ -60,8 +60,8 @@ public class Swerve extends SubsystemBase {
         layout.add("reset gyro", new ResetGyro(this));
         layout.addNumber("x position", () -> pose().getX());
         layout.addNumber("y position", () -> pose().getY());
-        layout.addNumber("forward m/s", () -> previousMove.vxMetersPerSecond);
-        layout.addNumber("sideways m/s", () -> previousMove.vyMetersPerSecond);
+        layout.addNumber("forward m", () -> previousMove.vxMetersPerSecond);
+        layout.addNumber("sideways m", () -> previousMove.vyMetersPerSecond);
         layout.addNumber("turning (rad)", () -> previousMove.omegaRadiansPerSecond);
     }
     private SwerveModulePosition[] getPositions() {
@@ -126,7 +126,7 @@ public class Swerve extends SubsystemBase {
     public double getAverageSpeed() {
         double total = 0.0;
         for(int i = 0; i < drivers.length; i++) {
-            total += Util.nativeUnitsToMetersPerSecond(drivers[i].getDrive());
+            total += Math.abs(Util.nativeUnitsToMetersPerSecond(drivers[i].getDrive()));
         };
         return total / drivers.length;
     }
