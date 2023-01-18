@@ -22,13 +22,13 @@ public class goToPosition extends CommandBase {
         desiredPosition = new Pose2d(14,2,rotation); // the desired position for the robot to move to
         vis = new Vision(tab);
         swerve = new Swerve(vis);
-        dirX = desiredPosition.getX() - swerve.pose().getX();
-        dirY = desiredPosition.getY() - swerve.pose().getY();
+        
     }
     
     
     public void initialize() {
-        
+        dirX = desiredPosition.getX() - swerve.pose().getX();
+        dirY = desiredPosition.getY() - swerve.pose().getY();
     }
     public void execute() {
         swerve.drive(dirX, dirY,0);
