@@ -42,7 +42,7 @@ public class AlignShoot extends SequentialCommandGroup {
             addCommands(new RamseteSwerve(drivetrain, new Pose2d(targetX, targetY, converted)));
         }
         if(isCone) {
-            addCommands(new AutoAlign(drivetrain, vision)); // if cone, use vision to fine-tune (might not be necessary)
+            addCommands(new AutoAlign(drivetrain, vision, targetX)); // if cone, use vision to fine-tune (might not be necessary)
         }
         // add a command to shoot
         addCommands(new RunIntake(intake, -1.0, 5.0)); // run intake full speed backwards for 5 seconds

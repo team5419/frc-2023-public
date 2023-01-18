@@ -53,7 +53,7 @@ public class RobotContainer {
     // aButtonDriver.whileTrue(new RunIntake(intake));
     // bButtonDriver.onTrue(deploy.twoPhase());
     // xButtonDriver.onTrue(claw.twoPhase());
-    //yButtonDriver.toggleOnTrue(new Balance(swerve, driver));
+    yButtonDriver.onTrue(new Balance(swerve, driver));
     //aButtonCodriver.toggleOnTrue(Commands.runOnce(() -> swerve.brake()));
   }
 

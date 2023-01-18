@@ -7,9 +7,11 @@ public class AutoAlign extends CommandBase {
     private Swerve drivetrain;
     private Vision vision;
     private boolean shouldFinish;
-    public AutoAlign(Swerve drivetrain, Vision vision) {
+    private double distance;
+    public AutoAlign(Swerve drivetrain, Vision vision, double distance) {
         this.drivetrain = drivetrain;
         this.vision = vision;
+        this.distance = distance;
         shouldFinish = false;
         addRequirements(drivetrain);
     }
@@ -21,7 +23,7 @@ public class AutoAlign extends CommandBase {
         double turn = Limelight.turnPID.calculate(turnDiff);
         double leftDiff = -vision.getHorizontalOffset();
         double left = Limelight.horizontalPID.calculate(leftDiff);
-        double forwardDiff = Limelight.desiredDistance - vision.getHorizontalDistance();
+        double forwardDiff = distance - Limelight.desiredDistance - vision.getHorizontalDistance();
         double forward = Limelight.forwardPID.calculate(forwardDiff);
         drivetrain.drive(forward, left, turn, false, true);
 

@@ -31,6 +31,7 @@ public class Swerve extends SubsystemBase {
     public int currentHeight;
     private ChassisSpeeds previousMove;
     public boolean slowMode;
+    public double yawOffset;
     public Swerve(Vision vision, boolean pigeon) {
         drivers = new SwerveModule[Drive.info.length];
         for(int i = 0; i < drivers.length; i++)  {
@@ -41,7 +42,8 @@ public class Swerve extends SubsystemBase {
         if(pigeon) {
             gyro = new Pigeon2(Ports.gyro, "canivore");
             gyro.configFactoryDefault(100);
-            gyro.setYaw(0.0, 100);
+            gyro.configMountPose(90.0, 0.0, -1.7);
+            yawOffset = gyro.getYaw();
         } else {
             gyro = null;
         }
@@ -54,8 +56,11 @@ public class Swerve extends SubsystemBase {
         foundPosition = !vision.usesCamera(); // if no camera, just start at zero
 
         ShuffleboardTab tab = Shuffleboard.getTab("Drivetrain");
-        ShuffleboardLayout layout = tab.getLayout("Main", BuiltInLayouts.kList).withPosition(0, 0).withSize(1, 5);
-        layout.addNumber("gyro", () -> this.angle());
+        ShuffleboardLayout layout = tab.getLayout("Main", BuiltInLayouts.kList).withPosition(0, 0).withSize(2, 5);
+        layout.addNumber("yaw", () -> this.angle());
+        layout.addNumber("pitch", () -> this.gyro.getPitch());
+        layout.addNumber("roll", () -> this.gyro.getRoll());
+        layout.addNumber("compass", () -> this.gyro.getCompassHeading());
         layout.addBoolean("slow mode", () -> this.slowMode);
         layout.add("reset gyro", new ResetGyro(this));
         layout.addNumber("x position", () -> pose().getX());
@@ -109,7 +114,7 @@ public class Swerve extends SubsystemBase {
         return foundPosition ? poseEstimator.getEstimatedPosition() : new Pose2d();
     }
     public double angle() {
-        return gyro == null ? 0.0 : gyro.getYaw();
+        return gyro == null ? 0.0 : (gyro.getYaw() - yawOffset);
     }
     public double anglePitch() {
         return gyro == null ? 0.0 : gyro.getPitch();

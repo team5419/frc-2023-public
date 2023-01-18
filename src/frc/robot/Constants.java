@@ -32,9 +32,9 @@ public class Constants {
         public static final PID TurnPID = new PID(8.0 / 12.0, 0.0, 0.0);
         public static final double slow = 0.2;
         public static final double maxVelocity = 4.0;  
-        public static final double kv = 2.298;//(2.1737 / 12); // 2.298
-        public static final double ka = 0.17118;//(0.29281 / 12); // 0.17118
-        public static final double ks = 0.10352;//(0.63566 / 12); // 0.10352
+        public static final double kv = (2.1737 / 12); // 2.298
+        public static final double ka = (0.29281 / 12); // 0.17118
+        public static final double ks = (0.63566 / 12); // 0.10352
         public static final SimpleMotorFeedforward feedForward = new SimpleMotorFeedforward(ks, kv, ka);
         public static final PIDController turnController = new PIDController(TurnPID.p, TurnPID.i, TurnPID.d);
 
@@ -47,10 +47,10 @@ public class Constants {
         public static final double wheelDiameter = wheelRadius * 2.0; // m
         public static final double wheelCircumference = wheelDiameter * Math.PI; // m
 
-        public static final PIDController balanceController = new PIDController(1.0, 0.0, 0.0);
-        public static final PIDController yawBalanceController = new PIDController(1.0, 0.0, 0.0);
-        public static final double epsilonBalance = 1.0;
-        public static final double epsilonYawBalance = 1.0;
+        public static final PIDController balanceController = new PIDController(0.02, 0.0, 0.0);
+        public static final PIDController yawBalanceController = new PIDController(0.04, 0.0, 0.0);
+        public static final double epsilonBalance = 0.5;
+        public static final double epsilonYawBalance = 0.5;
 
         public static final double speedMultiplier = 4.0;
         public static final double turnMultiplier = 2.5;
