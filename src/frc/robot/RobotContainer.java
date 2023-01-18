@@ -62,7 +62,7 @@ public class RobotContainer {
     yButtonDriver.toggleOnTrue(new Balance(swerve, driver));
     aButtonCodriver.toggleOnTrue(Commands.runOnce(() -> swerve.brake()));
     bButtonCodriver.whileTrue(cintake);
-    bButtonCodriver.whileTrue(couttake);
+    xButtonCodriver.whileTrue(couttake);
 
 
   }
