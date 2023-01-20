@@ -48,8 +48,8 @@ public class RobotContainer {
 
     Trigger aButtonCodriver = new Trigger(() -> codriver.getAButton());
     
-    aButtonDriver.toggleOnTrue(new RunIntake(intake, .5));
-    bButtonDriver.toggleOnTrue(new RunIntake(intake, -1.0));
+    aButtonDriver.toggleOnTrue(new RunIntake(intake, 1.0));
+    bButtonDriver.toggleOnTrue(new RunIntake(intake, -.50));
     //bButtonDriver.onTrue(deploy.twoPhase());
     //xButtonDriver.onTrue(claw.twoPhase());
     //yButtonDriver.toggleOnTrue(new Balance(swerve, driver));
