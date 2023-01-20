@@ -35,7 +35,7 @@ public class Vision extends SubsystemBase {
     public Team team;
     public Vision(ShuffleboardTab tab, boolean _limelight, boolean _photon) {
         team = Team.NONE;
-        layout = tab.getLayout("Vision", BuiltInLayouts.kList).withPosition(3, 0).withSize(2, 4);
+        layout = tab.getLayout("Vision", BuiltInLayouts.kList).withPosition(1, 0).withSize(2, 4);
         if(_limelight) {
             limelight = NetworkTableInstance.getDefault().getTable("limelight");            
             layout.addNumber("Offset", () -> getHorizontalOffset());

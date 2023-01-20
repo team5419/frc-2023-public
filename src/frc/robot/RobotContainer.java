@@ -12,7 +12,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 
 public class RobotContainer {
-  private Intake intake;
+  //private Intake intake;
   private IntakeDeploy deploy;
   private Vision vision;
   private SendableChooser<SequentialCommandGroup> autoSelector;
@@ -20,14 +20,16 @@ public class RobotContainer {
   private Swerve swerve;
   private XboxController driver;
   private XboxController codriver;
-  private Claw claw;
+  //private Claw claw;
+  private Coner coner;
 
   public RobotContainer(ShuffleboardTab tab) {
     driver = new XboxController(0);
     codriver = new XboxController(1);
     vision = new Vision(tab, false, false);
-    intake = new Intake();
-    claw = new Claw();
+    coner = new Coner(tab, false);
+    //intake = new Intake();
+    //claw = new Claw();
 
     swerve = new Swerve(vision, true); /* CHOOSE ONE!!! */
     //drivetrain = new Drivetrain(); /* ^^^ */
@@ -48,12 +50,21 @@ public class RobotContainer {
     Trigger xButtonDriver = new Trigger(() -> driver.getXButton());
     Trigger yButtonDriver = new Trigger(() -> driver.getYButton());
 
-    Trigger aButtonCodriver = new Trigger(() -> codriver.getAButton());
-    aButtonDriver.whileTrue(Commands.runEnd(() -> { swerve.slowMode = true; }, () -> { swerve.slowMode = false; }));
+    //Trigger aButtonCodriver = new Trigger(() -> codriver.getAButton());
+    //aButtonDriver.whileTrue(Commands.runEnd(() -> { swerve.slowMode = true; }, () -> { swerve.slowMode = false; }));
     // aButtonDriver.whileTrue(new RunIntake(intake));
     // bButtonDriver.onTrue(deploy.twoPhase());
-    // xButtonDriver.onTrue(claw.twoPhase());
-    yButtonDriver.onTrue(new Balance(swerve, driver));
+    xButtonDriver.whileTrue(Commands.runEnd(() -> { coner.top.intake(); coner.bottom.intake(); }, 
+    () -> { coner.top.stop(); coner.bottom.stop(); }, coner));
+
+    aButtonDriver.whileTrue(Commands.runEnd(() -> { coner.top.outtakeMid(); coner.bottom.outtakeMid(); }, 
+    () -> { coner.top.stop(); coner.bottom.stop(); }, coner));
+
+    yButtonDriver.whileTrue(Commands.runEnd(() -> { coner.top.outtakeHigh(); coner.bottom.outtakeHigh(); }, 
+    () -> { coner.top.stop(); coner.bottom.stop(); }, coner));
+
+    bButtonDriver.onTrue(deploy.twoPhase());
+    //yButtonDriver.onTrue(new Balance(swerve, driver));
     //aButtonCodriver.toggleOnTrue(Commands.runOnce(() -> swerve.brake()));
   }
 

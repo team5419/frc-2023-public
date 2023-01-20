@@ -134,5 +134,7 @@ public class Constants {
         public static final int rightFollower = 4;
         public static final int gyro = 13;
         public static final int claw = 15;
+        public static final int coneTop = 16;
+        public static final int coneBottom = 17;
     }
 };
