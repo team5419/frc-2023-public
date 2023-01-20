@@ -7,20 +7,19 @@ public class SuctionIn extends CommandBase {
 
     public SuctionIn(Suction _suction){
         this.suction = _suction;
-        addRequirements(suction);
+        // addRequirements(this.suction);
     }
 
     public void initialize() {
-
+        this.suction.airIn();
     }
+
     public void execute() {
-        drivetrain.drive(driver.getLeftY(), driver.getRightX());
     }
 
     public boolean isFinished() {
         return true;
     }
     public void end(boolean interrupted) {
-        drivetrain.drive(0.0, 0.0);
     }
 }

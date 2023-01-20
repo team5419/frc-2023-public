@@ -21,6 +21,7 @@ public class RobotContainer {
   private XboxController driver;
   private XboxController codriver;
   //private Claw claw;
+  private Suction suction;
 
   public RobotContainer(ShuffleboardTab _tab) {
     driver = new XboxController(0);
@@ -47,6 +48,7 @@ public class RobotContainer {
     Trigger yButtonDriver = new Trigger(() -> driver.getYButton());
 
     Trigger aButtonCodriver = new Trigger(() -> codriver.getAButton());
+    Trigger yButtonCodriver = new Trigger(() -> codriver.getYButton());
     
     aButtonDriver.toggleOnTrue(new RunIntake(intake, 1.0));
     bButtonDriver.toggleOnTrue(new RunIntake(intake, -.50));
@@ -54,6 +56,7 @@ public class RobotContainer {
     //xButtonDriver.onTrue(claw.twoPhase());
     //yButtonDriver.toggleOnTrue(new Balance(swerve, driver));
     //aButtonCodriver.toggleOnTrue(Commands.runOnce(() -> swerve.brake()));
+    yButtonCodriver.toggleOnTrue(new SuctionIn(suction));
   }
 
   // public Command getAutonomousCommand() {
