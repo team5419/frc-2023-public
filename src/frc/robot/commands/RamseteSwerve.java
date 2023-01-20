@@ -18,9 +18,10 @@ public class RamseteSwerve extends CommandBase {
     }
     public RamseteSwerve(Swerve drivetrain, double changeX, double changeY, double changeTheta) { // from current position
         this.drivetrain = drivetrain;
-        Pose2d current = drivetrain.pose();
+        Pose2d current = drivetrain.pose(); //get postion of drivetrain (Pose2d is a object of coordinates and angle)
         double currentAngle = drivetrain.angle();
         this.goal = new Pose2d(current.getX() + changeX, current.getY() + changeY, Rotation2d.fromDegrees(currentAngle + changeTheta));
+        // ^ finds coordinates of the current position + the change in coordinates
         isFinished = false;
         addRequirements(drivetrain);
     }

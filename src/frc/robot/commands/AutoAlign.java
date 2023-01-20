@@ -19,11 +19,11 @@ public class AutoAlign extends CommandBase {
         
     }
     public void execute() {
-        double turnDiff = Limelight.desiredAngle - drivetrain.angle();
-        double turn = Limelight.turnPID.calculate(turnDiff);
-        double leftDiff = -vision.getHorizontalOffset();
-        double left = Limelight.horizontalPID.calculate(leftDiff);
-        double forwardDiff = distance - Limelight.desiredDistance - vision.getHorizontalDistance();
+        double turnDiff = Limelight.desiredAngle - drivetrain.angle(); //calculates how many degrees to turn
+        double turn = Limelight.turnPID.calculate(turnDiff); //calculates amt to turn
+        double leftDiff = -vision.getHorizontalOffset(); //how far sidewyas to move across fied
+        double left = Limelight.horizontalPID.calculate(leftDiff);// ''
+        double forwardDiff = distance - Limelight.desiredDistance - vision.getHorizontalDistance(); //how far forward to go
         double forward = Limelight.forwardPID.calculate(forwardDiff);
         drivetrain.drive(forward, left, turn, false, true);
 

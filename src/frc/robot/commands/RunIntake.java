@@ -26,12 +26,12 @@ public class RunIntake extends CommandBase {
             timer.reset();
             timer.start();
         }
-        intake.run(speed);
+        intake.run(speed); 
     }
     public void execute() {
     }
     public boolean isFinished() {
-        return time != 0.0 && timer.get() >= time;
+        return time != 0.0 && timer.get() >= time; //stops if time is not 0 and has surpassed the 
     }
     public void end(boolean interrupted) {
         intake.run(0.0);
