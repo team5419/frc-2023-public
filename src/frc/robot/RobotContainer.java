@@ -14,10 +14,10 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 public class RobotContainer {
   //private Intake intake;
   //private IntakeDeploy deploy;
-  //private Vision vision;
+  private Vision vision;
   private SendableChooser<SequentialCommandGroup> autoSelector;
   //private Drivetrain drivetrain;
-  //private Swerve swerve;
+  private Swerve swerve;
   private XboxController driver;
   private XboxController codriver;
   //private Claw claw;
@@ -26,12 +26,12 @@ public class RobotContainer {
   public RobotContainer(ShuffleboardTab tab) {
     driver = new XboxController(0);
     codriver = new XboxController(1);
-    //vision = new Vision(tab, false, false);
+    vision = new Vision(tab, false, true);
     coner = new Coner(tab, true);
     //intake = new Intake();
     //claw = new Claw();
 
-    //swerve = new Swerve(vision, true); /* CHOOSE ONE!!! */
+    swerve = new Swerve(vision, true); /* CHOOSE ONE!!! */
     //drivetrain = new Drivetrain(); /* ^^^ */
 
     //deploy = new IntakeDeploy();

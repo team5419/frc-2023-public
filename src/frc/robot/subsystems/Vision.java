@@ -33,6 +33,7 @@ public class Vision extends SubsystemBase { // this keeps track of our limelight
     private PhotonCamera camera; // keep track of the photon camera (april tags stuff)
     private RobotPoseEstimator poseEstimator; // the photon camera has its own pose estimator that interacts with the overall pose estimator
     public Team team; // keep track of the team that we think we're on
+    private int lastTagSeen;
     public Vision(ShuffleboardTab tab, boolean _limelight, boolean _photon) { // the boolean parameters tell the code if we're using limelight and photon vision
         team = Team.NONE; // we don't know what team we're on yet
         layout = tab.getLayout("Vision", BuiltInLayouts.kList).withPosition(1, 0).withSize(2, 4); // create a shuffleboard layout to print data
@@ -54,6 +55,7 @@ public class Vision extends SubsystemBase { // this keeps track of our limelight
                         return "None";
                 }
             });
+            layout.addInteger("Last tag seen", () -> lastTagSeen);
             camera = new PhotonCamera("photonvision");
             ArrayList<Pair<PhotonCamera, Transform3d>> camList = new ArrayList<Pair<PhotonCamera, Transform3d>>();
             camList.add(new Pair<PhotonCamera, Transform3d>(camera, AprilTags.robotToCam));
@@ -77,6 +79,7 @@ public class Vision extends SubsystemBase { // this keeps track of our limelight
         }
         PhotonTrackedTarget best = result.getBestTarget();
         int id = best.getFiducialId();
+        lastTagSeen = id;
         if(id < 1 || id > 8) {
             return Team.NONE;
         }
@@ -135,7 +138,7 @@ public class Vision extends SubsystemBase { // this keeps track of our limelight
     }
 
     public void periodic() {
-        if(team == Team.NONE) {
+        if(true/*team == Team.NONE*/) {
             team = getTeam();
         } else if(poseEstimator == null && camera != null) {
             AprilTagFieldLayout tagLayout = null;
