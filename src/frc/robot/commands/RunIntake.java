@@ -1,23 +1,31 @@
 package frc.robot.commands;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Constants.IntakeConstants;
+import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
 
 public class RunIntake extends CommandBase {
     private Intake intake;
     private double speed;
+    private double indexSpeed;
     private double time;
     private Timer timer;
-    public RunIntake(Intake intake, double speed, double time) {
+    private Indexer indexer;
+    public RunIntake(Intake intake, Indexer indexer, double speed, double indexSpeed, double time) {
         this.intake = intake;
+        this.indexer = indexer;
         this.speed = speed;
+        this.indexSpeed = indexSpeed;
         this.time = time;
         timer = new Timer();
         addRequirements(intake);
     }
-    public RunIntake(Intake intake) {
+    public RunIntake(Intake intake, Indexer indexer) {
         this.intake = intake;
-        speed = 1.0;
+        this.indexer = indexer;
+        speed = IntakeConstants.intakeSpeed;
+        indexSpeed = IntakeConstants.indexerIntakeSpeed;
         time = 0.0;
         timer = new Timer();
     }
@@ -27,6 +35,7 @@ public class RunIntake extends CommandBase {
             timer.start();
         }
         intake.run(speed);
+        indexer.run(indexSpeed);
     }
     public void execute() {
     }
@@ -35,5 +44,6 @@ public class RunIntake extends CommandBase {
     }
     public void end(boolean interrupted) {
         intake.run(0.0);
+        indexer.run(0.0);
     }
 }

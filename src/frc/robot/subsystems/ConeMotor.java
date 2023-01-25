@@ -19,7 +19,10 @@ public class ConeMotor {
     private GenericEntry intake;
     private GenericEntry outtakeMid;
     private GenericEntry outtakeHigh;
-    public ConeMotor(ShuffleboardLayout layout, boolean falcon, int port, String title) {
+    private double defaultIntake;
+    private double defaultMid;
+    private double defaultHigh;
+    public ConeMotor(ShuffleboardLayout layout, boolean falcon, int port, String title, double defaultIntake, double defaultMid, double defaultHigh) {
         if(falcon) {
             neo = null;
             talon = new TalonFX(port);
@@ -29,12 +32,15 @@ public class ConeMotor {
             neo = new CANSparkMax(port, MotorType.kBrushless);
             Util.setUpMotor(neo, false, false);
         }
-        intake = getEntry(layout, title + " Intake speed", 0);
-        outtakeMid = getEntry(layout, title + " Outtake mid", 1);
-        outtakeHigh = getEntry(layout, title + " Outtake high", 2);
+        this.defaultIntake = defaultIntake;
+        this.defaultMid = defaultMid;
+        this.defaultHigh = defaultHigh;
+        intake = getEntry(layout, title + " Intake speed", 0, defaultIntake);
+        outtakeMid = getEntry(layout, title + " Outtake mid", 1, defaultMid);
+        outtakeHigh = getEntry(layout, title + " Outtake high", 2, defaultHigh);
     }
-    private GenericEntry getEntry(ShuffleboardLayout layout, String title, int y) {
-        return layout.add(title, 0.0)
+    private GenericEntry getEntry(ShuffleboardLayout layout, String title, int y, double def) {
+        return layout.add(title, def)
             .withPosition(0, y)
             .withSize(2, 1)
             .withWidget(BuiltInWidgets.kNumberSlider)
@@ -49,13 +55,13 @@ public class ConeMotor {
         }
     }
     public void intake() {
-        set(intake.getDouble(0.0));
+        set(intake.getDouble(defaultIntake));
     }
     public void outtakeMid() {
-        set(outtakeMid.getDouble(0.0));
+        set(outtakeMid.getDouble(defaultMid));
     }
     public void outtakeHigh() {
-        set(outtakeHigh.getDouble(0.0));
+        set(outtakeHigh.getDouble(defaultHigh));
     }
     public void stop() {
         set(0.0);

@@ -12,6 +12,20 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import java.lang.Math;
 
 public class Constants {
+    public static final class ConerConstants {
+        public static final double defaultLowIntake = -0.5;
+        public static final double defaultLowMid = 0.5;
+        public static final double defaultLowHigh = 1.0;
+        public static final double defaultTopIntake = 0.5;
+        public static final double defaultTopMid = -0.5;
+        public static final double defaultTopHigh = -1.0;
+    }
+    public static final class IntakeConstants {
+        public static final PIDController outtakePID = new PIDController(0.0001, 0, 0);
+        public static final double outtakeSpeed = -1000.0;
+        public static final double intakeSpeed = 0.25;
+        public static final double indexerIntakeSpeed = 0.1;
+    }
     public static final class ProtoDrive {
         public static final double trackWidth = 1.781;
         public static final double maxAcceleration = 1.5;
@@ -128,6 +142,7 @@ public class Constants {
     }
     public static final class Ports {
         public static final int intake = 14;
+        public static final int indexer = 18;
         public static final int leftLeader = 1;
         public static final int leftFollower = 2;
         public static final int rightLeader = 3;
@@ -136,5 +151,8 @@ public class Constants {
         public static final int claw = 15;
         public static final int coneTop = 16;
         public static final int coneBottom = 17;
+
+        public static final int solenoidA = 9;
+        public static final int solenoidB = 14;
     }
 };
