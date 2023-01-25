@@ -34,12 +34,8 @@ public class RunIntake extends CommandBase {
             timer.reset();
             timer.start();
         }
-<<<<<<< HEAD
         intake.run(speed);
         indexer.run(indexSpeed);
-=======
-        intake.run(speed); 
->>>>>>> e1671c2ed58933bd695d6d35ddbaf33607ca688c
     }
     public void execute() {
     }

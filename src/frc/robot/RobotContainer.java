@@ -12,14 +12,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 
 public class RobotContainer {
-<<<<<<< HEAD
   private Intake intake;
   private Indexer indexer;
   private IntakeDeploy deploy;
-=======
-  //private Intake intake;
-  //private IntakeDeploy deploy;
->>>>>>> e1671c2ed58933bd695d6d35ddbaf33607ca688c
   private Vision vision;
   private SendableChooser<SequentialCommandGroup> autoSelector;
   //private Drivetrain drivetrain;
@@ -32,16 +27,10 @@ public class RobotContainer {
   public RobotContainer(ShuffleboardTab tab) {
     driver = new XboxController(0);
     codriver = new XboxController(1);
-<<<<<<< HEAD
     vision = new Vision(tab, false, false);
     coner = new Coner(tab, false);
     intake = new Intake(tab);
     indexer = new Indexer();
-=======
-    vision = new Vision(tab, false, true);
-    coner = new Coner(tab, true);
-    //intake = new Intake();
->>>>>>> e1671c2ed58933bd695d6d35ddbaf33607ca688c
     //claw = new Claw();
 
     swerve = new Swerve(vision, true); /* CHOOSE ONE!!! */
