@@ -12,9 +12,14 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 
 public class RobotContainer {
+<<<<<<< HEAD
   private Intake intake;
   private Indexer indexer;
   private IntakeDeploy deploy;
+=======
+  //private Intake intake;
+  //private IntakeDeploy deploy;
+>>>>>>> e1671c2ed58933bd695d6d35ddbaf33607ca688c
   private Vision vision;
   private SendableChooser<SequentialCommandGroup> autoSelector;
   //private Drivetrain drivetrain;
@@ -27,21 +32,27 @@ public class RobotContainer {
   public RobotContainer(ShuffleboardTab tab) {
     driver = new XboxController(0);
     codriver = new XboxController(1);
+<<<<<<< HEAD
     vision = new Vision(tab, false, false);
     coner = new Coner(tab, false);
     intake = new Intake(tab);
     indexer = new Indexer();
+=======
+    vision = new Vision(tab, false, true);
+    coner = new Coner(tab, true);
+    //intake = new Intake();
+>>>>>>> e1671c2ed58933bd695d6d35ddbaf33607ca688c
     //claw = new Claw();
 
     swerve = new Swerve(vision, true); /* CHOOSE ONE!!! */
     //drivetrain = new Drivetrain(); /* ^^^ */
 
-    deploy = new IntakeDeploy();
+    //deploy = new IntakeDeploy();
     autoSelector = new SendableChooser<SequentialCommandGroup>();
     tab.add("Auto selector", autoSelector);
     autoSelector.setDefaultOption("Baseline", new Baseline());
     //sautoSelector.addOption("Proto Routine", new ProtoRoutine(drivetrain));
-    autoSelector.addOption("Proto Routine", new SwerveRoutine(swerve));
+    //autoSelector.addOption("Proto Routine", new SwerveRoutine(swerve));
     setDefaults();
     configureButtonBindings(driver, codriver);
   }
@@ -72,7 +83,7 @@ public class RobotContainer {
     yButtonDriver.whileTrue(Commands.runEnd(() -> { coner.top.outtakeHigh(); coner.bottom.outtakeHigh(); }, 
     () -> { coner.top.stop(); coner.bottom.stop(); }, coner));
 
-    bButtonDriver.onTrue(deploy.twoPhase());
+    //bButtonDriver.onTrue(deploy.twoPhase());
     //yButtonDriver.onTrue(new Balance(swerve, driver));
     //aButtonCodriver.toggleOnTrue(Commands.runOnce(() -> swerve.brake()));
   }
@@ -84,6 +95,6 @@ public class RobotContainer {
 
   public void setDefaults() {
     //drivetrain.setDefaultCommand(new DriveCommand(drivetrain, driver));
-    swerve.setDefaultCommand(new SwerveDrive(swerve, driver));
+    //swerve.setDefaultCommand(new SwerveDrive(swerve, driver));
   }
 }

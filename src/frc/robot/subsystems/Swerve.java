@@ -20,124 +20,130 @@ import frc.robot.Constants.Drive;
 import frc.robot.Constants.Ports;
 import frc.robot.Util; 
 import frc.robot.commands.ResetGyro;
-
-public class Swerve extends SubsystemBase {
-    private Vision vision;
-    private SwerveDrivePoseEstimator poseEstimator;
-    public SwerveModule[] drivers;
-    public Pigeon2 gyro;
-    private boolean foundPosition;
-    public int currentNum;
-    public int currentHeight;
-    private ChassisSpeeds previousMove;
-    public boolean slowMode;
-    public double yawOffset;
-    public Swerve(Vision vision, boolean pigeon) {
-        drivers = new SwerveModule[Drive.info.length];
+public class Swerve extends SubsystemBase { // our swerve drive subsystem
+    private Vision vision; // it has to be able to access the vision system for position tracking
+    private SwerveDrivePoseEstimator poseEstimator; // specialized position estimator that uses motor data and vision data
+    public SwerveModule[] drivers; // an array of 4 swerve modules for the four modules on the robot
+    public Pigeon2 gyro; // keep a gyro to read our current angle
+    private boolean foundPosition; // keeps track of whether the robot has gotten an initial position reading from the vision system
+    public int currentNum; // keep track of the current station (0-8) that the driver wants to go to based on the button board
+    public int currentHeight; // keep track of whether the driver wants to shoot low, mid, or high based on the button board
+    private ChassisSpeeds previousMove; // keep track of the previous speeds of the modules for position tracking
+    public boolean slowMode; // whether the swerve drive is in slowmode
+    public double yawOffset; // keep track of a yaw offset for the gyro so that we can reset it to 0
+    public Swerve(Vision vision, boolean pigeon) { // the pigeon parameter tells the code whether we are using a pigeon
+        drivers = new SwerveModule[Drive.info.length]; // instantiate the module array
         for(int i = 0; i < drivers.length; i++)  {
-            drivers[i] = new SwerveModule(Drive.info[i], i);
+            drivers[i] = new SwerveModule(Drive.info[i], i); // for each module, instantiate the module with predefined constant module info
         }
-        slowMode = false;
-        previousMove = new ChassisSpeeds();
-        if(pigeon) {
+        slowMode = false; // slow mode starts off
+        previousMove = new ChassisSpeeds(); // the last chassisspeeds were zero
+        if(pigeon) { // if the gyro is used, set it up and set it to zero
             gyro = new Pigeon2(Ports.gyro, "canivore");
             gyro.configFactoryDefault(100);
-            gyro.configMountPose(90.0, 0.0, -1.7);
-            yawOffset = gyro.getYaw();
+            gyro.configMountPose(90.0, 0.0, -1.7); // this configures our gyro pose so that we can read the pitch value
+            yawOffset = gyro.getYaw(); // reset gyro at the beginning
         } else {
             gyro = null;
         }
         
-        currentNum = 0;
+        currentNum = 0; // set default values for these (to be changed later by the codriver) 
         currentHeight = 0;
-        this.vision = vision;
-        Rotation2d tation = Rotation2d.fromDegrees(angle());
+        this.vision = vision; // keep track of the vision system
+        Rotation2d tation = Rotation2d.fromDegrees(angle()); // get our current gyro angle
+        // instantiate the pose estimator based on our current angle and motor data, with a pose at the origin
         poseEstimator = new SwerveDrivePoseEstimator(Drive.kinematics, tation, getPositions(), new Pose2d(0.0, 0.0, tation));
-        foundPosition = !vision.usesCamera(); // if no camera, just start at zero
+        foundPosition = !vision.usesCamera(); // if no camera, just start at zero and move from there. otherwise, wait until the camera reads a value to update the pose tracker
 
-        ShuffleboardTab tab = Shuffleboard.getTab("Drivetrain");
-        ShuffleboardLayout layout = tab.getLayout("Main", BuiltInLayouts.kList).withPosition(0, 0).withSize(2, 5);
-        layout.addNumber("yaw", () -> this.angle());
+        ShuffleboardTab tab = Shuffleboard.getTab("Drivetrain"); // add a special drivetrain tab to shuffleboard
+        ShuffleboardLayout layout = tab.getLayout("Main", BuiltInLayouts.kList).withPosition(0, 0).withSize(2, 5); // add a main layout within the tab
+        layout.addNumber("yaw", () -> this.angle()); // print all 3 euler angles of the gyro at all times for testing
         layout.addNumber("pitch", () -> this.gyro.getPitch());
         layout.addNumber("roll", () -> this.gyro.getRoll());
-        layout.addNumber("compass", () -> this.gyro.getCompassHeading());
-        layout.addBoolean("slow mode", () -> this.slowMode);
-        layout.add("reset gyro", new ResetGyro(this));
-        layout.addNumber("x position", () -> pose().getX());
+        layout.addNumber("compass", () -> this.gyro.getCompassHeading()); // wtf is this lmao
+        layout.addBoolean("slow mode", () -> this.slowMode); // shows whether we are in slow mode
+        layout.add("reset gyro", new ResetGyro(this)); // add a button on the screen to reset the gyro to 0 degrees
+        layout.addNumber("x position", () -> pose().getX()); // print out our x and y position
         layout.addNumber("y position", () -> pose().getY());
-        layout.addNumber("forward m", () -> previousMove.vxMetersPerSecond);
+        layout.addNumber("forward m", () -> previousMove.vxMetersPerSecond); // print out our current speed and turning speed
         layout.addNumber("sideways m", () -> previousMove.vyMetersPerSecond);
         layout.addNumber("turning (rad)", () -> previousMove.omegaRadiansPerSecond);
     }
-    private SwerveModulePosition[] getPositions() {
+    private SwerveModulePosition[] getPositions() { // get the total lengths driven by each module as an array
         SwerveModulePosition[] arr = new SwerveModulePosition[drivers.length];
         for(int i = 0; i < drivers.length; i++) {
-            arr[i] = drivers[i].getPosition();
+            arr[i] = drivers[i].getPosition(); // populate the array with each module position
         }
         return arr;
     }
-    public SwerveModuleState[] getStates() {
+    public SwerveModuleState[] getStates() { // get the current speed and angle of each module
         SwerveModuleState[] moduleState = new SwerveModuleState[drivers.length];
         for(int i = 0; i < moduleState.length; i++) {
-            moduleState[i] = drivers[i].getState();
+            moduleState[i] = drivers[i].getState(); // populate the array with each module speed and angle
         }
         return moduleState;
     }
-    public void resetOdometry(Pose2d pose) {
+    public void resetOdometry(Pose2d pose) { // reset the odometry to a certain position using motor data and the current angle
         poseEstimator.resetPosition(Rotation2d.fromDegrees(this.angle()), getPositions(), pose);
     }
     public void periodic() {
-        Rotation2d angle = Rotation2d.fromDegrees(angle());
-        SwerveModulePosition[] positions = getPositions();
-        if(!foundPosition) {
-            Pair<Pose2d, Double> initialMeasurement = vision.getRobotPose(new Pose2d());
-            if(initialMeasurement != null) {
+        Rotation2d angle = Rotation2d.fromDegrees(angle()); // read the current angle of the robot
+        SwerveModulePosition[] positions = getPositions(); // get all the module positions
+        if(!foundPosition) { // if we're still waiting for the first vision position reading, do this
+            Pair<Pose2d, Double> initialMeasurement = vision.getRobotPose(new Pose2d()); // get the current vision measurement
+            if(initialMeasurement != null) { // if that measurement exists, turn off foundPosition and reset our position based on the reading
                 foundPosition = true;
                 poseEstimator.resetPosition(angle, positions, initialMeasurement.getFirst());
             }
         } else {
-            Pose2d pose = poseEstimator.updateWithTime(Timer.getFPGATimestamp(), angle, positions);
-            Pair<Pose2d, Double> res = vision.getRobotPose(pose);
-            if(res != null) {
+            // otherwise, do the normal stuff
+            Pose2d pose = poseEstimator.updateWithTime(Timer.getFPGATimestamp(), angle, positions); // update our position estimator using the current lag time, the robot angle, and the module positions
+            Pair<Pose2d, Double> res = vision.getRobotPose(pose); // try to get a reading from the vision system
+            if(res != null) { // if the reading exists, interpolate it with our data to improve our position tracking
                 poseEstimator.addVisionMeasurement(res.getFirst(), res.getSecond());
             }
         }
     }
     public void drive(double forward, double left, double rotation, boolean fieldCentric, boolean pid) {
+        // drive the robot at a certain speed forward, a certain speed to the left, and rotating at a certain speed
+        // if fieldCentric is false, this will drive forward/left from the perspective of the robot. otherwise, it uses the perspective of the field
+        // if pid is true, it will use more accurate and brake-y control for the drive motors. this is true for auto but false for regular driving
         ChassisSpeeds speeds = (fieldCentric) ? ChassisSpeeds.fromFieldRelativeSpeeds(forward, left, rotation, Rotation2d.fromDegrees(this.angle())) : new ChassisSpeeds(forward, left, rotation);
+        // ^ generate desired speeds for the chassis
         this.previousMove = speeds;
-        SwerveModuleState[] states = Drive.kinematics.toSwerveModuleStates(speeds);
-        SwerveDriveKinematics.desaturateWheelSpeeds(states, Drive.maxVelocity);
+        SwerveModuleState[] states = Drive.kinematics.toSwerveModuleStates(speeds); // convert the chassis speed to individual states for each module
+        SwerveDriveKinematics.desaturateWheelSpeeds(states, Drive.maxVelocity); // make sure that the states conform to our max velocity
         updateMotors(states, pid, forward == 0.0 && left == 0.0 && rotation == 0.0);
+        // if the driver isn't touching the controller, don't just turn to 0 for no reason. instead, don't move at all
     }
-    public Pose2d pose() {
+    public Pose2d pose() { // get the current position based on the estimator, or 0 if the position hasn't been estimated yet
         return foundPosition ? poseEstimator.getEstimatedPosition() : new Pose2d();
     }
-    public double angle() {
+    public double angle() { // get the yaw angle if we're using a gyro, and subtract the offset to adjust for when we zero the gyro
         return gyro == null ? 0.0 : (gyro.getYaw() - yawOffset);
     }
-    public double anglePitch() {
+    public double anglePitch() { // get the pitch angle of the gyro
         return gyro == null ? 0.0 : gyro.getPitch();
     }
-    public void brake() {
+    public void brake() { // turn all the motors inwards so that it makes our robot hard to move
         drivers[0].setDesiredState(new SwerveModuleState(0.0, Rotation2d.fromDegrees(45.0)), false, false, true);
         drivers[1].setDesiredState(new SwerveModuleState(0.0, Rotation2d.fromDegrees(315.0)), false, false, true);
         drivers[2].setDesiredState(new SwerveModuleState(0.0, Rotation2d.fromDegrees(135.0)), false, false, true);
         drivers[3].setDesiredState(new SwerveModuleState(0.0, Rotation2d.fromDegrees(225.0)), false, false, true);
     }
-    public void stop() {
+    public void stop() { // stop the robot from moving
         this.drive(0.0, 0.0, 0.0, true, false);
     }
-    public double getAverageSpeed() {
+    public double getAverageSpeed() { // get the average absolute speed of the swerve modules, in meters per second
         double total = 0.0;
         for(int i = 0; i < drivers.length; i++) {
-            total += Math.abs(Util.nativeUnitsToMetersPerSecond(drivers[i].getDrive()));
+            total += Math.abs(Util.nativeUnitsToMetersPerSecond(drivers[i].getDrive())); // sum up all of the speeds and divide by the number of modules to get the average
         };
         return total / drivers.length;
     }
-    private void updateMotors(SwerveModuleState[] myStates, boolean pid, boolean preventTurn) {
+    private void updateMotors(SwerveModuleState[] myStates, boolean pid, boolean preventTurn) { // update each motor based on desired swerve module states
         for(int i = 0; i < drivers.length; i++) {
-            drivers[i].setDesiredState(myStates[i], preventTurn, this.slowMode, pid);
+            drivers[i].setDesiredState(myStates[i], preventTurn, this.slowMode, pid); // iterate through the array and set each motor
         }
     }
 }

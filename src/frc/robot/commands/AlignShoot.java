@@ -8,7 +8,8 @@ import frc.robot.subsystems.Swerve;
 import frc.robot.subsystems.Vision;
 import frc.robot.Constants.AprilTags;
 public class AlignShoot extends SequentialCommandGroup {
-    public AlignShoot(Swerve drivetrain, Vision vision, Intake intake, XboxController controller, boolean useClosest) {
+    public AlignShoot(Swerve drivetrain, Vision vision, Intake intake, 
+                        XboxController controller, boolean useClosest) {
         int num = drivetrain.currentNum;
         int height = drivetrain.currentHeight;
         Pose2d pose = drivetrain.pose();
