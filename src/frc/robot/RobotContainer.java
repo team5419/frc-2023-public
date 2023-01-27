@@ -48,7 +48,7 @@ public class RobotContainer {
   
   public void configureButtonBindings(XboxController driver, XboxController codriver) {
     Trigger aButtonDriver = new Trigger(() -> driver.getAButton());
-    Trigger bButtonDriver = new Trigger(() -> driver.getBButton());
+    //Trigger bButtonDriver = new Trigger(() -> driver.getBButton());
     Trigger xButtonDriver = new Trigger(() -> driver.getXButton());
     Trigger yButtonDriver = new Trigger(() -> driver.getYButton());
     
