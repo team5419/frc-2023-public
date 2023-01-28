@@ -57,12 +57,12 @@ public class RobotContainer {
     Trigger rightBumper = new Trigger(() -> driver.getRightBumper());
 
     //Trigger aButtonCodriver = new Trigger(() -> codriver.getAButton());
-    //aButtonDriver.whileTrue(Commands.runEnd(() -> { swerve.slowMode = true; }, () -> { swerve.slowMode = false; }));
+    leftBumper.whileTrue(Commands.runEnd(() -> { swerve.slowMode = true; }, () -> { swerve.slowMode = false; }));
     // aButtonDriver.whileTrue(new RunIntake(intake));
     bButtonDriver.onTrue(deploy.twoPhase());
-    leftBumper.whileTrue(new RunIntake(intake, indexer));
+    // leftBumper.whileTrue(new RunIntake(intake, indexer));
 
-    rightBumper.whileTrue(new Shoot(intake, indexer));
+    // rightBumper.whileTrue(new Shoot(intake, indexer));
 
     xButtonDriver.whileTrue(Commands.runEnd(() -> { coner.top.intake(); coner.bottom.intake(); }, 
     () -> { coner.top.stop(); coner.bottom.stop(); }, coner));
@@ -74,7 +74,7 @@ public class RobotContainer {
     () -> { coner.top.stop(); coner.bottom.stop(); }, coner));
 
     //bButtonDriver.onTrue(deploy.twoPhase());
-    //yButtonDriver.onTrue(new Balance(swerve, driver));
+    bButtonDriver.onTrue(new Balance(swerve, driver));
     //aButtonCodriver.toggleOnTrue(Commands.runOnce(() -> swerve.brake()));
   }
 
@@ -85,6 +85,6 @@ public class RobotContainer {
 
   public void setDefaults() {
     //drivetrain.setDefaultCommand(new DriveCommand(drivetrain, driver));
-    //swerve.setDefaultCommand(new SwerveDrive(swerve, driver));
+    swerve.setDefaultCommand(new SwerveDrive(swerve, driver));
   }
 }
