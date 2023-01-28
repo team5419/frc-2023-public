@@ -5,16 +5,16 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import frc.robot.Constants.Limelight;
 
+import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
-import org.photonvision.RobotPoseEstimator;
-import org.photonvision.RobotPoseEstimator.PoseStrategy;
+import org.photonvision.PhotonPoseEstimator;
+import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.wpilibj.Timer;
@@ -31,7 +31,7 @@ public class Vision extends SubsystemBase { // this keeps track of our limelight
     private NetworkTable limelight; // keep track of the limelight
     private ShuffleboardLayout layout; // keep track of a shuffleboard layout for printing data
     private PhotonCamera camera; // keep track of the photon camera (april tags stuff)
-    private RobotPoseEstimator poseEstimator; // the photon camera has its own pose estimator that interacts with the overall pose estimator
+    private PhotonPoseEstimator poseEstimator; // the photon camera has its own pose estimator that interacts with the overall pose estimator
     public Team team; // keep track of the team that we think we're on
     private int lastTagSeen;
     public Vision(ShuffleboardTab tab, boolean _limelight, boolean _photon) { // the boolean parameters tell the code if we're using limelight and photon vision
@@ -93,9 +93,9 @@ public class Vision extends SubsystemBase { // this keeps track of our limelight
         }
         poseEstimator.setReferencePose(previous);
         double time = Timer.getFPGATimestamp();
-        Optional<Pair<Pose3d, Double>> result = poseEstimator.update();
+        Optional<EstimatedRobotPose> result = poseEstimator.update();
         if (result.isPresent()) {
-            return new Pair<Pose2d, Double>(result.get().getFirst().toPose2d(), time - result.get().getSecond());
+            return new Pair<Pose2d, Double>(result.get().estimatedPose.toPose2d(), time - result.get().timestampSeconds);
         } else {
             return null;
         }
@@ -136,7 +136,7 @@ public class Vision extends SubsystemBase { // this keeps track of our limelight
     }
 
     public void periodic() {
-        if(true/*team == Team.NONE*/) {
+        if(team == Team.NONE) {
             team = getTeam();
         } else if(poseEstimator == null && camera != null) {
             AprilTagFieldLayout tagLayout = null;
@@ -145,9 +145,7 @@ public class Vision extends SubsystemBase { // this keeps track of our limelight
             } catch(Exception e) {
                 System.out.println("Unable to load april tags file!!");
             }
-            ArrayList<Pair<PhotonCamera, Transform3d>> camList = new ArrayList<Pair<PhotonCamera, Transform3d>>();
-            camList.add(new Pair<PhotonCamera, Transform3d>(camera, AprilTags.robotToCam));
-            poseEstimator = new RobotPoseEstimator(tagLayout, PoseStrategy.CLOSEST_TO_REFERENCE_POSE, camList);
+            poseEstimator = new PhotonPoseEstimator(tagLayout, PoseStrategy.CLOSEST_TO_REFERENCE_POSE, camera, AprilTags.robotToCam);
         }
     }
 }
