@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj.XboxController;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -29,14 +30,14 @@ public class RobotContainer {
     codriver = new XboxController(1);
     vision = new Vision(tab, false, false);
     coner = new Coner(tab, false);
-    intake = new Intake(tab);
-    indexer = new Indexer();
+    intake = new Intake(Shuffleboard.getTab("Intake"));
+    indexer = new Indexer(Shuffleboard.getTab("Indexer"));
     //claw = new Claw();
 
     swerve = new Swerve(vision, true); /* CHOOSE ONE!!! */
     //drivetrain = new Drivetrain(); /* ^^^ */
 
-    //deploy = new IntakeDeploy();
+    deploy = new IntakeDeploy();
     autoSelector = new SendableChooser<SequentialCommandGroup>();
     tab.add("Auto selector", autoSelector);
     autoSelector.setDefaultOption("Baseline", new Baseline());
@@ -58,7 +59,7 @@ public class RobotContainer {
     //Trigger aButtonCodriver = new Trigger(() -> codriver.getAButton());
     //aButtonDriver.whileTrue(Commands.runEnd(() -> { swerve.slowMode = true; }, () -> { swerve.slowMode = false; }));
     // aButtonDriver.whileTrue(new RunIntake(intake));
-    // bButtonDriver.onTrue(deploy.twoPhase());
+    bButtonDriver.onTrue(deploy.twoPhase());
     leftBumper.whileTrue(new RunIntake(intake, indexer));
 
     rightBumper.whileTrue(new Shoot(intake, indexer));

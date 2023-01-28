@@ -43,7 +43,7 @@ public class RunIntake extends CommandBase {
         return time != 0.0 && timer.get() >= time; //stops if time is not 0 and has surpassed the 
     }
     public void end(boolean interrupted) {
-        intake.run(0.0);
-        indexer.run(0.0);
+        intake.stop();
+        indexer.stop();
     }
 }

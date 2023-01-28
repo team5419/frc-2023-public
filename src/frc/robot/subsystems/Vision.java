@@ -57,8 +57,6 @@ public class Vision extends SubsystemBase { // this keeps track of our limelight
             });
             layout.addInteger("Last tag seen", () -> lastTagSeen);
             camera = new PhotonCamera("photonvision");
-            ArrayList<Pair<PhotonCamera, Transform3d>> camList = new ArrayList<Pair<PhotonCamera, Transform3d>>();
-            camList.add(new Pair<PhotonCamera, Transform3d>(camera, AprilTags.robotToCam));
         } else {
             camera = null;
         }

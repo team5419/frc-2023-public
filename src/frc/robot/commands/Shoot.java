@@ -22,16 +22,16 @@ public class Shoot extends CommandBase {
     public void execute() {
         double speed = intake.getVelocity();
         if(/*Math.abs(speed) >= Math.abs(IntakeConstants.outtakeSpeed)*/timer.get() > 1.0) {
-            indexer.run(-0.6);
+            indexer.run();
         }
         ///double output = IntakeConstants.outtakePID.calculate(speed, IntakeConstants.outtakeSpeed);
-        intake.run(-0.6);
+        intake.run();
     }
     public boolean isFinished() {
         return false;
     }
     public void end(boolean interrupted) {
-        intake.run(0.0);
-        indexer.run(0.0);
+        intake.stop();
+        indexer.stop();
     }
 }
