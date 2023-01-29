@@ -28,7 +28,7 @@ public class RobotContainer {
   public RobotContainer(ShuffleboardTab tab) {
     driver = new XboxController(0);
     codriver = new XboxController(1);
-    vision = new Vision(tab, false, false);
+    vision = new Vision(tab, false, true);
     coner = new Coner(tab, false);
     intake = new Intake(Shuffleboard.getTab("Intake"));
     indexer = new Indexer(Shuffleboard.getTab("Indexer"));

@@ -75,10 +75,10 @@ public class Constants {
         public static final double epsilonXY = 0.1;
         public static final double epsilonTheta = 1.0;
         public static final ModuleInfo[] info = {
-            new ModuleInfo(1, 2, true, true, 9, 3.48213), //numbers are placeholders
-            new ModuleInfo(7, 8, false, true, 12, 0.35895),
-            new ModuleInfo(3, 4, true, true, 10, 1.2149),
-            new ModuleInfo(5, 6, false, true, 11, 0.91578)
+            new ModuleInfo(1, 2, true, true, 9, 3.48213 - 1.6521), //numbers are placeholders -1.6521
+            new ModuleInfo(7, 8, false, true, 12, 0.35895 + 1.6229), // 1.6229
+            new ModuleInfo(3, 4, true, true, 10, 1.2149 + 1.6230), // 1.6230
+            new ModuleInfo(5, 6, false, true, 11, 0.91578 + 4.7247) //4.7247
         };
 
         public static final Translation2d frontLeft = new Translation2d(0.2794, 0.2794);
@@ -152,7 +152,7 @@ public class Constants {
         public static final int coneTop = 16;
         public static final int coneBottom = 17;
 
-        public static final int solenoidA = 9;
-        public static final int solenoidB = 14;
+        public static final int solenoidA = 8;
+        public static final int solenoidB = 15;
     }
 };
