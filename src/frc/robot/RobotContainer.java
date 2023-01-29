@@ -25,6 +25,8 @@ public class RobotContainer {
   //private Claw claw;
   private Coner coner;
 
+  private EverybotArm arm;
+
   public RobotContainer(ShuffleboardTab tab) {
     driver = new XboxController(0);
     codriver = new XboxController(1);
@@ -33,6 +35,8 @@ public class RobotContainer {
     intake = new Intake(Shuffleboard.getTab("Intake"));
     indexer = new Indexer(Shuffleboard.getTab("Indexer"));
     //claw = new Claw();
+
+    arm = new EverybotArm();
 
     swerve = new Swerve(vision, true); /* CHOOSE ONE!!! */
     //drivetrain = new Drivetrain(); /* ^^^ */
@@ -56,6 +60,9 @@ public class RobotContainer {
     Trigger leftBumper = new Trigger(() -> driver.getLeftBumper());
     Trigger rightBumper = new Trigger(() -> driver.getRightBumper());
 
+    Trigger dPadUp = new Trigger(() -> ((driver.getPOV() < 90 || driver.getPOV() >= 270) && driver.getPOV() != -1));
+    Trigger dPadDown = new Trigger(() -> ((driver.getPOV() >= 90 || driver.getPOV() < 270) && driver.getPOV() != -1));
+
     //Trigger aButtonCodriver = new Trigger(() -> codriver.getAButton());
     leftBumper.whileTrue(Commands.runEnd(() -> { swerve.slowMode = true; }, () -> { swerve.slowMode = false; }));
     // aButtonDriver.whileTrue(new RunIntake(intake));
@@ -63,6 +70,9 @@ public class RobotContainer {
     // leftBumper.whileTrue(new RunIntake(intake, indexer));
 
     // rightBumper.whileTrue(new Shoot(intake, indexer));
+
+    dPadUp.onTrue(new EverybotIntake(this.arm, false));
+    dPadDown.onTrue(new EverybotIntake(this.arm, true));
 
     xButtonDriver.whileTrue(Commands.runEnd(() -> { coner.top.intake(); coner.bottom.intake(); }, 
     () -> { coner.top.stop(); coner.bottom.stop(); }, coner));
@@ -86,5 +96,6 @@ public class RobotContainer {
   public void setDefaults() {
     //drivetrain.setDefaultCommand(new DriveCommand(drivetrain, driver));
     swerve.setDefaultCommand(new SwerveDrive(swerve, driver));
+    arm.setDefaultCommand(new Arm(this.arm, this.driver));
   }
 }
