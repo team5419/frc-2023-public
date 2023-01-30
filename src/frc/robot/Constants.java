@@ -75,10 +75,11 @@ public class Constants {
         public static final double epsilonXY = 0.1;
         public static final double epsilonTheta = 1.0;
         public static final ModuleInfo[] info = {
-            new ModuleInfo(1, 2, true, true, 9, 3.48213 - 1.6521), //numbers are placeholders -1.6521
-            new ModuleInfo(7, 8, false, true, 12, 0.35895 + 1.6229), // 1.6229
-            new ModuleInfo(3, 4, true, true, 10, 1.2149 + 1.6230), // 1.6230
-            new ModuleInfo(5, 6, false, true, 11, 0.91578 + 4.7247) //4.7247
+            new ModuleInfo(7, 8, true, true, 12, 0.35895 + 1.6229), // 1.6229
+            new ModuleInfo(5, 6, false, true, 11, 0.91578 + 4.7247), //4.7247            
+            new ModuleInfo(1, 2, true, true, 9, 3.48213 - 1.6521 + 0.06), //numbers are placeholders -1.6521
+            new ModuleInfo(3, 4, false, true, 10, 1.2149 + 1.6230 - 0.02) // 1.6230
+            
         };
 
         public static final Translation2d frontLeft = new Translation2d(0.2794, 0.2794);
@@ -112,8 +113,8 @@ public class Constants {
     }
     public static final class AprilTags {
         public static Transform3d robotToCam = new Transform3d( // we can prob just leave this at 0 and use camera as a reference to our robot 
-            new Translation3d(0.0, 0.0, 0.0), new Rotation3d(0.0, 0.0, Math.PI)); // however we should change angle to keep in accordance with gyro angle
-            
+            new Translation3d(0.0, 0.0, 0.0), new Rotation3d(0.15708, 0.0, -3.14)); // however we should change angle to keep in accordance with gyro angle
+        public static double totalX = 16.54175;
         public static double[] yPositions = {
             0.5128, // bottom pole
             1.0716, // bottom cube (furthest from HP)
@@ -126,19 +127,19 @@ public class Constants {
             4.9832 // top pole
         };
         public static double[] cubeDists = {
-            1.0, // high
-            1.0, // mid
-            1.0 // low
+            2.0, // high
+            2.0, // mid
+            2.0 // low
         };
         public static double[] coneDists = {
-            1.0, // high
-            1.0, // mid
-            1.0 // low
+            2.0, // high
+            2.0, // mid
+            2.0 // low
         };
         public static double cubeRotation = 0.0;
         public static double coneRotation = 0.0;
-        public static final double xPosBeforeBarriers = 1.5; // to be measured
-        public static final double xEndOfChargingStation = 3.5; // to be measured
+        public static final double xPosBeforeBarriers = 1.6; // to be measured
+        public static final double xEndOfChargingStation = 2.55; // to be measured
     }
     public static final class Ports {
         public static final int intake = 14;

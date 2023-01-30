@@ -57,10 +57,10 @@ public class Swerve extends SubsystemBase { // our swerve drive subsystem
 
         ShuffleboardTab tab = Shuffleboard.getTab("Drivetrain"); // add a special drivetrain tab to shuffleboard
         ShuffleboardLayout layout = tab.getLayout("Main", BuiltInLayouts.kList).withPosition(0, 0).withSize(2, 5); // add a main layout within the tab
-        layout.addNumber("yaw", () -> this.angle()); // print all 3 euler angles of the gyro at all times for testing
-        layout.addNumber("pitch", () -> this.gyro.getPitch());
-        layout.addNumber("roll", () -> this.gyro.getRoll());
-        layout.addNumber("compass", () -> this.gyro.getCompassHeading()); // wtf is this lmao
+         layout.addNumber("yaw", () -> this.angle()); // print all 3 euler angles of the gyro at all times for testing
+        // layout.addNumber("pitch", () -> this.gyro.getPitch());
+        // layout.addNumber("roll", () -> this.gyro.getRoll());
+        //layout.addNumber("compass", () -> this.gyro.getCompassHeading()); // wtf is this lmao
         layout.addBoolean("slow mode", () -> this.slowMode); // shows whether we are in slow mode
         layout.add("reset gyro", new ResetGyro(this)); // add a button on the screen to reset the gyro to 0 degrees
         layout.addNumber("x position", () -> pose().getX()); // print out our x and y position
@@ -97,7 +97,7 @@ public class Swerve extends SubsystemBase { // our swerve drive subsystem
             }
         } else {
             // otherwise, do the normal stuff
-            Pose2d pose = poseEstimator.updateWithTime(Timer.getFPGATimestamp(), angle, positions); // update our position estimator using the current lag time, the robot angle, and the module positions
+            Pose2d pose = poseEstimator.update(angle, positions); // update our position estimator using the current lag time, the robot angle, and the module positions
             Pair<Pose2d, Double> res = vision.getRobotPose(pose); // try to get a reading from the vision system
             if(res != null) { // if the reading exists, interpolate it with our data to improve our position tracking
                 poseEstimator.addVisionMeasurement(res.getFirst(), res.getSecond());

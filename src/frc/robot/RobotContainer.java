@@ -52,14 +52,14 @@ public class RobotContainer {
     Trigger bButtonDriver = new Trigger(() -> driver.getBButton());
     Trigger xButtonDriver = new Trigger(() -> driver.getXButton());
     Trigger yButtonDriver = new Trigger(() -> driver.getYButton());
-    
+
     Trigger leftBumper = new Trigger(() -> driver.getLeftBumper());
     Trigger rightBumper = new Trigger(() -> driver.getRightBumper());
 
     //Trigger aButtonCodriver = new Trigger(() -> codriver.getAButton());
     leftBumper.whileTrue(Commands.runEnd(() -> { swerve.slowMode = true; }, () -> { swerve.slowMode = false; }));
     // aButtonDriver.whileTrue(new RunIntake(intake));
-    bButtonDriver.onTrue(deploy.twoPhase());
+    bButtonDriver.onTrue(new AlignShoot(swerve, vision, intake, driver, true));
     // leftBumper.whileTrue(new RunIntake(intake, indexer));
 
     // rightBumper.whileTrue(new Shoot(intake, indexer));

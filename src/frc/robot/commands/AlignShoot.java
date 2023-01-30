@@ -34,16 +34,19 @@ public class AlignShoot extends SequentialCommandGroup {
         double targetX = isCone ? AprilTags.coneDists[height] : AprilTags.cubeDists[height];
         double targetY = AprilTags.yPositions[num];
         if(effectiveX > AprilTags.xEndOfChargingStation) { // if hasn't made it to end of charging station, drive straight to end of station to avoid collision
+            System.out.println("drive to end of charging station");
             addCommands(new RamseteSwerve(drivetrain, new Pose2d(AprilTags.xEndOfChargingStation, pose.getY(), converted)));
         } else if(effectiveX < AprilTags.xPosBeforeBarriers) {
+            System.out.println("drive out of barriers");
             addCommands(new RamseteSwerve(drivetrain, new Pose2d(AprilTags.xPosBeforeBarriers, pose.getY(), converted)));
         }
-        addCommands(new RamseteSwerve(drivetrain, new Pose2d(Math.max(AprilTags.xPosBeforeBarriers, targetX), targetY, converted)));
+        //addCommands(new RamseteSwerve(drivetrain, new Pose2d(Math.max(AprilTags.xPosBeforeBarriers, targetX), targetY, converted)));
         if(targetX < AprilTags.xPosBeforeBarriers) { // if not far enough, drive straight forward to goal
-            addCommands(new RamseteSwerve(drivetrain, new Pose2d(targetX, targetY, converted)));
+            System.out.println("drive into barriers");
+            //addCommands(new RamseteSwerve(drivetrain, new Pose2d(targetX, targetY, converted)));
         }
         if(isCone) {
-            addCommands(new AutoAlign(drivetrain, vision, targetX)); // if cone, use vision to fine-tune (might not be necessary)
+            //addCommands(new AutoAlign(drivetrain, vision, targetX)); // if cone, use vision to fine-tune (might not be necessary)
         }
         // add a command to shoot
         //addCommands(new RunIntake(intake, -1.0, 5.0)); // run intake full speed backwards for 5 seconds
