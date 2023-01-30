@@ -152,6 +152,9 @@ public class Constants {
         public static final int claw = 15;
         public static final int coneTop = 16;
         public static final int coneBottom = 17;
+        public static final int everyIntakeMotor = 19;
+        public static final int everyArm0 = 20;
+        public static final int everyArm1 = 21;
 
         public static final int solenoidA = 8;
         public static final int solenoidB = 15;
