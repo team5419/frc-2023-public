@@ -71,7 +71,7 @@ public class Constants {
         public static final double controllerDeadband = 0.1;
 
         public static final double pXY = 0.27;
-        public static final double pTheta = 0.4;
+        public static final double pTheta = 4.0;
         public static final double epsilonXY = 0.1;
         public static final double epsilonTheta = 1.0;
         public static final ModuleInfo[] info = {
