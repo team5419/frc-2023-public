@@ -22,6 +22,7 @@ public class EverybotArm extends SubsystemBase {
     // private GenericEntry widget;
     public EverybotArm() {
         intakeMotor = new CANSparkMax(Ports.everyIntakeMotor, MotorType.kBrushless);
+        armMotors = new CANSparkMax[2];
         armMotors[0] = new CANSparkMax(Ports.everyArm0, MotorType.kBrushless);
         armMotors[1] = new CANSparkMax(Ports.everyArm1, MotorType.kBrushless);
         Util.setUpMotor(intakeMotor, false, false);

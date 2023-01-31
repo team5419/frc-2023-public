@@ -3,13 +3,16 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Swerve;
 import frc.robot.Constants.Drive;
 import frc.robot.Util;
+
+import java.util.function.Supplier;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 
 public class RamseteSwerve extends CommandBase {
-    private Swerve drivetrain;
-    private boolean isFinished;
-    private Pose2d goal;
+    protected Swerve drivetrain;
+    protected boolean isFinished;
+    protected Pose2d goal;
     public RamseteSwerve(Swerve drivetrain, Pose2d goal) {
         this.drivetrain = drivetrain;
         this.goal = goal;
@@ -17,18 +20,19 @@ public class RamseteSwerve extends CommandBase {
         addRequirements(drivetrain);
     }
     public RamseteSwerve(Swerve drivetrain, double changeX, double changeY, double changeTheta) { // from current position
-        this.drivetrain = drivetrain;
-        Pose2d current = drivetrain.pose(); //get postion of drivetrain (Pose2d is a object of coordinates and angle)
-        double currentAngle = drivetrain.angle();
-        this.goal = new Pose2d(current.getX() + changeX, current.getY() + changeY, Rotation2d.fromDegrees(currentAngle + changeTheta));
+        
         // ^ finds coordinates of the current position + the change in coordinates
         isFinished = false;
         addRequirements(drivetrain);
     }
     public void initialize() {
-        
+        System.out.println("initializing");
     }
     public void execute() { 
+        if(goal == null) {
+            System.out.println("goal is null");
+            return;
+        }
         double theta = drivetrain.angle();
         double targetRotation = goal.getRotation().getDegrees();
         double target = Math.round((theta - targetRotation) / 360.0) * 360.0 + targetRotation;
@@ -56,6 +60,7 @@ public class RamseteSwerve extends CommandBase {
         isFinished = dx == 0 && dy == 0 && dtheta == 0 && drivetrain.getAverageSpeed() < 0.1;
     }
     public boolean isFinished() {
+        System.out.println("finished");
         return isFinished;
     }
     public void end(boolean interrupted) {
