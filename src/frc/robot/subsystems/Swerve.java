@@ -90,18 +90,15 @@ public class Swerve extends SubsystemBase { // our swerve drive subsystem
         Rotation2d angle = Rotation2d.fromDegrees(angle()); // read the current angle of the robot
         SwerveModulePosition[] positions = getPositions(); // get all the module positions
         if(!foundPosition) { // if we're still waiting for the first vision position reading, do this
-            Pair<Pose2d, Double> initialMeasurement = vision.getRobotPose(new Pose2d()); // get the current vision measurement
-            if(initialMeasurement != null) { // if that measurement exists, turn off foundPosition and reset our position based on the reading
+            Pose2d measure = vision.updateRobotPose(poseEstimator, new Pose2d(), false); // get the current vision measurement
+            if(measure != null) {
                 foundPosition = true;
-                poseEstimator.resetPosition(angle, positions, initialMeasurement.getFirst());
+                poseEstimator.resetPosition(angle, getPositions(), measure);
             }
         } else {
             // otherwise, do the normal stuff
             Pose2d pose = poseEstimator.update(angle, positions); // update our position estimator using the current lag time, the robot angle, and the module positions
-            Pair<Pose2d, Double> res = vision.getRobotPose(pose); // try to get a reading from the vision system
-            if(res != null) { // if the reading exists, interpolate it with our data to improve our position tracking
-                poseEstimator.addVisionMeasurement(res.getFirst(), res.getSecond());
-            }
+            vision.updateRobotPose(poseEstimator, pose, true); // try to get a reading from the vision system
         }
     }
     public void drive(double forward, double left, double rotation, boolean fieldCentric, boolean pid) {

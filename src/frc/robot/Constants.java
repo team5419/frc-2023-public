@@ -112,9 +112,14 @@ public class Constants {
         public static final double epsilonForward = 0.1;
     }
     public static final class AprilTags {
-        public static Transform3d robotToCam = new Transform3d( // we can prob just leave this at 0 and use camera as a reference to our robot 
-            new Translation3d(0.0, 0.0, 0.0), new Rotation3d(0.15708, 0.0, -3.14)); // however we should change angle to keep in accordance with gyro angle
+        public static Transform3d[] robotToCam = new Transform3d[] { 
+            new Transform3d( // we can prob just leave this at 0 and use camera as a reference to our robot 
+                new Translation3d(-0.07112, 0.0, 0.12827), new Rotation3d(0.0, -0.087266, -3.14)), // however we should change angle to keep in accordance with gyro angle
+            new Transform3d(
+                new Translation3d(0.0, 0.0, 0.0), new Rotation3d(0.0, 0.0, 0.0))
+        };
         public static double totalX = 16.54175;
+        public static double totalY = 8.0137;
         public static double[] yPositions = {
             0.5128, // bottom pole
             1.0716, // bottom cube (furthest from HP)
@@ -140,6 +145,10 @@ public class Constants {
         public static double coneRotation = 0.0;
         public static final double xPosBeforeBarriers = 1.6; // to be measured
         public static final double xEndOfChargingStation = 2.55; // to be measured
+        public static final double yOutsideRightChargingStation = -1.0;
+        public static final double yInsideRightChargingStation = -1.0;
+        public static final double yInsideLeftChargingStation = 1000.0;
+        public static final double yOutsideLeftChargingStation = 1000.0;
     }
     public static final class Ports {
         public static final int intake = 14;

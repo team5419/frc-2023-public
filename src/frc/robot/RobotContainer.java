@@ -46,7 +46,7 @@ public class RobotContainer {
     tab.add("Auto selector", autoSelector);
     autoSelector.setDefaultOption("Baseline", new Baseline());
     //sautoSelector.addOption("Proto Routine", new ProtoRoutine(drivetrain));
-    autoSelector.addOption("Proto Routine", new SwerveRoutine(swerve));
+    autoSelector.addOption("Proto Routine", new SwerveRoutine(swerve, vision));
     setDefaults();
     configureButtonBindings(driver, codriver);
   }
@@ -66,7 +66,7 @@ public class RobotContainer {
     //Trigger aButtonCodriver = new Trigger(() -> codriver.getAButton());
     leftBumper.whileTrue(Commands.runEnd(() -> { swerve.slowMode = true; }, () -> { swerve.slowMode = false; }));
     // aButtonDriver.whileTrue(new RunIntake(intake));
-    bButtonDriver.onTrue(new SpecialRamseteSwerve(swerve, true));
+    bButtonDriver.onTrue(new SpecialRamseteSwerve(swerve, vision, true));
     // leftBumper.whileTrue(new RunIntake(intake, indexer));
 
     // rightBumper.whileTrue(new Shoot(intake, indexer));

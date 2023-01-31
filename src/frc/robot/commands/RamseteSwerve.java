@@ -1,6 +1,8 @@
 package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Swerve;
+import frc.robot.subsystems.Vision;
+import frc.robot.Constants.AprilTags;
 import frc.robot.Constants.Drive;
 import frc.robot.Util;
 
@@ -13,20 +15,21 @@ public class RamseteSwerve extends CommandBase {
     protected Swerve drivetrain;
     protected boolean isFinished;
     protected Pose2d goal;
-    public RamseteSwerve(Swerve drivetrain, Pose2d goal) {
+    protected boolean teamRelative;
+    protected Vision vision;
+    public RamseteSwerve(Swerve drivetrain, Vision vision, Pose2d goal, boolean teamRelative) {
         this.drivetrain = drivetrain;
+        this.teamRelative = teamRelative;
         this.goal = goal;
-        isFinished = false;
-        addRequirements(drivetrain);
-    }
-    public RamseteSwerve(Swerve drivetrain, double changeX, double changeY, double changeTheta) { // from current position
-        
-        // ^ finds coordinates of the current position + the change in coordinates
+        this.vision = vision;
         isFinished = false;
         addRequirements(drivetrain);
     }
     public void initialize() {
         System.out.println("initializing");
+        if(teamRelative && vision.team == Vision.Team.RED) {
+            this.goal = new Pose2d(AprilTags.totalX - goal.getX(), AprilTags.totalY - goal.getY(), goal.getRotation());
+        }
     }
     public void execute() { 
         if(goal == null) {
@@ -55,7 +58,7 @@ public class RamseteSwerve extends CommandBase {
         double dtheta = 1 * Drive.pTheta * (Math.PI / 180.0) * Util.deadband(target - theta, Drive.epsilonTheta);
         System.out.println(dtheta);
         //System.out.println("theta: ${DriveConstants.pTheta * (Math.PI / 180) * (target - theta)}");
-        drivetrain.drive(dx, dy, dtheta, true, true);
+        drivetrain.drive(dx, -dy, dtheta, true, true);
 
         isFinished = dx == 0 && dy == 0 && dtheta == 0 && drivetrain.getAverageSpeed() < 0.1;
     }

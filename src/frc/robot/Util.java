@@ -8,10 +8,23 @@ import com.ctre.phoenix.motorcontrol.StatusFrame;
 import com.ctre.phoenix.motorcontrol.ControlFrame;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import frc.robot.classes.PID;
+import frc.robot.Constants.AprilTags;
 
 import frc.robot.Constants.Drive;
 import frc.robot.Constants.ProtoDrive;
 public class Util {
+    public static int getSection(double xpos) {
+        if(xpos <= AprilTags.yOutsideRightChargingStation) {
+            return 0;
+        }
+        if(xpos >= AprilTags.yInsideRightChargingStation && xpos <= AprilTags.yInsideLeftChargingStation) {
+            return 1;
+        }
+        if(xpos >= AprilTags.yOutsideLeftChargingStation) {
+            return 2;
+        }
+        return -1;
+    }
     public static double nativeUnitsToMetersPerSecond(double units) {
         return (units / Drive.ticksPerRotation) * Drive.wheelCircumference * 10.0;
     }

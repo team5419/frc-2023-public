@@ -8,6 +8,8 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import frc.robot.Constants.AprilTags;
 import frc.robot.subsystems.Swerve;
+import frc.robot.subsystems.Vision;
+import frc.robot.Util;
 
 public class SpecialRamseteSwerve extends RamseteSwerve {
     enum State {
@@ -19,8 +21,8 @@ public class SpecialRamseteSwerve extends RamseteSwerve {
     private State state;
     private double targetX;
     private double targetY;
-    public SpecialRamseteSwerve(Swerve drivetrain, boolean useClosest) {
-        super(drivetrain, new Pose2d());
+    public SpecialRamseteSwerve(Swerve drivetrain, Vision vision, boolean useClosest) {
+        super(drivetrain, vision, new Pose2d(), false);
         this.useClosest = useClosest;
         this.state = State.PREDIAGONAL;
         this.targetX = 0.0;
@@ -30,9 +32,12 @@ public class SpecialRamseteSwerve extends RamseteSwerve {
         int num = drivetrain.currentNum;
         int height = drivetrain.currentHeight;
         Pose2d pose = drivetrain.pose();
-        double angle = drivetrain.angle();
+        Vision.Team team = vision.team;
         if(useClosest) {
             double currentY = pose.getY();
+            if(team == Vision.Team.RED) {
+                currentY = AprilTags.totalY - currentY;
+            }
             int closestNum = 0;
             for(int i = 1; i < AprilTags.yPositions.length; i++) {
                 if(AprilTags.yPositions[i] > currentY) {
@@ -43,27 +48,26 @@ public class SpecialRamseteSwerve extends RamseteSwerve {
             num = closestNum;
         }
         boolean isCone = (num - 1) % 3 != 0; 
-        double targetRotation = Math.round((angle  - (isCone ? AprilTags.coneRotation : AprilTags.cubeRotation)) / 360.0);
-        targetRotation *= 360.0;
-        targetRotation += isCone ? AprilTags.coneRotation : AprilTags.cubeRotation;
-        Rotation2d converted = Rotation2d.fromDegrees(targetRotation);
+        Rotation2d converted = Rotation2d.fromDegrees(isCone ? AprilTags.coneRotation : AprilTags.cubeRotation);
         double effectiveX = pose.getX();
-        double targetX = isCone ? AprilTags.coneDists[height] : AprilTags.cubeDists[height];
-        double targetY = AprilTags.yPositions[num];
-        
-        this.state = State.PREDIAGONAL;
-        this.targetX = targetX;
-        System.out.println("targetX = " + targetX);
-        System.out.println("targetY = " + targetY);
-        System.out.println("target rotation = " + targetRotation);
-        this.targetY = targetY;
-        if(effectiveX > AprilTags.xEndOfChargingStation) { // if hasn't made it to end of charging station, drive straight to end of station to avoid collision
-            this.goal = new Pose2d(AprilTags.xEndOfChargingStation, pose.getY(), converted);
-        } else if(effectiveX < AprilTags.xPosBeforeBarriers) {
-            this.goal = new Pose2d(AprilTags.xPosBeforeBarriers, pose.getY(), converted);
-        } else {
-            this.goal = pose;
+        this.targetX = isCone ? AprilTags.coneDists[height] : AprilTags.cubeDists[height];
+        this.targetY = AprilTags.yPositions[num];
+        if(team == Vision.Team.RED) {
+            this.targetY = AprilTags.totalY = targetY;
         }
+        int section = Util.getSection(pose.getY());
+        this.goal = pose;
+        if(section == Util.getSection(AprilTags.yPositions[num]) && section != -1) {
+            this.state = State.POSTDIAGONAL;
+        } else {
+            this.state = State.PREDIAGONAL;
+            if(effectiveX > AprilTags.xEndOfChargingStation) { // if hasn't made it to end of charging station, drive straight to end of station to avoid collision
+                this.goal = new Pose2d(AprilTags.xEndOfChargingStation, pose.getY(), converted);
+            } else if(effectiveX < AprilTags.xPosBeforeBarriers) {
+                this.goal = new Pose2d(AprilTags.xPosBeforeBarriers, pose.getY(), converted);
+            }
+        }
+        
     }
 
     public boolean isFinished() {

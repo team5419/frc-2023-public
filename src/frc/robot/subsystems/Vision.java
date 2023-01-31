@@ -15,6 +15,7 @@ import java.io.File;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.Pair;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
@@ -25,6 +26,7 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import frc.robot.Constants.AprilTags;
 import java.util.ArrayList;
 import java.util.Optional;
+import java.util.Spliterators.AbstractSpliterator;
 
 public class Vision extends SubsystemBase { // this keeps track of our limelight and photon camera
     public enum Team { // whether vision thinks we are on red team or blue team (starts out as Team.NONE until one is found)
@@ -32,11 +34,12 @@ public class Vision extends SubsystemBase { // this keeps track of our limelight
     };
     private NetworkTable limelight; // keep track of the limelight
     private ShuffleboardLayout layout; // keep track of a shuffleboard layout for printing data
-    private PhotonCamera camera; // keep track of the photon camera (april tags stuff)
-    private PhotonPoseEstimator poseEstimator; // the photon camera has its own pose estimator that interacts with the overall pose estimator
+    private PhotonCamera[] cameras; // keep track of the photon camera (april tags stuff)
+    private PhotonPoseEstimator[] poseEstimator; // the photon camera has its own pose estimator that interacts with the overall pose estimator
     public Team team; // keep track of the team that we think we're on
     private Rotation3d lastTagRotation;
     private Pose2d lastTagPosition;
+    private Pose2d lastTagPositionFront;
     public Vision(ShuffleboardTab tab, boolean _limelight, boolean _photon) { // the boolean parameters tell the code if we're using limelight and photon vision
         team = Team.NONE; // we don't know what team we're on yet
         layout = tab.getLayout("Vision", BuiltInLayouts.kList).withPosition(1, 0).withSize(2, 4); // create a shuffleboard layout to print data
@@ -49,6 +52,7 @@ public class Vision extends SubsystemBase { // this keeps track of our limelight
         }
         lastTagRotation = new Rotation3d(0.0, 0.0, 0.0);
         lastTagPosition = new Pose2d();
+        lastTagPositionFront = new Pose2d();
         if(_photon) { // if we're using photon camera, set it up and add a value to shuffleboard for what team we're on
             layout.addString("Team", () -> {
                 switch(team) {
@@ -66,23 +70,25 @@ public class Vision extends SubsystemBase { // this keeps track of our limelight
 
             layout.addDouble("Last tag x", () -> lastTagPosition.getX());
             layout.addDouble("Last tag y", () -> lastTagPosition.getY());
-            camera = new PhotonCamera("back");
+            layout.addDouble("Last tag x (front cam)", () -> lastTagPositionFront.getX());
+            layout.addDouble("Last tag y (front cam)", () -> lastTagPositionFront.getY());
+        cameras = new PhotonCamera[] { new PhotonCamera("back")/* , new PhotonCamera("front") */}; // MAKE SURE BACK IS FIRST
         } else {
-            camera = null;
+            cameras = null;
         }
         poseEstimator = null; // we'll create the pose estimator once we know what team we're on
     }
 
     public boolean usesCamera() {
-        return camera != null;
+        return cameras != null;
     }
 
     private Team getTeam() {
         //System.out.println("getting team");
-        if(camera == null) {
+        if(cameras == null) {
             return Team.NONE;
         }
-        PhotonPipelineResult result = camera.getLatestResult();
+        PhotonPipelineResult result = cameras[0].getLatestResult(); // first camera is the back
         if(!result.hasTargets()) {
             return Team.NONE;
         }
@@ -100,27 +106,43 @@ public class Vision extends SubsystemBase { // this keeps track of our limelight
         return Team.RED;
     }
 
-    public Pair<Pose2d, Double> getRobotPose(Pose2d previous) {
+    public Pose2d updateRobotPose(SwerveDrivePoseEstimator poser, Pose2d previous, boolean foundPosition) {
         if(poseEstimator == null) {
             return null;
         }
         Pose2d prev = previous;
         if(team == Team.RED) {
-            prev = new Pose2d(AprilTags.totalX - prev.getX(), prev.getY(), prev.getRotation());
+            prev = new Pose2d(AprilTags.totalX - prev.getX(), AprilTags.totalY - prev.getY(), prev.getRotation());
         }
-        poseEstimator.setReferencePose(prev);
-        Optional<EstimatedRobotPose> result = poseEstimator.update();
-        if (result.isPresent()) {
-            lastTagRotation = result.get().estimatedPose.getRotation();
-            Pose2d asPose = result.get().estimatedPose.toPose2d();
-            if(team == Team.RED) {
-                asPose = new Pose2d(AprilTags.totalX - asPose.getX(), asPose.getY(), asPose.getRotation());
+        for(int i = 0; i < poseEstimator.length; i++) {
+            poseEstimator[i].setReferencePose(prev);
+            Optional<EstimatedRobotPose> result = poseEstimator[i].update();
+            if(result.isPresent()) {
+                Pose2d asPose = result.get().estimatedPose.toPose2d();
+                if(team == Team.RED) {
+                    asPose = new Pose2d(AprilTags.totalX - asPose.getX(), AprilTags.totalY - asPose.getY(), asPose.getRotation());
+                }
+                if((foundPosition && (Math.abs(asPose.getY() - previous.getY()) > 1.0 || Math.abs(asPose.getX() - previous.getX()) > 1.0))) {
+                    System.out.println("previous y: " + previous.getY()+ " new y: " + asPose.getY());
+                    continue;
+                }
+                if(asPose.getY() < 0.0) {
+                    continue;
+                }
+                
+                if(i == 0) {
+                    lastTagRotation = result.get().estimatedPose.getRotation();
+                    lastTagPosition = asPose;
+                } else if(i == 1) {
+                    lastTagPositionFront = asPose;
+                }
+                if(!foundPosition) {
+                    return asPose;
+                }
+                poser.addVisionMeasurement(asPose, result.get().timestampSeconds);
             }
-            lastTagPosition = asPose;
-            return new Pair<Pose2d, Double>(asPose, result.get().timestampSeconds);
-        } else {
-            return null;
         }
+        return null;
     }
 
     public double getHorizontalOffset() { // in settings, make sure limelight is filtering for lowest target closest to the middle
@@ -164,7 +186,7 @@ public class Vision extends SubsystemBase { // this keeps track of our limelight
         // System.out.println(team == Team.BLUE);
         if(team == Team.NONE) {
             team = getTeam();
-        } else if(poseEstimator == null && camera != null) {
+        } else if(poseEstimator == null && cameras != null) {
             AprilTagFieldLayout tagLayout = null;
             try {
                 //File file = new File(team == Team.RED ? "./aprilTagsRed.json" : "./aprilTagsBlue.json");
@@ -174,7 +196,10 @@ public class Vision extends SubsystemBase { // this keeps track of our limelight
                 System.out.println("Unable to load april tags file!!");
                 System.out.println(e);
             }
-            poseEstimator = new PhotonPoseEstimator(tagLayout, PoseStrategy.CLOSEST_TO_REFERENCE_POSE, camera, AprilTags.robotToCam);
+            poseEstimator = new PhotonPoseEstimator[cameras.length];
+            for(int i = 0; i < cameras.length; i++) {
+                poseEstimator[i] = new PhotonPoseEstimator(tagLayout, PoseStrategy.LOWEST_AMBIGUITY, cameras[i], AprilTags.robotToCam[i]);
+            };
         }
     }
 }
