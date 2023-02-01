@@ -1,6 +1,8 @@
 package frc.robot.subsystems;
 import com.ctre.phoenix.sensors.Pigeon2;
 
+import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.Nat;
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -9,6 +11,8 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -52,7 +56,15 @@ public class Swerve extends SubsystemBase { // our swerve drive subsystem
         this.vision = vision; // keep track of the vision system
         Rotation2d tation = Rotation2d.fromDegrees(angle()); // get our current gyro angle
         // instantiate the pose estimator based on our current angle and motor data, with a pose at the origin
-        poseEstimator = new SwerveDrivePoseEstimator(Drive.kinematics, tation, getPositions(), new Pose2d(0.0, 0.0, tation));
+        Matrix<N3, N1> stateDevs = new Matrix<N3,N1>(N3.instance, N1.instance);
+            stateDevs.set(0, 0, 0.1);
+            stateDevs.set(1, 0, 0.1);
+            stateDevs.set(2, 0, 0.1);
+        Matrix<N3, N1> visionDevs = new Matrix<N3,N1>(N3.instance, N1.instance);
+            visionDevs.set(0, 0, 0.9);
+            visionDevs.set(1, 0, 0.9);
+            visionDevs.set(2, 0, 99.0);
+        poseEstimator = new SwerveDrivePoseEstimator(Drive.kinematics, tation, getPositions(), new Pose2d(0.0, 0.0, tation), stateDevs, visionDevs);
         foundPosition = !vision.usesCamera(); // if no camera, just start at zero and move from there. otherwise, wait until the camera reads a value to update the pose tracker
 
         ShuffleboardTab tab = Shuffleboard.getTab("Drivetrain"); // add a special drivetrain tab to shuffleboard
@@ -90,7 +102,7 @@ public class Swerve extends SubsystemBase { // our swerve drive subsystem
         Rotation2d angle = Rotation2d.fromDegrees(angle()); // read the current angle of the robot
         SwerveModulePosition[] positions = getPositions(); // get all the module positions
         if(!foundPosition) { // if we're still waiting for the first vision position reading, do this
-            Pose2d measure = vision.updateRobotPose(poseEstimator, new Pose2d(), false); // get the current vision measurement
+            Pose2d measure = vision.updateRobotPose(poseEstimator, angle, new Pose2d(), false); // get the current vision measurement
             if(measure != null) {
                 foundPosition = true;
                 poseEstimator.resetPosition(angle, getPositions(), measure);
@@ -98,7 +110,7 @@ public class Swerve extends SubsystemBase { // our swerve drive subsystem
         } else {
             // otherwise, do the normal stuff
             Pose2d pose = poseEstimator.update(angle, positions); // update our position estimator using the current lag time, the robot angle, and the module positions
-            vision.updateRobotPose(poseEstimator, pose, true); // try to get a reading from the vision system
+            vision.updateRobotPose(poseEstimator, angle, pose, true); // try to get a reading from the vision system
         }
     }
     public void drive(double forward, double left, double rotation, boolean fieldCentric, boolean pid) {
