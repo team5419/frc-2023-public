@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj.PneumaticHub;
 
 public class RobotContainer {
   private Cuber intake;
@@ -28,6 +29,8 @@ public class RobotContainer {
 
   private EverybotArm arm;
 
+  private PneumaticHub hub;
+
   public RobotContainer(ShuffleboardTab tab) {
     driver = new XboxController(0);
     codriver = new XboxController(1);
@@ -37,17 +40,20 @@ public class RobotContainer {
     indexer = new Indexer(Shuffleboard.getTab("Indexer"));
     //claw = new Claw();
 
-    arm = new EverybotArm();
+    hub = new PneumaticHub();
+
+    arm = new EverybotArm(/*this.hub*/);
 
     swerve = new Swerve(vision, true); /* CHOOSE ONE!!! */
     //drivetrain = new Drivetrain(); /* ^^^ */
 
-    deploy = new IntakeDeploy();
+    deploy = new IntakeDeploy(this.hub);
+
     autoSelector = new SendableChooser<SequentialCommandGroup>();
     tab.add("Auto selector", autoSelector);
     autoSelector.setDefaultOption("Baseline", new Baseline());
     //sautoSelector.addOption("Proto Routine", new ProtoRoutine(drivetrain));
-    autoSelector.addOption("Proto Routine", new SwerveRoutine(swerve, vision));
+    // autoSelector.addOption("Proto Routine", new SwerveRoutine(swerve, vision));
     setDefaults();
     configureButtonBindings(driver, codriver);
   }
@@ -61,19 +67,21 @@ public class RobotContainer {
     Trigger leftBumper = new Trigger(() -> driver.getLeftBumper());
     Trigger rightBumper = new Trigger(() -> driver.getRightBumper());
 
-    Trigger dPadUp = new Trigger(() -> ((codriver.getPOV() < 90 || codriver.getPOV() >= 270) && codriver.getPOV() != -1));
-    Trigger dPadDown = new Trigger(() -> ((codriver.getPOV() >= 90 || codriver.getPOV() < 270) && codriver.getPOV() != -1));
+    Trigger dPadDown = new Trigger(() -> ((codriver.getPOV() >= 180 && codriver.getPOV() < 315) && codriver.getPOV() != -1));
+    Trigger dPadUp = new Trigger(() -> ((codriver.getPOV() >= 315 || codriver.getPOV() < 45) && codriver.getPOV() != -1));
+    Trigger dPadRight = new Trigger(() -> ((codriver.getPOV() >= 45 && codriver.getPOV() < 180) && codriver.getPOV() != -1));
 
     //Trigger aButtonCodriver = new Trigger(() -> codriver.getAButton());
-    leftBumper.whileTrue(Commands.runEnd(() -> { swerve.slowMode = true; }, () -> { swerve.slowMode = false; }));
+    // leftBumper.whileTrue(Commands.runEnd(() -> { swerve.slowMode = true; }, () -> { swerve.slowMode = false; }));
     // aButtonDriver.whileTrue(new RunIntake(intake));
     bButtonDriver.onTrue(new SpecialRamseteSwerve(swerve, vision, driver, true));
     // leftBumper.whileTrue(new RunIntake(intake, indexer));
 
     rightBumper.toggleOnTrue(Commands.runEnd(() -> arm.gotoPosition(Arm.outPosition), () -> arm.gotoPosition(Arm.inPosition)));
 
-    dPadUp.onTrue(new EverybotIntake(this.arm, false));
-    dPadDown.onTrue(new EverybotIntake(this.arm, true));
+    // dPadUp.onTrue(new EverybotIntake(this.arm, false));
+    // dPadRight.onTrue(new EverybotSuction(this.arm));
+    // dPadDown.onTrue(new EverybotIntake(this.arm, true));
 
     // xButtonDriver.whileTrue(Commands.runEnd(() -> { coner.top.intake(); coner.bottom.intake(); }, 
     // () -> { coner.top.stop(); coner.bottom.stop(); }, coner));
@@ -95,7 +103,7 @@ public class RobotContainer {
   }
 
   public void setDefaults() {
-    //drivetrain.setDefaultCommand(new DriveCommand(drivetrain, driver));
+    //drivetrain.setDefaultCommand(new DriveCommand(drivetrain, driver, false));
     swerve.setDefaultCommand(new SwerveDrive(swerve, driver));
     //arm.setDefaultCommand(new Arm(this.arm, this.driver));
   }

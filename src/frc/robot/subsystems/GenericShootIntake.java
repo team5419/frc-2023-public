@@ -6,4 +6,5 @@ public interface GenericShootIntake {
     public void shootHigh();
     public void intake();
     public void stop();
+    public void setup(int height);
 }

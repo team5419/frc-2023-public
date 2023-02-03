@@ -29,17 +29,17 @@ public class StupidRamsete extends CommandBase {
     public void execute() {
         double time = timer.get();
         if(time < rotation) {
-            drivetrain.drive(0.0, turnInverted ? (-ProtoDrive.stupidTurn) : ProtoDrive.stupidTurn);
+            drivetrain.drive(0.0, turnInverted ? (-ProtoDrive.stupidTurn) : ProtoDrive.stupidTurn, false);
         } else {
             //System.out.println(throttleInverted ? (-ProtoDrive.stupidThrottle) : ProtoDrive.stupidThrottle);
-            drivetrain.drive(throttleInverted ? (ProtoDrive.stupidThrottle) : -ProtoDrive.stupidThrottle, 0.0);
+            drivetrain.drive(throttleInverted ? (ProtoDrive.stupidThrottle) : -ProtoDrive.stupidThrottle, 0.0, false);
         }
     }
     public boolean isFinished() {
         return timer.get() > rotation + forward;
     }
     public void end(boolean interrupted) {
-        drivetrain.drive(0.0, 0.0);
+        drivetrain.drive(0.0, 0.0, false);
         timer.stop();
     }
 }

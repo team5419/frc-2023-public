@@ -25,26 +25,32 @@ public class Cuber extends TesterSubsystem implements GenericShootIntake {
         super("Cube Shooter", new TesterMotor[] {
             new TesterNeo("Main", Util.setUpMotor(
                 new CANSparkMax(Ports.intake, MotorType.kBrushless), false, false
+            )),
+            new TesterNeo("Indexer", Util.setUpMotor(
+                new CANSparkMax(Ports.indexer, MotorType.kBrushless), false, false
             ))
-        }, Map.of("low", new TesterSetting(new double[] { CubeShooter.outtakeSpeedLow }),
-                  "mid", new TesterSetting(new double[] { CubeShooter.outtakeSpeedMid }),
-                  "high", new TesterSetting(new double[] { CubeShooter.outtakeSpeedHigh }),
-                  "intake", new TesterSetting(new double[] { CubeShooter.intakeSpeed })));
+        }, Map.of("low", new TesterSetting(new double[] { CubeShooter.outtakeSpeedLow, CubeShooter.indexerOuttakeSpeed }),
+                  "mid", new TesterSetting(new double[] { CubeShooter.outtakeSpeedMid, CubeShooter.indexerOuttakeSpeed }),
+                  "high", new TesterSetting(new double[] { CubeShooter.outtakeSpeedHigh, CubeShooter.indexerOuttakeSpeed }),
+                  "intake", new TesterSetting(new double[] { CubeShooter.intakeSpeed, CubeShooter.indexerIntakeSpeed })));
     }
     public void shootHigh() { // set the motor to a given percent output
-        run("high");
+        runSingle("high", 0);
     }
     public void shootMid() {
-        run("mid");
+        runSingle("mid", 0);
     }
     public void shootLow() {
-        run("low");
+        runSingle("low", 0);
     }
     public void intake() {
         run("intake");
     }
     public void stop() {
         super.stop();
+    }
+    public void setup(int height) {
+        runSingle("high", 1);
     }
     public void periodic() {
 

@@ -24,6 +24,10 @@ public class TesterSubsystem extends SubsystemBase {
             motors[i].run(theSetting.getValue(i));
         }
     }
+    protected void runSingle(String setting, int i) {
+        TesterSetting theSetting = stateMap.get(setting);
+        motors[i].run(theSetting.getValue(i));
+    }
     protected void stop() {
         for(int i = 0; i < motors.length; i++) {
             motors[i].run(0.0);

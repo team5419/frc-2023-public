@@ -51,6 +51,7 @@ public class Coner extends TesterSubsystem implements GenericShootIntake {
     public void stop() {
         super.stop();
     }
+    public void setup(int a) {}
     public void periodic() {
 
     }

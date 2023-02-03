@@ -24,12 +24,21 @@ public class Constants {
         public static final double defaultTopMid = -0.5;
         public static final double defaultTopHigh = -1.0;
     }
+    public static final class EverybotConeConstants {
+        public static final double outtakeSpeedHigh = -1.0;
+        public static final double outtakeSpeedMid = -1.0;
+        public static final double outtakeSpeedLow = -1.0;
+        public static final double intakeSpeed = 0.25;
+    }
     public static final class CubeShooter {
         public static final PIDController outtakePID = new PIDController(0.0001, 0, 0);
         public static final double outtakeSpeedHigh = -1.0;
         public static final double outtakeSpeedMid = -1.0;
         public static final double outtakeSpeedLow = -1.0;
         public static final double intakeSpeed = 0.25;
+
+        public static final double indexerIntakeSpeed = 0.1;
+        public static final double indexerOuttakeSpeed = -0.6;
     }
     public static final class ProtoDrive {
         public static final double trackWidth = 1.781;
@@ -180,5 +189,6 @@ public class Constants {
 
         public static final int solenoidA = 8;
         public static final int solenoidB = 15;
+        public static final int solenoidC = 1;
     }
 };

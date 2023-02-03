@@ -10,13 +10,9 @@ import frc.robot.Util;
 import frc.robot.Constants.Arm;
 
 public class EverybotArm extends SubsystemBase {
-    private CANSparkMax intakeMotor;
     private TalonFX leftArm;
     private TalonFX rightArm;
-    // private GenericEntry widget;
     public EverybotArm() {
-        intakeMotor = new CANSparkMax(Ports.everyIntakeMotor, MotorType.kBrushless);
-        Util.setUpMotor(intakeMotor, false, false);
         leftArm = new TalonFX(Ports.everyArm0);
         Util.setUpMotor(leftArm, Arm.PID, true, 1.0);
         rightArm = new TalonFX(Ports.everyArm1);
@@ -26,14 +22,6 @@ public class EverybotArm extends SubsystemBase {
 
     public void gotoPosition(double ticks) {
         leftArm.set(ControlMode.Position, ticks);
-    }
-
-    public void start(boolean reverse) {
-        intakeMotor.set(reverse ? Arm.outtakeSpeed : Arm.intakeSpeed);
-    }
-
-    public void stop() {
-        intakeMotor.set(0.0);
     }
 
     public void periodic() {
