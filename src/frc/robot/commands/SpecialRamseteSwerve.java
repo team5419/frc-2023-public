@@ -6,7 +6,9 @@ import org.opencv.core.RotatedRect;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.Constants.AprilTags;
+import frc.robot.Constants.Drive;
 import frc.robot.subsystems.Swerve;
 import frc.robot.subsystems.Vision;
 import frc.robot.Util;
@@ -17,21 +19,23 @@ public class SpecialRamseteSwerve extends RamseteSwerve {
         DIAGONAL,
         POSTDIAGONAL
     };
-    private boolean useClosest; 
     private State state;
     private double targetX;
     private double targetY;
     private boolean imBasic;
-    public SpecialRamseteSwerve(Swerve drivetrain, Vision vision, boolean useClosest, boolean imBasic) {
+    private XboxController driver;
+    public SpecialRamseteSwerve(Swerve drivetrain, Vision vision, XboxController driver, boolean imBasic) {
         super(drivetrain, vision, new Pose2d(), false);
-        this.useClosest = useClosest;
         this.state = State.PREDIAGONAL;
         this.targetX = 0.0;
-        
+        this.targetY = 0.0;
+        this.imBasic = imBasic;
+        this.driver = driver;
     }
     public void initialize() {
         System.out.println("Special init");
         int num = drivetrain.currentNum;
+        boolean isCone = (num - 1) % 3 != 0; 
         int height = drivetrain.currentHeight;
         Pose2d pose = drivetrain.pose();
         Vision.Team team = vision.team;
@@ -39,7 +43,6 @@ public class SpecialRamseteSwerve extends RamseteSwerve {
         if(team == Vision.Team.RED) {
             currentY = AprilTags.totalY - currentY;
         }
-        if(useClosest) {
             int closestNum = 0;
             for(int i = 1; i < AprilTags.yPositions.length; i++) {
                 if(AprilTags.yPositions[i] > currentY) {
@@ -47,9 +50,7 @@ public class SpecialRamseteSwerve extends RamseteSwerve {
                     break;
                 }
             }
-            num = closestNum;
-        }
-        boolean isCone = (num - 1) % 3 != 0; 
+            num += 3 * (closestNum / 3); // sketchy fr
         Rotation2d converted = Rotation2d.fromDegrees(isCone ? AprilTags.coneRotation : AprilTags.cubeRotation);
         double effectiveX = pose.getX();
         this.targetX = isCone ? AprilTags.coneDists[height] : AprilTags.cubeDists[height];
@@ -59,7 +60,7 @@ public class SpecialRamseteSwerve extends RamseteSwerve {
         }
         int section = Util.getSection(currentY);
         this.goal = pose;
-        if(section == Util.getSection(AprilTags.yPositions[num]) && section != -1) {
+        if((section == Util.getSection(AprilTags.yPositions[num]) && section != -1) || imBasic) {
             this.state = State.POSTDIAGONAL;
         } else {
             this.state = State.PREDIAGONAL;
@@ -73,6 +74,9 @@ public class SpecialRamseteSwerve extends RamseteSwerve {
     }
 
     public boolean isFinished() {
+        if(Math.abs(driver.getLeftX()) > Drive.controllerDeadband || Math.abs(driver.getLeftY()) > Drive.controllerDeadband || Math.abs(driver.getRightX()) > Drive.controllerDeadband || Math.abs(driver.getRightY()) > Drive.controllerDeadband) {
+            return true;
+        }
         if(isFinished) {
             isFinished = false;
             if(state == State.PREDIAGONAL) {

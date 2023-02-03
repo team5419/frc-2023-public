@@ -46,16 +46,16 @@ public class Util {
     public static double deadband(double value, double tolerance) {
         return (Math.abs(value) <= tolerance) ? 0.0 : value;
     }
-    public static void setUpMotor(TalonFX motor) {
-        setUpMotor(motor, false, false);
+    public static TalonFX setUpMotor(TalonFX motor) {
+        return setUpMotor(motor, false, false);
     }
-    public static void setUpMotor(TalonFX motor, boolean sensorPhase, boolean inverted) {
-        setUpMotor(motor, sensorPhase, inverted, new PID(0.0, 0.0, 0.0), false, 1.0);
+    public static TalonFX setUpMotor(TalonFX motor, boolean sensorPhase, boolean inverted) {
+        return setUpMotor(motor, sensorPhase, inverted, new PID(0.0, 0.0, 0.0), false, 1.0);
     }
-    public static void setUpMotor(TalonFX motor, PID pid, boolean brake, double maxOutput) {
-        setUpMotor(motor, false, false, pid, brake, maxOutput);
+    public static TalonFX setUpMotor(TalonFX motor, PID pid, boolean brake, double maxOutput) {
+        return setUpMotor(motor, false, false, pid, brake, maxOutput);
     }
-    public static void setUpMotor(TalonFX motor, boolean sensorPhase, boolean inverted, PID pid, boolean brake, double maxOutput) {
+    public static TalonFX setUpMotor(TalonFX motor, boolean sensorPhase, boolean inverted, PID pid, boolean brake, double maxOutput) {
         motor.configFactoryDefault(100);
         motor.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 40.0, 0.0, 0.0), 100);
 
@@ -75,8 +75,9 @@ public class Util {
         motor.setNeutralMode(brake ? NeutralMode.Brake : NeutralMode.Coast);
 
         motor.configClosedLoopPeakOutput(0, maxOutput, 100);
+        return motor;
     }
-    public static void setUpMotor(CANSparkMax motor, boolean inverted, boolean brake) {
+    public static CANSparkMax setUpMotor(CANSparkMax motor, boolean inverted, boolean brake) {
         motor.restoreFactoryDefaults();
         motor.setIdleMode(brake ? IdleMode.kBrake : IdleMode.kCoast);
         motor.setInverted(inverted);
@@ -84,5 +85,6 @@ public class Util {
         motor.setClosedLoopRampRate(1.0);
         motor.setControlFramePeriodMs(50);
         motor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 50);
+        return motor;
     }
 }

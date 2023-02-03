@@ -72,7 +72,7 @@ public class SwerveModule implements ISwerveModule {
 
             driveMotor.configClosedLoopPeakOutput(0, 0.1, 100);
             ShuffleboardTab tab = Shuffleboard.getTab("Drivetrain");
-            ShuffleboardLayout layout = tab.getLayout("Module " + num, BuiltInLayouts.kList).withPosition(num + 2, 0).withSize(1, 4);
+            ShuffleboardLayout layout = tab.getLayout("Module " + num, BuiltInLayouts.kList).withPosition(num + 4, 0).withSize(1, 4);
         layout.addNumber("angle", () -> getTurn().getRadians());
         layout.addNumber("drive", () -> getDrive());
         layout.addNumber("desired angle output", () -> this.lastTurnOutput);

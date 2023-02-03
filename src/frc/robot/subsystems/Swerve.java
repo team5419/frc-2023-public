@@ -30,7 +30,7 @@ public class Swerve extends SubsystemBase { // our swerve drive subsystem
     public SwerveModule[] drivers; // an array of 4 swerve modules for the four modules on the robot
     public Pigeon2 gyro; // keep a gyro to read our current angle
     private boolean foundPosition; // keeps track of whether the robot has gotten an initial position reading from the vision system
-    public int currentNum; // keep track of the current station (0-8) that the driver wants to go to based on the button board
+    public int currentNum; // keep track of the current station (0-2) that the driver wants to go to based on the button board
     public int currentHeight; // keep track of whether the driver wants to shoot low, mid, or high based on the button board
     private ChassisSpeeds previousMove; // keep track of the previous speeds of the modules for position tracking
     public boolean slowMode; // whether the swerve drive is in slowmode
@@ -51,8 +51,8 @@ public class Swerve extends SubsystemBase { // our swerve drive subsystem
             gyro = null;
         }
         
-        currentNum = 0; // set default values for these (to be changed later by the codriver) 
-        currentHeight = 0;
+        currentNum = 1; // set default values for these (to be changed later by the codriver) 
+        currentHeight = 1;
         this.vision = vision; // keep track of the vision system
         Rotation2d tation = Rotation2d.fromDegrees(angle()); // get our current gyro angle
         // instantiate the pose estimator based on our current angle and motor data, with a pose at the origin
@@ -61,8 +61,8 @@ public class Swerve extends SubsystemBase { // our swerve drive subsystem
             stateDevs.set(1, 0, 0.1);
             stateDevs.set(2, 0, 0.1);
         Matrix<N3, N1> visionDevs = new Matrix<N3,N1>(N3.instance, N1.instance);
-            visionDevs.set(0, 0, 0.9);
-            visionDevs.set(1, 0, 0.9);
+            visionDevs.set(0, 0, 0.5);
+            visionDevs.set(1, 0, 0.5);
             visionDevs.set(2, 0, 99.0);
         poseEstimator = new SwerveDrivePoseEstimator(Drive.kinematics, tation, getPositions(), new Pose2d(0.0, 0.0, tation), stateDevs, visionDevs);
         foundPosition = !vision.usesCamera(); // if no camera, just start at zero and move from there. otherwise, wait until the camera reads a value to update the pose tracker
@@ -80,6 +80,16 @@ public class Swerve extends SubsystemBase { // our swerve drive subsystem
         layout.addNumber("forward m", () -> previousMove.vxMetersPerSecond); // print out our current speed and turning speed
         layout.addNumber("sideways m", () -> previousMove.vyMetersPerSecond);
         layout.addNumber("turning (rad)", () -> previousMove.omegaRadiansPerSecond);
+        ShuffleboardTab selectionTab = Shuffleboard.getTab("Shot Selection");
+        for(int i = 0; i < 3; i++) {
+            for(int j = 0; j < 3; j++) {
+                int savedI = i;
+                int savedJ = j;
+                selectionTab.addBoolean("row " + i + ", col " + j, () -> (currentNum == savedI && currentHeight == savedJ))
+                    .withSize(1, 1)
+                    .withPosition(j, i);
+            }
+        }
     }
     private SwerveModulePosition[] getPositions() { // get the total lengths driven by each module as an array
         SwerveModulePosition[] arr = new SwerveModulePosition[drivers.length];

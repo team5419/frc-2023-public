@@ -1,4 +1,5 @@
 package frc.robot;
+import frc.robot.Constants.Arm;
 import frc.robot.auto.*;
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
@@ -13,7 +14,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 
 public class RobotContainer {
-  private Intake intake;
+  private Cuber intake;
   private Indexer indexer;
   private IntakeDeploy deploy;
   private Vision vision;
@@ -31,8 +32,8 @@ public class RobotContainer {
     driver = new XboxController(0);
     codriver = new XboxController(1);
     vision = new Vision(tab, false, true);
-    coner = new Coner(tab, false);
-    intake = new Intake(Shuffleboard.getTab("Intake"));
+    coner = new Coner(false);
+    intake = new Cuber();
     indexer = new Indexer(Shuffleboard.getTab("Indexer"));
     //claw = new Claw();
 
@@ -60,28 +61,28 @@ public class RobotContainer {
     Trigger leftBumper = new Trigger(() -> driver.getLeftBumper());
     Trigger rightBumper = new Trigger(() -> driver.getRightBumper());
 
-    Trigger dPadUp = new Trigger(() -> ((driver.getPOV() < 90 || driver.getPOV() >= 270) && driver.getPOV() != -1));
-    Trigger dPadDown = new Trigger(() -> ((driver.getPOV() >= 90 || driver.getPOV() < 270) && driver.getPOV() != -1));
+    Trigger dPadUp = new Trigger(() -> ((codriver.getPOV() < 90 || codriver.getPOV() >= 270) && codriver.getPOV() != -1));
+    Trigger dPadDown = new Trigger(() -> ((codriver.getPOV() >= 90 || codriver.getPOV() < 270) && codriver.getPOV() != -1));
 
     //Trigger aButtonCodriver = new Trigger(() -> codriver.getAButton());
     leftBumper.whileTrue(Commands.runEnd(() -> { swerve.slowMode = true; }, () -> { swerve.slowMode = false; }));
     // aButtonDriver.whileTrue(new RunIntake(intake));
-    bButtonDriver.onTrue(new SpecialRamseteSwerve(swerve, vision, true));
+    bButtonDriver.onTrue(new SpecialRamseteSwerve(swerve, vision, driver, true));
     // leftBumper.whileTrue(new RunIntake(intake, indexer));
 
-    // rightBumper.whileTrue(new Shoot(intake, indexer));
+    rightBumper.toggleOnTrue(Commands.runEnd(() -> arm.gotoPosition(Arm.outPosition), () -> arm.gotoPosition(Arm.inPosition)));
 
     dPadUp.onTrue(new EverybotIntake(this.arm, false));
     dPadDown.onTrue(new EverybotIntake(this.arm, true));
 
-    xButtonDriver.whileTrue(Commands.runEnd(() -> { coner.top.intake(); coner.bottom.intake(); }, 
-    () -> { coner.top.stop(); coner.bottom.stop(); }, coner));
+    // xButtonDriver.whileTrue(Commands.runEnd(() -> { coner.top.intake(); coner.bottom.intake(); }, 
+    // () -> { coner.top.stop(); coner.bottom.stop(); }, coner));
 
-    aButtonDriver.whileTrue(Commands.runEnd(() -> { coner.top.outtakeMid(); coner.bottom.outtakeMid(); }, 
-    () -> { coner.top.stop(); coner.bottom.stop(); }, coner));
+    // aButtonDriver.whileTrue(Commands.runEnd(() -> { coner.top.outtakeMid(); coner.bottom.outtakeMid(); }, 
+    // () -> { coner.top.stop(); coner.bottom.stop(); }, coner));
 
-    yButtonDriver.whileTrue(Commands.runEnd(() -> { coner.top.outtakeHigh(); coner.bottom.outtakeHigh(); }, 
-    () -> { coner.top.stop(); coner.bottom.stop(); }, coner));
+    // yButtonDriver.whileTrue(Commands.runEnd(() -> { coner.top.outtakeHigh(); coner.bottom.outtakeHigh(); }, 
+    // () -> { coner.top.stop(); coner.bottom.stop(); }, coner));
 
     // bButtonDriver.onTrue(deploy.twoPhase());
     // bButtonDriver.onTrue(new Balance(swerve, driver));

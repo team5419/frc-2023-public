@@ -13,7 +13,6 @@ public class EverybotIntake extends CommandBase {
         this.reverse = _reverse;
         this.arm = _arm;
         this.timer = new Timer();
-        // addRequirements(arm);
     }
 
     public void initialize() {

@@ -16,17 +16,20 @@ import java.lang.Math;
 public class Constants {
     public static final class ConerConstants {
         public static final double defaultLowIntake = -0.5;
+        public static final double defaultLowLow = 0.5;
         public static final double defaultLowMid = 0.5;
         public static final double defaultLowHigh = 1.0;
         public static final double defaultTopIntake = 0.5;
+        public static final double defaultTopLow = -0.5;
         public static final double defaultTopMid = -0.5;
         public static final double defaultTopHigh = -1.0;
     }
-    public static final class IntakeConstants {
+    public static final class CubeShooter {
         public static final PIDController outtakePID = new PIDController(0.0001, 0, 0);
-        public static final double outtakeSpeed = -1000.0;
+        public static final double outtakeSpeedHigh = -1.0;
+        public static final double outtakeSpeedMid = -1.0;
+        public static final double outtakeSpeedLow = -1.0;
         public static final double intakeSpeed = 0.25;
-        public static final double indexerIntakeSpeed = 0.1;
     }
     public static final class ProtoDrive {
         public static final double trackWidth = 1.781;
@@ -44,6 +47,7 @@ public class Constants {
         public static final double ticksPerRotation = 2048.0 * 10.3333;
     };
     public static final class Drive {
+        public static final int dPadInputRange = 30;
         public static final PID DrivePID = new PID(0.1, 0.0, 0.0);
         public static final PID TurnPID = new PID(8.0 / 12.0, 0.0, 0.0);
         public static final double slow = 0.2;
@@ -151,6 +155,13 @@ public class Constants {
         public static final double yInsideRightChargingStation = -1.0;
         public static final double yInsideLeftChargingStation = 1000.0;
         public static final double yOutsideLeftChargingStation = 1000.0;
+    }
+    public static final class Arm {
+        public static final PID PID = new PID(1.0, 0.0, 0.0);
+        public static final double intakeSpeed = 1.0;
+        public static final double outtakeSpeed = -1.0;
+        public static final double inPosition = 0.0;
+        public static final double outPosition = 1000.0;
     }
     public static final class Ports {
         public static final int intake = 14;
