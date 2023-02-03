@@ -21,11 +21,13 @@ public class SpecialRamseteSwerve extends RamseteSwerve {
     private State state;
     private double targetX;
     private double targetY;
-    public SpecialRamseteSwerve(Swerve drivetrain, Vision vision, boolean useClosest) {
+    private boolean imBasic;
+    public SpecialRamseteSwerve(Swerve drivetrain, Vision vision, boolean useClosest, boolean imBasic) {
         super(drivetrain, vision, new Pose2d(), false);
         this.useClosest = useClosest;
         this.state = State.PREDIAGONAL;
         this.targetX = 0.0;
+        
     }
     public void initialize() {
         System.out.println("Special init");
@@ -33,11 +35,11 @@ public class SpecialRamseteSwerve extends RamseteSwerve {
         int height = drivetrain.currentHeight;
         Pose2d pose = drivetrain.pose();
         Vision.Team team = vision.team;
+        double currentY = pose.getY();
+        if(team == Vision.Team.RED) {
+            currentY = AprilTags.totalY - currentY;
+        }
         if(useClosest) {
-            double currentY = pose.getY();
-            if(team == Vision.Team.RED) {
-                currentY = AprilTags.totalY - currentY;
-            }
             int closestNum = 0;
             for(int i = 1; i < AprilTags.yPositions.length; i++) {
                 if(AprilTags.yPositions[i] > currentY) {
@@ -53,9 +55,9 @@ public class SpecialRamseteSwerve extends RamseteSwerve {
         this.targetX = isCone ? AprilTags.coneDists[height] : AprilTags.cubeDists[height];
         this.targetY = AprilTags.yPositions[num];
         if(team == Vision.Team.RED) {
-            this.targetY = AprilTags.totalY = targetY;
+            this.targetY = AprilTags.totalY - targetY;
         }
-        int section = Util.getSection(pose.getY());
+        int section = Util.getSection(currentY);
         this.goal = pose;
         if(section == Util.getSection(AprilTags.yPositions[num]) && section != -1) {
             this.state = State.POSTDIAGONAL;

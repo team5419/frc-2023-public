@@ -3,6 +3,8 @@ package frc.robot;
 import frc.robot.modules.ModuleInfo;
 import frc.robot.classes.PID;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
@@ -112,11 +114,11 @@ public class Constants {
         public static final double epsilonForward = 0.1;
     }
     public static final class AprilTags {
-        public static Transform3d[] robotToCam = new Transform3d[] { 
-            new Transform3d( // we can prob just leave this at 0 and use camera as a reference to our robot 
-                new Translation3d(-0.07112, 0.0, 0.12827), new Rotation3d(0.0, -0.087266, -3.14)), // however we should change angle to keep in accordance with gyro angle
-            new Transform3d(
-                new Translation3d(0.0, 0.0, 0.0), new Rotation3d(0.0, 0.0, 0.0))
+        public static Pose2d[] robotToCam = new Pose2d[] { 
+            new Pose2d( // we can prob just leave this at 0 and use camera as a reference to our robot 
+                0.0, 0.0, new Rotation2d(0.0)), // however we should change angle to keep in accordance with gyro angle
+            new Pose2d(
+                0.1, 0.0, Rotation2d.fromDegrees(180.0))
         };
         public static double totalX = 16.54175;
         public static double totalY = 8.0137;
