@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj.PneumaticHub;
 
 public class RobotContainer {
   private Intake intake;
@@ -18,8 +19,8 @@ public class RobotContainer {
   private IntakeDeploy deploy;
   private Vision vision;
   private SendableChooser<SequentialCommandGroup> autoSelector;
-  //private Drivetrain drivetrain;
-  private Swerve swerve;
+  private Drivetrain drivetrain;
+  // private Swerve swerve;
   private XboxController driver;
   private XboxController codriver;
   //private Claw claw;
@@ -27,26 +28,31 @@ public class RobotContainer {
 
   private EverybotArm arm;
 
+  private PneumaticHub hub;
+
   public RobotContainer(ShuffleboardTab tab) {
     driver = new XboxController(0);
     codriver = new XboxController(1);
     vision = new Vision(tab, false, true);
-    coner = new Coner(tab, false);
+    coner = new Coner(tab, true);
     intake = new Intake(Shuffleboard.getTab("Intake"));
     indexer = new Indexer(Shuffleboard.getTab("Indexer"));
     //claw = new Claw();
 
-    arm = new EverybotArm();
+    hub = new PneumaticHub();
 
-    swerve = new Swerve(vision, true); /* CHOOSE ONE!!! */
-    //drivetrain = new Drivetrain(); /* ^^^ */
+    arm = new EverybotArm(/*this.hub*/);
 
-    deploy = new IntakeDeploy();
+    // swerve = new Swerve(vision, true); /* CHOOSE ONE!!! */
+    drivetrain = new Drivetrain(); /* ^^^ */
+
+    deploy = new IntakeDeploy(this.hub);
+
     autoSelector = new SendableChooser<SequentialCommandGroup>();
     tab.add("Auto selector", autoSelector);
     autoSelector.setDefaultOption("Baseline", new Baseline());
     //sautoSelector.addOption("Proto Routine", new ProtoRoutine(drivetrain));
-    autoSelector.addOption("Proto Routine", new SwerveRoutine(swerve, vision));
+    // autoSelector.addOption("Proto Routine", new SwerveRoutine(swerve, vision));
     setDefaults();
     configureButtonBindings(driver, codriver);
   }
@@ -60,19 +66,23 @@ public class RobotContainer {
     Trigger leftBumper = new Trigger(() -> driver.getLeftBumper());
     Trigger rightBumper = new Trigger(() -> driver.getRightBumper());
 
-    Trigger dPadUp = new Trigger(() -> ((driver.getPOV() < 90 || driver.getPOV() >= 270) && driver.getPOV() != -1));
-    Trigger dPadDown = new Trigger(() -> ((driver.getPOV() >= 90 || driver.getPOV() < 270) && driver.getPOV() != -1));
+    Trigger dPadDown = new Trigger(() -> ((driver.getPOV() >= 180 && driver.getPOV() < 315) && driver.getPOV() != -1));
+    Trigger dPadUp = new Trigger(() -> ((driver.getPOV() >= 315 || driver.getPOV() < 45) && driver.getPOV() != -1));
+    Trigger dPadRight = new Trigger(() -> ((driver.getPOV() >= 45 && driver.getPOV() < 180) && driver.getPOV() != -1));
 
     //Trigger aButtonCodriver = new Trigger(() -> codriver.getAButton());
-    leftBumper.whileTrue(Commands.runEnd(() -> { swerve.slowMode = true; }, () -> { swerve.slowMode = false; }));
+    // leftBumper.whileTrue(Commands.runEnd(() -> { swerve.slowMode = true; }, () -> { swerve.slowMode = false; }));
     // aButtonDriver.whileTrue(new RunIntake(intake));
-    bButtonDriver.onTrue(new SpecialRamseteSwerve(swerve, vision, true));
+    // bButtonDriver.onTrue(new SpecialRamseteSwerve(swerve, vision, true));
     // leftBumper.whileTrue(new RunIntake(intake, indexer));
 
     // rightBumper.whileTrue(new Shoot(intake, indexer));
 
     dPadUp.onTrue(new EverybotIntake(this.arm, false));
+    dPadRight.onTrue(new EverybotSuction(this.arm));
     dPadDown.onTrue(new EverybotIntake(this.arm, true));
+
+    leftBumper.whileTrue(new DriveCommand(drivetrain, driver, true));
 
     xButtonDriver.whileTrue(Commands.runEnd(() -> { coner.top.intake(); coner.bottom.intake(); }, 
     () -> { coner.top.stop(); coner.bottom.stop(); }, coner));
@@ -94,8 +104,8 @@ public class RobotContainer {
   }
 
   public void setDefaults() {
-    //drivetrain.setDefaultCommand(new DriveCommand(drivetrain, driver));
-    swerve.setDefaultCommand(new SwerveDrive(swerve, driver));
+    drivetrain.setDefaultCommand(new DriveCommand(drivetrain, driver, false));
+    // swerve.setDefaultCommand(new SwerveDrive(swerve, driver));
     //arm.setDefaultCommand(new Arm(this.arm, this.driver));
   }
 }

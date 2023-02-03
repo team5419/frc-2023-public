@@ -167,5 +167,6 @@ public class Constants {
 
         public static final int solenoidA = 8;
         public static final int solenoidB = 15;
+        public static final int solenoidC = 1;
     }
 };

@@ -20,6 +20,7 @@ public class Drivetrain extends SubsystemBase { // differential (non-swerve) dri
     private TalonFX rightFollower; // the back right motor
     private DifferentialDriveOdometry odometry; // this is used to keep track of the robot's position
     public Pigeon2 gyro; // a gyrometer that's used to read our current angle
+    private double mod;
 
     public Drivetrain() {
         leftLeader = new TalonFX(Ports.leftLeader); // instantiate all four motors using predefined ports
@@ -52,10 +53,23 @@ public class Drivetrain extends SubsystemBase { // differential (non-swerve) dri
     public void simulationPeriodic() {
         
     }
-    public void drive(double throttle, double turnAmount){ // drive the robot with a given throttle amount and turn amount
-        leftLeader.set(TalonFXControlMode.PercentOutput, throttle - turnAmount); // the left motors' outputs are decreased by the turn amount
-        rightLeader.set(TalonFXControlMode.PercentOutput, throttle + turnAmount); // the right motors' outputs are increased by the turn amount
-        // picture this in your head - this way, the left and right sides move in opposite direction to produce a turn
+    public void drive(double throttle, double turnAmount, boolean slow){ // drive the robot with a given throttle amount and turn amount
+        if (slow){
+            mod = 0.5;
+        } else {
+            mod = 1;
+        }
+
+        double turnSense = 0.75;
+
+        if (throttle <= 0.02){
+            leftLeader.set(TalonFXControlMode.PercentOutput, ( -turnAmount * mod); // the left motors' outputs are decreased by the turn amount
+            rightLeader.set(TalonFXControlMode.PercentOutput, (turnAmount * mod);
+        } else {
+            leftLeader.set(TalonFXControlMode.PercentOutput, (throttle - (turnAmount * turnSense)) * mod); // the left motors' outputs are decreased by the turn amount
+            rightLeader.set(TalonFXControlMode.PercentOutput, (throttle + (turnAmount * turnSense)) * mod); // the right motors' outputs are increased by the turn amount
+            // picture this in your head - this way, the left and right sides move in opposite direction to produce a turn
+        }
     }
     public void setVelocity(double leftVelocity, double rightVelocity, double leftFF, double rightFF) {
         leftLeader.set( // set the left and right sides using velocity control and feed forward to get more accurate control during auto
