@@ -12,7 +12,9 @@ import frc.robot.Constants.Arm;
 public class EverybotArm extends SubsystemBase {
     private TalonFX leftArm;
     private TalonFX rightArm;
-    public EverybotArm() {
+    private boolean usePID;
+    public EverybotArm(boolean usePID) {
+        this.usePID = usePID;
         leftArm = new TalonFX(Ports.everyArm0);
         Util.setUpMotor(leftArm, Arm.PID, true, 1.0);
         rightArm = new TalonFX(Ports.everyArm1);
@@ -21,7 +23,13 @@ public class EverybotArm extends SubsystemBase {
     }
 
     public void gotoPosition(double ticks) {
-        leftArm.set(ControlMode.Position, ticks);
+        if(usePID) {
+            leftArm.set(ControlMode.Position, ticks);
+        }
+    }
+
+    public void move(double speed) {
+        leftArm.set(ControlMode.PercentOutput, speed);
     }
 
     public void periodic() {

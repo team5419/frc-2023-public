@@ -11,10 +11,9 @@ public class IntakeDeploy extends TwoPhaseSubsystem {
     private Solenoid soOne;
     private Solenoid soTwo;
     private PneumaticHub hub;
-    public IntakeDeploy(PneumaticHub hub) {
+    public IntakeDeploy() {
         super();
-        this.hub = hub;
-        // hub = new PneumaticHub();
+        this.hub = new PneumaticHub();
         compressor = this.hub.makeCompressor();
         //solenoid = hub.makeDoubleSolenoid(Ports.solenoidA, Ports.solenoidB);
         //compressor = new Compressor(0, PneumaticsModuleType.CTREPCM);

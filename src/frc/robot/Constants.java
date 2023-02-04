@@ -39,6 +39,7 @@ public class Constants {
 
         public static final double indexerIntakeSpeed = 0.1;
         public static final double indexerOuttakeSpeed = -0.6;
+        public static final double indexerSlowBackwardsSpeed = 0.1;
     }
     public static final class ProtoDrive {
         public static final double trackWidth = 1.781;
@@ -167,10 +168,9 @@ public class Constants {
     }
     public static final class Arm {
         public static final PID PID = new PID(1.0, 0.0, 0.0);
-        public static final double intakeSpeed = 1.0;
-        public static final double outtakeSpeed = -1.0;
         public static final double inPosition = 0.0;
         public static final double outPosition = 1000.0;
+        public static final double moveSpeed = 0.1;
     }
     public static final class Ports {
         public static final int intake = 14;

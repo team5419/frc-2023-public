@@ -34,15 +34,12 @@ public class Cuber extends TesterSubsystem implements GenericShootIntake {
                   "high", new TesterSetting(new double[] { CubeShooter.outtakeSpeedHigh, CubeShooter.indexerOuttakeSpeed }),
                   "intake", new TesterSetting(new double[] { CubeShooter.intakeSpeed, CubeShooter.indexerIntakeSpeed })));
     }
-    public void shootHigh() { // set the motor to a given percent output
-        runSingle("high", 0);
+    private void shoot() {
+        runSingle("high", 1);
     }
-    public void shootMid() {
-        runSingle("mid", 0);
-    }
-    public void shootLow() {
-        runSingle("low", 0);
-    }
+    public void shootHigh() {shoot();};
+    public void shootMid() {shoot();};
+    public void shootLow() {shoot();};
     public void intake() {
         run("intake");
     }
@@ -50,7 +47,18 @@ public class Cuber extends TesterSubsystem implements GenericShootIntake {
         super.stop();
     }
     public void setup(int height) {
-        runSingle("high", 1);
+        motors[1].run(CubeShooter.indexerSlowBackwardsSpeed);
+        switch(height) {
+            case 0:
+                runSingle("low", 0);
+                break;
+            case 1:
+                runSingle("mid", 0);
+                break;
+            case 2:
+                runSingle("high", 0);
+                break;
+        }
     }
     public void periodic() {
 
