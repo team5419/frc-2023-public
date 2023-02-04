@@ -1,33 +1,23 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.AprilTagConstants;
+import frc.robot.Constants.LimelightConstants;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import frc.robot.Constants.Limelight;
-
-import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
-import org.photonvision.PhotonPoseEstimator;
-import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
-import java.io.File;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
-import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
-import frc.robot.Constants.AprilTags;
-import java.util.ArrayList;
 import java.util.Optional;
 
 public class Vision extends SubsystemBase { // this keeps track of our limelight and photon camera
@@ -116,7 +106,7 @@ public class Vision extends SubsystemBase { // this keeps track of our limelight
                 PhotonTrackedTarget target = res.getBestTarget();
                 if(target != null) {
                     Transform3d transform = target.getBestCameraToTarget();
-                    Pose2d reference = AprilTags.robotToCam[i];
+                    Pose2d reference = AprilTagConstants.robotToCam[i];
                     //double theta = target.getYaw() * Math.PI / 180.0; use this to rely on apriltag angle instead of gyro
                     double _theta = theta.getRadians() - reference.getRotation().getRadians();
                     double preTransformX = transform.getX() - reference.getX();
@@ -126,7 +116,7 @@ public class Vision extends SubsystemBase { // this keeps track of our limelight
                     Optional<Pose3d> tagPose = tagLayout.getTagPose(target.getFiducialId());
                     Pose2d pose2d = new Pose2d(transformedX + tagPose.get().getX(), transformedY + tagPose.get().getY(), theta);
                     if(team == Team.RED) {
-                        pose2d = new Pose2d(AprilTags.totalX - pose2d.getX(), AprilTags.totalY - pose2d.getY(), theta);
+                        pose2d = new Pose2d(AprilTagConstants.totalX - pose2d.getX(), AprilTagConstants.totalY - pose2d.getY(), theta);
                     }
                     if(i == 0) {
                         lastTagPositionFront = pose2d; // actually this is the back reading
@@ -153,7 +143,7 @@ public class Vision extends SubsystemBase { // this keeps track of our limelight
         if(limelight == null) {
             return 0.0;
         }
-        return (Limelight.lowTargetHeight - Limelight.cameraHeight) / Math.tan(Math.toRadians(Limelight.cameraAngle + getVerticalOffset()));
+        return (LimelightConstants.lowTargetHeight - LimelightConstants.cameraHeight) / Math.tan(Math.toRadians(LimelightConstants.cameraAngle + getVerticalOffset()));
     }
 
     // check if the limelight is picking up on the target

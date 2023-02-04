@@ -15,18 +15,24 @@ public class TesterSubsystem extends SubsystemBase {
         int i = 0;
         for(Map.Entry<String, TesterSetting> entry : states.entrySet()) {
             entry.getValue().initialize(tab, motors, entry.getKey(), i);
-            i += 2;
+            i++;
+        }
+        for(int j = 0; j < motors.length; j++) { // display all velocities at the bottom
+            int savedJ = j;
+            tab.addNumber(motors[j].getName() + " VELOCITY", () -> motors[savedJ].getVelocity())
+                .withSize(2, 1)
+                .withPosition(j * 2, i);
         }
     }
     public void run(String setting) {
         TesterSetting theSetting = stateMap.get(setting);
         for(int i = 0; i < motors.length; i++) {
-            motors[i].run(theSetting.getValue(i));
+            theSetting.setMotor(i, motors[i]);
         }
     }
     protected void runSingle(String setting, int i) {
         TesterSetting theSetting = stateMap.get(setting);
-        motors[i].run(theSetting.getValue(i));
+        theSetting.setMotor(i, motors[i]);
     }
     protected void stop() {
         for(int i = 0; i < motors.length; i++) {

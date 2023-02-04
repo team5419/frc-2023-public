@@ -2,14 +2,10 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Swerve;
 import frc.robot.subsystems.Vision;
-import frc.robot.Constants.AprilTags;
-import frc.robot.Constants.Drive;
 import frc.robot.Util;
-
-import java.util.function.Supplier;
-
+import frc.robot.Constants.AprilTagConstants;
+import frc.robot.Constants.SwerveDriveConstants;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 
 public class RamseteSwerve extends CommandBase {
     protected Swerve drivetrain;
@@ -28,7 +24,7 @@ public class RamseteSwerve extends CommandBase {
     public void initialize() {
         System.out.println("initializing");
         if(teamRelative && vision.team == Vision.Team.RED) {
-            this.goal = new Pose2d(AprilTags.totalX - goal.getX(), AprilTags.totalY - goal.getY(), goal.getRotation());
+            this.goal = new Pose2d(AprilTagConstants.totalX - goal.getX(), AprilTagConstants.totalY - goal.getY(), goal.getRotation());
         }
     }
     public void execute() { 
@@ -46,16 +42,16 @@ public class RamseteSwerve extends CommandBase {
         double ydiff = goal.getY() - pose.getY();
         //System.out.println(ydiff);
 
-        double dx = Drive.pXY * Util.deadband(xdiff, Drive.epsilonXY);
-        double dy = Drive.pXY * Util.deadband(ydiff, Drive.epsilonXY);
+        double dx = SwerveDriveConstants.pXY * Util.deadband(xdiff, SwerveDriveConstants.epsilonXY);
+        double dy = SwerveDriveConstants.pXY * Util.deadband(ydiff, SwerveDriveConstants.epsilonXY);
         double magnitude = Math.sqrt(Math.pow(dx, 2.0) + Math.pow(dy, 2.0));
 
-        if(magnitude > Drive.maxVelocity) {
-            dx *= (Drive.maxVelocity / magnitude); // straight line ? idk
-            dy *= (Drive.maxVelocity / magnitude);
+        if(magnitude > SwerveDriveConstants.maxVelocity) {
+            dx *= (SwerveDriveConstants.maxVelocity / magnitude); // straight line ? idk
+            dy *= (SwerveDriveConstants.maxVelocity / magnitude);
         }
 
-        double dtheta = 1 * Drive.pTheta * (Math.PI / 180.0) * Util.deadband(target - theta, Drive.epsilonTheta);
+        double dtheta = 1 * SwerveDriveConstants.pTheta * (Math.PI / 180.0) * Util.deadband(target - theta, SwerveDriveConstants.epsilonTheta);
         System.out.println(dtheta);
         //System.out.println("theta: ${DriveConstants.pTheta * (Math.PI / 180) * (target - theta)}");
         drivetrain.drive(dx, -dy, dtheta, true, true);

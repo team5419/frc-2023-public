@@ -1,8 +1,8 @@
 package frc.robot.commands;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Constants.DifferentialDriveConstants;
 import frc.robot.subsystems.Drivetrain;
-import frc.robot.Constants.ProtoDrive;
 
 public class StupidRamsete extends CommandBase {
     private Drivetrain drivetrain;
@@ -29,10 +29,10 @@ public class StupidRamsete extends CommandBase {
     public void execute() {
         double time = timer.get();
         if(time < rotation) {
-            drivetrain.drive(0.0, turnInverted ? (-ProtoDrive.stupidTurn) : ProtoDrive.stupidTurn, false);
+            drivetrain.drive(0.0, turnInverted ? (-DifferentialDriveConstants.stupidTurn) : DifferentialDriveConstants.stupidTurn, false);
         } else {
             //System.out.println(throttleInverted ? (-ProtoDrive.stupidThrottle) : ProtoDrive.stupidThrottle);
-            drivetrain.drive(throttleInverted ? (ProtoDrive.stupidThrottle) : -ProtoDrive.stupidThrottle, 0.0, false);
+            drivetrain.drive(throttleInverted ? (DifferentialDriveConstants.stupidThrottle) : -DifferentialDriveConstants.stupidThrottle, 0.0, false);
         }
     }
     public boolean isFinished() {

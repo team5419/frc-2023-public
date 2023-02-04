@@ -2,8 +2,6 @@ package frc.robot.subsystems;
 import com.ctre.phoenix.sensors.Pigeon2;
 
 import edu.wpi.first.math.Matrix;
-import edu.wpi.first.math.Nat;
-import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -13,15 +11,14 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.modules.SwerveModule;
-import frc.robot.Constants.Drive;
 import frc.robot.Constants.Ports;
+import frc.robot.Constants.SwerveDriveConstants;
 import frc.robot.Util; 
 import frc.robot.commands.ResetGyro;
 public class Swerve extends SubsystemBase { // our swerve drive subsystem
@@ -36,9 +33,9 @@ public class Swerve extends SubsystemBase { // our swerve drive subsystem
     public boolean slowMode; // whether the swerve drive is in slowmode
     public double yawOffset; // keep track of a yaw offset for the gyro so that we can reset it to 0
     public Swerve(Vision vision, boolean pigeon) { // the pigeon parameter tells the code whether we are using a pigeon
-        drivers = new SwerveModule[Drive.info.length]; // instantiate the module array
+        drivers = new SwerveModule[SwerveDriveConstants.info.length]; // instantiate the module array
         for(int i = 0; i < drivers.length; i++)  {
-            drivers[i] = new SwerveModule(Drive.info[i], i); // for each module, instantiate the module with predefined constant module info
+            drivers[i] = new SwerveModule(SwerveDriveConstants.info[i], i); // for each module, instantiate the module with predefined constant module info
         }
         slowMode = false; // slow mode starts off
         previousMove = new ChassisSpeeds(); // the last chassisspeeds were zero
@@ -64,7 +61,7 @@ public class Swerve extends SubsystemBase { // our swerve drive subsystem
             visionDevs.set(0, 0, 0.5);
             visionDevs.set(1, 0, 0.5);
             visionDevs.set(2, 0, 99.0);
-        poseEstimator = new SwerveDrivePoseEstimator(Drive.kinematics, tation, getPositions(), new Pose2d(0.0, 0.0, tation), stateDevs, visionDevs);
+        poseEstimator = new SwerveDrivePoseEstimator(SwerveDriveConstants.kinematics, tation, getPositions(), new Pose2d(0.0, 0.0, tation), stateDevs, visionDevs);
         foundPosition = !vision.usesCamera(); // if no camera, just start at zero and move from there. otherwise, wait until the camera reads a value to update the pose tracker
 
         ShuffleboardTab tab = Shuffleboard.getTab("Drivetrain"); // add a special drivetrain tab to shuffleboard
@@ -130,8 +127,8 @@ public class Swerve extends SubsystemBase { // our swerve drive subsystem
         ChassisSpeeds speeds = (fieldCentric) ? ChassisSpeeds.fromFieldRelativeSpeeds(forward, left, rotation, Rotation2d.fromDegrees(this.angle())) : new ChassisSpeeds(forward, left, rotation);
         // ^ generate desired speeds for the chassis
         this.previousMove = speeds;
-        SwerveModuleState[] states = Drive.kinematics.toSwerveModuleStates(speeds); // convert the chassis speed to individual states for each module
-        SwerveDriveKinematics.desaturateWheelSpeeds(states, Drive.maxVelocity); // make sure that the states conform to our max velocity
+        SwerveModuleState[] states = SwerveDriveConstants.kinematics.toSwerveModuleStates(speeds); // convert the chassis speed to individual states for each module
+        SwerveDriveKinematics.desaturateWheelSpeeds(states, SwerveDriveConstants.maxVelocity); // make sure that the states conform to our max velocity
         updateMotors(states, pid, forward == 0.0 && left == 0.0 && rotation == 0.0);
         // if the driver isn't touching the controller, don't just turn to 0 for no reason. instead, don't move at all
     }

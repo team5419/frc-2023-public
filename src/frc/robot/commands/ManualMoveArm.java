@@ -2,11 +2,8 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.EverybotArm;
-import frc.robot.subsystems.Swerve;
 import frc.robot.Util;
-import frc.robot.Constants.Arm;
-import frc.robot.Constants.Drive;
-
+import frc.robot.Constants.EverybotArmConstants;
 public class ManualMoveArm extends CommandBase {
     XboxController codriver;
     EverybotArm arm;
@@ -21,7 +18,7 @@ public class ManualMoveArm extends CommandBase {
 
     }
     public void execute() {
-        arm.move(Util.deadband(codriver.getLeftY(), 0.1) * Arm.moveSpeed);
+        arm.move(Util.deadband(codriver.getLeftY(), 0.1) * EverybotArmConstants.moveSpeed);
     }
     public boolean isFinished() {
         return false;

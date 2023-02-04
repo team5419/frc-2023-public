@@ -7,41 +7,41 @@ import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.StatusFrame;
 import com.ctre.phoenix.motorcontrol.ControlFrame;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
-import frc.robot.classes.PID;
-import frc.robot.Constants.AprilTags;
 
-import frc.robot.Constants.Drive;
-import frc.robot.Constants.ProtoDrive;
+import frc.robot.Constants.AprilTagConstants;
+import frc.robot.Constants.DifferentialDriveConstants;
+import frc.robot.Constants.SwerveDriveConstants;
+import frc.robot.classes.PID;
 public class Util {
     public static int getSection(double xpos) {
-        if(xpos <= AprilTags.yOutsideRightChargingStation) {
+        if(xpos <= AprilTagConstants.yOutsideRightChargingStation) {
             return 0;
         }
-        if(xpos >= AprilTags.yInsideRightChargingStation && xpos <= AprilTags.yInsideLeftChargingStation) {
+        if(xpos >= AprilTagConstants.yInsideRightChargingStation && xpos <= AprilTagConstants.yInsideLeftChargingStation) {
             return 1;
         }
-        if(xpos >= AprilTags.yOutsideLeftChargingStation) {
+        if(xpos >= AprilTagConstants.yOutsideLeftChargingStation) {
             return 2;
         }
         return -1;
     }
     public static double nativeUnitsToMetersPerSecond(double units) {
-        return (units / Drive.ticksPerRotation) * Drive.wheelCircumference * 10.0;
+        return (units / SwerveDriveConstants.ticksPerRotation) * SwerveDriveConstants.wheelCircumference * 10.0;
     }
     public static double nativeUnitsToMeters(double units) {
-        return (units / Drive.ticksPerRotation) * Drive.wheelCircumference / Drive.unitsPerMeter;
+        return (units / SwerveDriveConstants.ticksPerRotation) * SwerveDriveConstants.wheelCircumference / SwerveDriveConstants.unitsPerMeter;
     }
     public static double nativeUnitsToMetersProto(double units) {
-        return (units / ProtoDrive.ticksPerRotation) * Drive.wheelCircumference;
+        return (units / DifferentialDriveConstants.ticksPerRotation) * SwerveDriveConstants.wheelCircumference;
     }
     public static double metersPerSecondToNativeUnits(double units) {
-        return ((units / Drive.wheelCircumference) * Drive.ticksPerRotation) / 10.0;
+        return ((units / SwerveDriveConstants.wheelCircumference) * SwerveDriveConstants.ticksPerRotation) / 10.0;
     }
     public static double metersPerSecondToNativeUnitsProto(double units) {
-        return ((units / Drive.wheelCircumference) * ProtoDrive.ticksPerRotation) / 10.0;
+        return ((units / SwerveDriveConstants.wheelCircumference) * DifferentialDriveConstants.ticksPerRotation) / 10.0;
     }
     public static double degreesToNativeUnits(double units) {
-        return (units / 360.0) * Drive.turnTicksPerRotation;
+        return (units / 360.0) * SwerveDriveConstants.turnTicksPerRotation;
     }
     public static double deadband(double value, double tolerance) {
         return (Math.abs(value) <= tolerance) ? 0.0 : value;

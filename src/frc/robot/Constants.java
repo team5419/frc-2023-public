@@ -1,47 +1,112 @@
 package frc.robot;
 
 import frc.robot.modules.ModuleInfo;
+import frc.robot.subsystems.test.TesterSetting;
 import frc.robot.classes.PID;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import java.lang.Math;
+import java.util.Map;
 
 public class Constants {
+    public static enum ConerTypes {
+        LOW, ARM_MOTORS, ARM_SUCTION
+    }
+    public static enum CuberTypes {
+        LOW
+    }
+    public static final class TargetHeights { // these need to be stored as strings for shuffleboard
+        public static final String LOW = "LOW";
+        public static final String MID = "MID";
+        public static final String HIGH = "HIGH";
+        public static final String INTAKE = "INTAKE";
+        public static final String[] heights = { LOW, MID, HIGH };
+    }
     public static final class ConerConstants {
-        public static final double defaultLowIntake = -0.5;
-        public static final double defaultLowLow = 0.5;
-        public static final double defaultLowMid = 0.5;
-        public static final double defaultLowHigh = 1.0;
-        public static final double defaultTopIntake = 0.5;
-        public static final double defaultTopLow = -0.5;
-        public static final double defaultTopMid = -0.5;
-        public static final double defaultTopHigh = -1.0;
-    }
-    public static final class EverybotConeConstants {
-        public static final double outtakeSpeedHigh = -1.0;
-        public static final double outtakeSpeedMid = -1.0;
-        public static final double outtakeSpeedLow = -1.0;
-        public static final double intakeSpeed = 0.25;
-    }
-    public static final class CubeShooter {
-        public static final PIDController outtakePID = new PIDController(0.0001, 0, 0);
-        public static final double outtakeSpeedHigh = -1.0;
-        public static final double outtakeSpeedMid = -1.0;
-        public static final double outtakeSpeedLow = -1.0;
-        public static final double intakeSpeed = 0.25;
+        // order: bottom motor, top motor
+        public static final Map<String, TesterSetting> percents = Map.of(TargetHeights.LOW, new TesterSetting(new double[] { 
+            0.5, -0.5
+        }), TargetHeights.MID, new TesterSetting(new double[] { 
+            0.5, -0.5
+        }), TargetHeights.HIGH, new TesterSetting(new double[] { 
+            1.0, -1.0
+        }), TargetHeights.INTAKE, new TesterSetting(new double[] { 
+            -0.5, 0.5
+        }));
 
-        public static final double indexerIntakeSpeed = 0.1;
-        public static final double indexerOuttakeSpeed = -0.6;
+        public static final Map<String, TesterSetting> neoVelocities = Map.of(TargetHeights.LOW, new TesterSetting(new double[] { 
+            2500.0, -2500.0
+        }), TargetHeights.MID, new TesterSetting(new double[] { 
+            2500.0, -2500.0
+        }), TargetHeights.HIGH, new TesterSetting(new double[] { 
+            5000.0, -5000.0
+        }), TargetHeights.INTAKE, new TesterSetting(new double[] { 
+            -2500.0, 2500.0
+        }));
+
+        public static final Map<String, TesterSetting> falconVelocities = Map.of(TargetHeights.LOW, new TesterSetting(new double[] { 
+            10000.0, -10000.0
+        }), TargetHeights.MID, new TesterSetting(new double[] { 
+            10000.0, -10000.0
+        }), TargetHeights.HIGH, new TesterSetting(new double[] { 
+            20000.0, -20000.0
+        }), TargetHeights.INTAKE, new TesterSetting(new double[] { 
+            -10000.0, 10000.0
+        }));
+    }
+    public static final class CubeShooterConstants {
+        public static final PIDController outtakePID = new PIDController(0.0001, 0, 0);
+
+        // order: main motor, indexer
+        public static final Map<String, TesterSetting> percents = Map.of(TargetHeights.LOW, new TesterSetting(new double[] { 
+            -1.0, -0.6
+        }), TargetHeights.MID, new TesterSetting(new double[] { 
+            -1.0, -0.6
+        }), TargetHeights.HIGH, new TesterSetting(new double[] { 
+            -1.0, -0.6
+        }), TargetHeights.INTAKE, new TesterSetting(new double[] { 
+            0.25, 0.1
+        }));
+
+        public static final Map<String, TesterSetting> velocities = Map.of(TargetHeights.LOW, new TesterSetting(new double[] { 
+            -5000.0, -3000.0
+        }), TargetHeights.MID, new TesterSetting(new double[] { 
+            -5000.0, -3000.0
+        }), TargetHeights.HIGH, new TesterSetting(new double[] { 
+            -5000.0, -3000.0
+        }), TargetHeights.INTAKE, new TesterSetting(new double[] { 
+             1250.0, 500.0
+        }));
+
         public static final double indexerSlowBackwardsSpeed = 0.1;
     }
-    public static final class ProtoDrive {
+    public static final class EverybotConeConstants {
+        // order: main motor
+        public static final Map<String, TesterSetting> percents = Map.of(TargetHeights.LOW, new TesterSetting(new double[] { 
+            -1.0
+        }), TargetHeights.MID, new TesterSetting(new double[] { 
+            -1.0
+        }), TargetHeights.HIGH, new TesterSetting(new double[] { 
+            -1.0
+        }), TargetHeights.INTAKE, new TesterSetting(new double[] { 
+            0.25
+        }));
+
+        public static final Map<String, TesterSetting> velocities = Map.of(TargetHeights.LOW, new TesterSetting(new double[] { 
+            -5000.0
+        }), TargetHeights.MID, new TesterSetting(new double[] { 
+            -5000.0
+        }), TargetHeights.HIGH, new TesterSetting(new double[] { 
+            -5000.0
+        }), TargetHeights.INTAKE, new TesterSetting(new double[] { 
+             1250.0
+        }));
+    }
+    public static final class DifferentialDriveConstants {
         public static final double trackWidth = 1.781;
         public static final double maxAcceleration = 1.5;
         public static final double maxVelocity = 3.0;
@@ -56,7 +121,7 @@ public class Constants {
         public static final double stupidThrottle = 0.1;
         public static final double ticksPerRotation = 2048.0 * 10.3333;
     };
-    public static final class Drive {
+    public static final class SwerveDriveConstants {
         public static final int dPadInputRange = 30;
         public static final PID DrivePID = new PID(0.1, 0.0, 0.0);
         public static final PID TurnPID = new PID(8.0 / 12.0, 0.0, 0.0);
@@ -113,7 +178,7 @@ public class Constants {
         public static final double openPosition = 0.0;
         public static final double closedPosition = 1.0;
     }
-    public static final class Limelight {
+    public static final class LimelightConstants {
         public static final double lowTargetHeight = 1.0;
         public static final double cameraAngle = 0.0;
         public static final double cameraHeight = 0.5;
@@ -127,7 +192,7 @@ public class Constants {
         public static final double epsilonHorizontal = 0.1;
         public static final double epsilonForward = 0.1;
     }
-    public static final class AprilTags {
+    public static final class AprilTagConstants {
         public static Pose2d[] robotToCam = new Pose2d[] { 
             new Pose2d( // we can prob just leave this at 0 and use camera as a reference to our robot 
                 0.0, 0.0, new Rotation2d(0.0)), // however we should change angle to keep in accordance with gyro angle
@@ -166,7 +231,7 @@ public class Constants {
         public static final double yInsideLeftChargingStation = 1000.0;
         public static final double yOutsideLeftChargingStation = 1000.0;
     }
-    public static final class Arm {
+    public static final class EverybotArmConstants {
         public static final PID PID = new PID(1.0, 0.0, 0.0);
         public static final double inPosition = 0.0;
         public static final double outPosition = 1000.0;

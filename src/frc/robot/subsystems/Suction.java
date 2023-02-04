@@ -3,7 +3,8 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.Arm;
+import frc.robot.Constants.EverybotArmConstants;
+import frc.robot.Constants.TargetHeights;
 
 public class Suction extends SubsystemBase implements GenericShootIntake {
     private Solenoid suctioner;
@@ -13,18 +14,17 @@ public class Suction extends SubsystemBase implements GenericShootIntake {
         suctioner = new Solenoid(PneumaticsModuleType.CTREPCM, 1);
         suctioner.set(false);
     }
-    private void shoot() {
-        suctioner.set(true);
+    public void shoot(String height) {
+        if(height != TargetHeights.INTAKE) {
+            suctioner.set(true);
+        }
     }
-    public void shootHigh() {shoot();};
-    public void shootMid() {shoot();};
-    public void shootLow() {shoot();};
-    public void intake() {}
+    public SubsystemBase subsystem() {return this;}
     public void stop() {
         suctioner.set(false);
-        arm.gotoPosition(Arm.inPosition);
+        arm.gotoPosition(EverybotArmConstants.inPosition);
     }
-    public void setup(int height) {
-        arm.gotoPosition(Arm.outPosition);
+    public void setup(String height) {
+        arm.gotoPosition(EverybotArmConstants.outPosition);
     }
 }

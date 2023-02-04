@@ -36,6 +36,9 @@ public class Robot extends TimedRobot {
   public void autonomousPeriodic() {}
 
   public void teleopInit() {
+    robotContainer.setUpShooters();
+    robotContainer.setDefaults(); // wait to call these functions until auto has started (A.K.A.)
+    robotContainer.configureButtonBindings();
     autoCommand.cancel();
   }
 

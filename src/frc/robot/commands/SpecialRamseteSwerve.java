@@ -1,17 +1,12 @@
 package frc.robot.commands;
-
-import java.util.function.Supplier;
-
-import org.opencv.core.RotatedRect;
-
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.XboxController;
-import frc.robot.Constants.AprilTags;
-import frc.robot.Constants.Drive;
 import frc.robot.subsystems.Swerve;
 import frc.robot.subsystems.Vision;
 import frc.robot.Util;
+import frc.robot.Constants.AprilTagConstants;
+import frc.robot.Constants.SwerveDriveConstants;
 
 public class SpecialRamseteSwerve extends RamseteSwerve {
     enum State {
@@ -41,47 +36,47 @@ public class SpecialRamseteSwerve extends RamseteSwerve {
         Vision.Team team = vision.team;
         double currentY = pose.getY();
         if(team == Vision.Team.RED) {
-            currentY = AprilTags.totalY - currentY;
+            currentY = AprilTagConstants.totalY - currentY;
         }
             int closestNum = 0;
-            for(int i = 1; i < AprilTags.yPositions.length; i++) {
-                if(AprilTags.yPositions[i] > currentY) {
-                    closestNum = (Math.abs(AprilTags.yPositions[i - 1] - currentY) < Math.abs(AprilTags.yPositions[i] - currentY)) ? (i - 1) : i;
+            for(int i = 1; i < AprilTagConstants.yPositions.length; i++) {
+                if(AprilTagConstants.yPositions[i] > currentY) {
+                    closestNum = (Math.abs(AprilTagConstants.yPositions[i - 1] - currentY) < Math.abs(AprilTagConstants.yPositions[i] - currentY)) ? (i - 1) : i;
                     break;
                 }
             }
             num += 3 * (closestNum / 3); // sketchy fr
-        Rotation2d converted = Rotation2d.fromDegrees(isCone ? AprilTags.coneRotation : AprilTags.cubeRotation);
+        Rotation2d converted = Rotation2d.fromDegrees(isCone ? AprilTagConstants.coneRotation : AprilTagConstants.cubeRotation);
         double effectiveX = pose.getX();
-        this.targetX = isCone ? AprilTags.coneDists[height] : AprilTags.cubeDists[height];
-        this.targetY = AprilTags.yPositions[num];
+        this.targetX = isCone ? AprilTagConstants.coneDists[height] : AprilTagConstants.cubeDists[height];
+        this.targetY = AprilTagConstants.yPositions[num];
         if(team == Vision.Team.RED) {
-            this.targetY = AprilTags.totalY - targetY;
+            this.targetY = AprilTagConstants.totalY - targetY;
         }
         int section = Util.getSection(currentY);
         this.goal = pose;
-        if((section == Util.getSection(AprilTags.yPositions[num]) && section != -1) || imBasic) {
+        if((section == Util.getSection(AprilTagConstants.yPositions[num]) && section != -1) || imBasic) {
             this.state = State.POSTDIAGONAL;
         } else {
             this.state = State.PREDIAGONAL;
-            if(effectiveX > AprilTags.xEndOfChargingStation) { // if hasn't made it to end of charging station, drive straight to end of station to avoid collision
-                this.goal = new Pose2d(AprilTags.xEndOfChargingStation, pose.getY(), converted);
-            } else if(effectiveX < AprilTags.xPosBeforeBarriers) {
-                this.goal = new Pose2d(AprilTags.xPosBeforeBarriers, pose.getY(), converted);
+            if(effectiveX > AprilTagConstants.xEndOfChargingStation) { // if hasn't made it to end of charging station, drive straight to end of station to avoid collision
+                this.goal = new Pose2d(AprilTagConstants.xEndOfChargingStation, pose.getY(), converted);
+            } else if(effectiveX < AprilTagConstants.xPosBeforeBarriers) {
+                this.goal = new Pose2d(AprilTagConstants.xPosBeforeBarriers, pose.getY(), converted);
             }
         }
         
     }
 
     public boolean isFinished() {
-        if(Math.abs(driver.getLeftX()) > Drive.controllerDeadband || Math.abs(driver.getLeftY()) > Drive.controllerDeadband || Math.abs(driver.getRightX()) > Drive.controllerDeadband || Math.abs(driver.getRightY()) > Drive.controllerDeadband) {
+        if(Math.abs(driver.getLeftX()) > SwerveDriveConstants.controllerDeadband || Math.abs(driver.getLeftY()) > SwerveDriveConstants.controllerDeadband || Math.abs(driver.getRightX()) > SwerveDriveConstants.controllerDeadband || Math.abs(driver.getRightY()) > SwerveDriveConstants.controllerDeadband) {
             return true;
         }
         if(isFinished) {
             isFinished = false;
             if(state == State.PREDIAGONAL) {
                 state = State.DIAGONAL;
-                this.goal = new Pose2d(Math.min(Math.max(AprilTags.xPosBeforeBarriers, targetX), AprilTags.xEndOfChargingStation), targetY, this.goal.getRotation());
+                this.goal = new Pose2d(Math.min(Math.max(AprilTagConstants.xPosBeforeBarriers, targetX), AprilTagConstants.xEndOfChargingStation), targetY, this.goal.getRotation());
             } else if(state == State.DIAGONAL) {
                 state = State.POSTDIAGONAL;
                 this.goal = new Pose2d(targetX, targetY, this.goal.getRotation());

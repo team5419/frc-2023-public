@@ -1,10 +1,8 @@
 package frc.robot.commands;
-import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.GenericShootIntake;
 import frc.robot.subsystems.Swerve;
-import frc.robot.Constants.Drive;
-import frc.robot.Util;
+import frc.robot.Constants.TargetHeights;
 public class Prep extends CommandBase {
     private Swerve drivetrain;
     private GenericShootIntake coneShooter;
@@ -13,19 +11,21 @@ public class Prep extends CommandBase {
         this.drivetrain = drivetrain;
         this.coneShooter = coneShooter;
         this.cubeShooter = cubeShooter;
+        addRequirements(coneShooter.subsystem());
+        addRequirements(cubeShooter.subsystem());
     }
     public void initialize() {
         boolean isCone = (drivetrain.currentNum - 1) % 3 != 0;
         int height = drivetrain.currentHeight; 
         if(isCone) {
-            coneShooter.setup(height);
+            coneShooter.setup(TargetHeights.heights[height]);
         } else {
-            cubeShooter.setup(height);
+            cubeShooter.setup(TargetHeights.heights[height]);
         }
     }
     public void execute() {}
     public boolean isFinished() {
-        return false;
+        return true;
     }
     public void end(boolean interrupted) {
     }

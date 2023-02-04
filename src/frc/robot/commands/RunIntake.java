@@ -1,5 +1,6 @@
 package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Constants.TargetHeights;
 import frc.robot.subsystems.GenericShootIntake;
 
 public class RunIntake extends CommandBase {
@@ -7,13 +8,14 @@ public class RunIntake extends CommandBase {
 
     public RunIntake(GenericShootIntake shooter) {
         this.shooter = shooter;
+        addRequirements(shooter.subsystem());
     }
 
     public void initialize() {
-        shooter.setup(-1);// -1 indicates that we're intaking, not shooting
+        shooter.setup(TargetHeights.INTAKE);// -1 indicates that we're intaking, not shooting
     }
     public void execute() {
-        shooter.intake();
+        shooter.shoot(TargetHeights.INTAKE);
     }
     public boolean isFinished() {
         return false;

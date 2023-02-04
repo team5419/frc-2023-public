@@ -1,6 +1,6 @@
 package frc.robot.commands;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Constants.TargetHeights;
 import frc.robot.subsystems.GenericShootIntake;
 import frc.robot.subsystems.Swerve;
 
@@ -16,6 +16,8 @@ public class Shoot extends CommandBase {
         this.drivetrain = drivetrain;
         isCone = false;
         height = 0;
+        addRequirements(coneShooter.subsystem());
+        addRequirements(cubeShooter.subsystem());
     }
     public void initialize() {
         isCone = (drivetrain.currentNum - 1) % 3 != 0;
@@ -23,17 +25,7 @@ public class Shoot extends CommandBase {
     }
     public void execute() {
         GenericShootIntake shooter = isCone ? coneShooter : cubeShooter;
-        switch(height) {
-            case 0:
-                shooter.shootLow();
-                break;
-            case 1:
-                shooter.shootMid();
-                break;
-            case 2:
-                shooter.shootHigh();
-                break;
-        }
+        shooter.shoot(TargetHeights.heights[height]);
     }
     public boolean isFinished() {
         return false;

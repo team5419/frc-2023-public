@@ -1,5 +1,4 @@
 package frc.robot.commands;
-import frc.robot.Constants.ProtoDrive;
 import edu.wpi.first.math.trajectory.constraint.DifferentialDriveVoltageConstraint;
 import edu.wpi.first.math.trajectory.constraint.DifferentialDriveKinematicsConstraint;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
@@ -15,6 +14,7 @@ import edu.wpi.first.math.controller.RamseteController;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.math.trajectory.Trajectory;
+import frc.robot.Constants.DifferentialDriveConstants;
 import frc.robot.subsystems.Drivetrain;
 import java.util.Arrays;
 
@@ -48,22 +48,22 @@ public class RamseteAction extends CommandBase {
     }
     private void setup() {
 
-        driveKinematics = new DifferentialDriveKinematics(ProtoDrive.trackWidth);
-        feedforward = new SimpleMotorFeedforward(ProtoDrive.ks, ProtoDrive.kv, ProtoDrive.ka);
-        voltageConstraint = new DifferentialDriveVoltageConstraint(feedforward, driveKinematics, ProtoDrive.maxVoltage);
-        driveKinematicsConstraint = new DifferentialDriveKinematicsConstraint(driveKinematics, ProtoDrive.maxVelocity);
+        driveKinematics = new DifferentialDriveKinematics(DifferentialDriveConstants.trackWidth);
+        feedforward = new SimpleMotorFeedforward(DifferentialDriveConstants.ks, DifferentialDriveConstants.kv, DifferentialDriveConstants.ka);
+        voltageConstraint = new DifferentialDriveVoltageConstraint(feedforward, driveKinematics, DifferentialDriveConstants.maxVoltage);
+        driveKinematicsConstraint = new DifferentialDriveKinematicsConstraint(driveKinematics, DifferentialDriveConstants.maxVelocity);
 
         // again, just trust it
-        config = new TrajectoryConfig(ProtoDrive.maxVelocity, ProtoDrive.maxAcceleration);
+        config = new TrajectoryConfig(DifferentialDriveConstants.maxVelocity, DifferentialDriveConstants.maxAcceleration);
             config.setKinematics(driveKinematics);
             config.setReversed(!reversed); // our motors are weird
             config.addConstraint(voltageConstraint);
             config.addConstraint(driveKinematicsConstraint);
             config.addConstraint(new CentripetalAccelerationConstraint(
-                ProtoDrive.maxCentripetalAcceleration
+                DifferentialDriveConstants.maxCentripetalAcceleration
             ));
             trajectory = TrajectoryGenerator.generateTrajectory(Arrays.asList(poses), config);
-            controller = new RamseteController(ProtoDrive.beta, ProtoDrive.zeta);
+            controller = new RamseteController(DifferentialDriveConstants.beta, DifferentialDriveConstants.zeta);
             prevSpeed = new DifferentialDriveWheelSpeeds(0.0, 0.0);
             prevTime = 0.0;
             timer = new Timer();

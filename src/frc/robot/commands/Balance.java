@@ -2,8 +2,8 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Swerve;
-import frc.robot.Constants.Drive;
 import frc.robot.Util;
+import frc.robot.Constants.SwerveDriveConstants;
 public class Balance extends CommandBase {
     private Swerve drivetrain;
     private boolean shouldFinish;
@@ -22,10 +22,10 @@ public class Balance extends CommandBase {
     public void execute() { 
         double yawDiff = targetYaw - drivetrain.angle(); //how far to turn (rotate) into correct postion
         double pitchDiff = -drivetrain.anglePitch();  //how far to get balanced
-        double yawChange = -Drive.yawBalanceController.calculate(yawDiff);
-        double pitchChange = -Drive.balanceController.calculate(pitchDiff); //returns how far needed to drive in order to balance
-        drivetrain.drive(pitchChange, Util.deadband(controller.getLeftX(), Drive.controllerDeadband) * Drive.speedMultiplier, yawChange, true, true);
-        shouldFinish = Math.abs(yawDiff) < Drive.epsilonYawBalance && Math.abs(pitchDiff) < Drive.epsilonBalance && drivetrain.getAverageSpeed() < 0.1;
+        double yawChange = -SwerveDriveConstants.yawBalanceController.calculate(yawDiff);
+        double pitchChange = -SwerveDriveConstants.balanceController.calculate(pitchDiff); //returns how far needed to drive in order to balance
+        drivetrain.drive(pitchChange, Util.deadband(controller.getLeftX(), SwerveDriveConstants.controllerDeadband) * SwerveDriveConstants.speedMultiplier, yawChange, true, true);
+        shouldFinish = Math.abs(yawDiff) < SwerveDriveConstants.epsilonYawBalance && Math.abs(pitchDiff) < SwerveDriveConstants.epsilonBalance && drivetrain.getAverageSpeed() < 0.1;
     }
     public boolean isFinished() {
         return shouldFinish;
