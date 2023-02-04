@@ -13,7 +13,7 @@ public class Robot extends TimedRobot {
   public Robot() {
     tab = Shuffleboard.getTab("Master");
     robotContainer = new RobotContainer(tab);
-    autoCommand = robotContainer.getAutonomousCommand();
+    autoCommand = null;
   }
 
   public void robotInit() {
@@ -29,6 +29,7 @@ public class Robot extends TimedRobot {
   public void disabledPeriodic() {}
 
   public void autonomousInit() {
+	robotContainer.setUpShooters();
     autoCommand = robotContainer.getAutonomousCommand();
     autoCommand.schedule();
   }
@@ -36,10 +37,11 @@ public class Robot extends TimedRobot {
   public void autonomousPeriodic() {}
 
   public void teleopInit() {
-    robotContainer.setUpShooters();
     robotContainer.setDefaults(); // wait to call these functions until auto has started (A.K.A.)
     robotContainer.configureButtonBindings();
-    autoCommand.cancel();
+	if(autoCommand != null) {
+		autoCommand.cancel();
+	}
   }
 
   public void teleopPeriodic() {}

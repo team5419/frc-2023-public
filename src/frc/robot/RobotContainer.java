@@ -4,6 +4,9 @@ import frc.robot.Constants.CuberTypes;
 import frc.robot.auto.*;
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
+
+import java.util.function.Supplier;
+
 import edu.wpi.first.wpilibj.XboxController;
 
 import edu.wpi.first.wpilibj2.command.Command;
@@ -17,7 +20,7 @@ public class RobotContainer {
     private GenericShootIntake cuber;
     private IntakeDeploy deploy;
     private Vision vision;
-    private SendableChooser<SequentialCommandGroup> autoSelector;
+    private SendableChooser<Supplier<SequentialCommandGroup>> autoSelector;
     private SendableChooser<ConerTypes> coneShooterSelector;
     private SendableChooser<CuberTypes> cubeShooterSelector;
   	//private Drivetrain drivetrain;
@@ -43,9 +46,9 @@ public class RobotContainer {
 
     	deploy = new IntakeDeploy();
 		
-    	autoSelector = new SendableChooser<SequentialCommandGroup>();
+    	autoSelector = new SendableChooser<Supplier<SequentialCommandGroup>>();
     	tab.add("Auto selector", autoSelector);
-    	autoSelector.setDefaultOption("Baseline", new Baseline());
+    	autoSelector.setDefaultOption("Baseline", () -> new Baseline());
     	//sautoSelector.addOption("Proto Routine", new ProtoRoutine(drivetrain));
     	// autoSelector.addOption("Proto Routine", new SwerveRoutine(swerve, vision));
 
@@ -118,7 +121,7 @@ public class RobotContainer {
   	}
 
 	public Command getAutonomousCommand() {
-		return autoSelector.getSelected();
+		return autoSelector.getSelected().get();
 	}
 
 	public void setDefaults() {
