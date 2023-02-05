@@ -13,12 +13,6 @@ import java.lang.Math;
 import java.util.Map;
 
 public class Constants {
-    public static enum ConerTypes {
-        LOW, ARM_MOTORS, ARM_SUCTION
-    }
-    public static enum CuberTypes {
-        LOW
-    }
     public static final class TargetHeights { // these need to be stored as strings for shuffleboard
         public static final String LOW = "LOW";
         public static final String MID = "MID";

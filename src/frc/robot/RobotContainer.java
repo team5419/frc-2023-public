@@ -1,6 +1,4 @@
 package frc.robot;
-import frc.robot.Constants.ConerTypes;
-import frc.robot.Constants.CuberTypes;
 import frc.robot.auto.*;
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
@@ -21,8 +19,8 @@ public class RobotContainer {
     private IntakeDeploy deploy;
     private Vision vision;
     private SendableChooser<Supplier<SequentialCommandGroup>> autoSelector;
-    private SendableChooser<ConerTypes> coneShooterSelector;
-    private SendableChooser<CuberTypes> cubeShooterSelector;
+    private SendableChooser<Supplier<GenericShootIntake>> coneShooterSelector;
+    private SendableChooser<Supplier<GenericShootIntake>> cubeShooterSelector;
   	//private Drivetrain drivetrain;
   	private Swerve swerve;
   	private XboxController driver;
@@ -52,15 +50,15 @@ public class RobotContainer {
     	//sautoSelector.addOption("Proto Routine", new ProtoRoutine(drivetrain));
     	// autoSelector.addOption("Proto Routine", new SwerveRoutine(swerve, vision));
 
-		coneShooterSelector = new SendableChooser<ConerTypes>();
+		coneShooterSelector = new SendableChooser<Supplier<GenericShootIntake>>();
 		tab.add("Cone shooter", coneShooterSelector);
-		coneShooterSelector.setDefaultOption("Low Coner", ConerTypes.LOW);
-		coneShooterSelector.addOption("Everybot arm w/ motors", ConerTypes.ARM_MOTORS);
-		coneShooterSelector.addOption("Everybot arm w/ suction", ConerTypes.ARM_SUCTION);
+		coneShooterSelector.setDefaultOption("Low Coner", () -> new Coner(true, false));
+		coneShooterSelector.addOption("Everybot arm w/ motors", () -> new EverybotConer(generateArm(), false));
+		coneShooterSelector.addOption("Everybot arm w/ suction", () -> new Suction(generateArm()));
 
-		cubeShooterSelector = new SendableChooser<CuberTypes>();
+		cubeShooterSelector = new SendableChooser<Supplier<GenericShootIntake>>();
 		tab.add("Cube shooter", cubeShooterSelector);
-		cubeShooterSelector.setDefaultOption("Low Cuber", CuberTypes.LOW);
+		cubeShooterSelector.setDefaultOption("Low Cuber", () -> new Cuber(false));
   	}
 
 	private EverybotArm generateArm() {
@@ -71,24 +69,8 @@ public class RobotContainer {
 	}
 
 	public void setUpShooters() {
-		ConerTypes coneType = coneShooterSelector.getSelected();
-		switch(coneType) {
-			case LOW:
-				coner = new Coner(true, false);
-				break;
-			case ARM_MOTORS:
-				coner = new EverybotConer(generateArm(), false);
-				break;
-			case ARM_SUCTION:
-				coner = new Suction(generateArm());
-				break;
-		}
-		CuberTypes cubeType = cubeShooterSelector.getSelected();
-		switch(cubeType) {
-			case LOW:
-				cuber = new Cuber(false);
-				break;
-		}
+		coner = coneShooterSelector.getSelected().get();
+		cuber = cubeShooterSelector.getSelected().get();
 	}
   
   	public void configureButtonBindings() {
