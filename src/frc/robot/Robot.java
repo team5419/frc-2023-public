@@ -29,7 +29,7 @@ public class Robot extends TimedRobot {
   public void disabledPeriodic() {}
 
   public void autonomousInit() {
-	robotContainer.setUpShooters();
+	  robotContainer.setUpShooters();
     autoCommand = robotContainer.getAutonomousCommand();
     autoCommand.schedule();
   }
@@ -37,11 +37,12 @@ public class Robot extends TimedRobot {
   public void autonomousPeriodic() {}
 
   public void teleopInit() {
+    robotContainer.setUpShooters(); // in case we're just testing and not running auto
     robotContainer.setDefaults(); // wait to call these functions until auto has started (A.K.A.)
     robotContainer.configureButtonBindings();
-	if(autoCommand != null) {
-		autoCommand.cancel();
-	}
+    if(autoCommand != null) {
+      autoCommand.cancel();
+    }
   }
 
   public void teleopPeriodic() {}

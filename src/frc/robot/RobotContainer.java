@@ -69,8 +69,12 @@ public class RobotContainer {
 	}
 
 	public void setUpShooters() {
-		coner = coneShooterSelector.getSelected().get();
-		cuber = cubeShooterSelector.getSelected().get();
+		if(coner == null) {
+			coner = coneShooterSelector.getSelected().get();
+		}
+		if(cuber == null) {
+			cuber = cubeShooterSelector.getSelected().get();
+		}
 	}
   
   	public void configureButtonBindings() {
