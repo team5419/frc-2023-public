@@ -16,7 +16,7 @@ public class EverybotConer extends TesterSubsystem implements GenericShootIntake
     public EverybotConer(EverybotArm arm, boolean velocityControl) {
         super("Everybot Cone Shooter", new TesterMotor[] {
             new TesterFalcon("Main", Util.setUpMotor(
-                new TalonFX(Ports.everyIntakeMotor), false, false
+                new TalonFX(Ports.everyIntakeMotor, "canivore"), false, false
             ))
         }, velocityControl ? EverybotConeConstants.velocities : EverybotConeConstants.percents);
         this.arm = arm;
@@ -28,7 +28,7 @@ public class EverybotConer extends TesterSubsystem implements GenericShootIntake
         arm.gotoPosition(EverybotArmConstants.outPosition);
     }
     public SubsystemBase subsystem() {return this;}
-    public void stop() {
+    public void stop(String height) {
         super.stop();
         arm.gotoPosition(EverybotArmConstants.inPosition);
     }

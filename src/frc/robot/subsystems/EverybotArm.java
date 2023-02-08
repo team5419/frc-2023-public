@@ -13,10 +13,10 @@ public class EverybotArm extends SubsystemBase {
     private boolean usePID;
     public EverybotArm(boolean usePID) {
         this.usePID = usePID;
-        leftArm = new TalonFX(Ports.everyArm0);
-        Util.setUpMotor(leftArm, EverybotArmConstants.PID, true, 1.0);
-        rightArm = new TalonFX(Ports.everyArm1);
-        Util.setUpMotor(rightArm, EverybotArmConstants.PID, true, 1.0);
+        leftArm = new TalonFX(Ports.everyArm0, "canivore");
+        Util.setUpMotor(leftArm, false, true, EverybotArmConstants.PID, true, 1.0);
+        rightArm = new TalonFX(Ports.everyArm1, "canivore");
+        Util.setUpMotor(rightArm, false, false, EverybotArmConstants.PID, true, 1.0);
         rightArm.follow(leftArm); // hopefully this works
     }
 

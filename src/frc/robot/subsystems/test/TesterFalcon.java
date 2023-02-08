@@ -24,6 +24,7 @@ public class TesterFalcon implements TesterMotor {
         return this.name;
     }
     public void run(double velocity) {
+        //System.out.println("directly setting motor to " + velocity);
         talon.set(ControlMode.PercentOutput, velocity);
     }
     public double getVelocity() {

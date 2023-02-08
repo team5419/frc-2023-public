@@ -20,7 +20,7 @@ public class Suction extends SubsystemBase implements GenericShootIntake {
         }
     }
     public SubsystemBase subsystem() {return this;}
-    public void stop() {
+    public void stop(String height) {
         suctioner.set(false);
         arm.gotoPosition(EverybotArmConstants.inPosition);
     }

@@ -30,7 +30,7 @@ public class SpecialRamseteSwerve extends RamseteSwerve {
     public void initialize() {
         System.out.println("Special init");
         int num = drivetrain.currentNum;
-        boolean isCone = (num - 1) % 3 != 0; 
+        boolean isCone = num != 1; 
         int height = drivetrain.currentHeight;
         Pose2d pose = drivetrain.pose();
         Vision.Team team = vision.team;

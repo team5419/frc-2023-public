@@ -15,7 +15,7 @@ public class Prep extends CommandBase {
         addRequirements(cubeShooter.subsystem());
     }
     public void initialize() {
-        boolean isCone = (drivetrain.currentNum - 1) % 3 != 0;
+        boolean isCone = drivetrain.currentNum != 1;
         int height = drivetrain.currentHeight; 
         if(isCone) {
             coneShooter.setup(TargetHeights.heights[height]);

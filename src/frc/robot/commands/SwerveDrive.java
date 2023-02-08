@@ -6,21 +6,26 @@ import frc.robot.Util;
 import frc.robot.Constants.SwerveDriveConstants;
 
 public class SwerveDrive extends CommandBase {
-    XboxController driver;
-    Swerve drivetrain;
+    private XboxController driver;
+    private Swerve drivetrain;
+    private boolean letGo;
 
     public SwerveDrive(Swerve drivetrain, XboxController _driver){
         driver = _driver;
         this.drivetrain = drivetrain;
         addRequirements(drivetrain);
+        letGo = true;
     }
 
     public void initialize() {
-
+        letGo = true;
     }
     public void execute() {
         int pov = driver.getPOV();
-        if(pov != -1) {
+        if(pov == -1) {
+            letGo = true;
+        } else if(letGo) {
+            letGo = false;
             if((pov <= SwerveDriveConstants.dPadInputRange || pov >= 360 - SwerveDriveConstants.dPadInputRange) && drivetrain.currentHeight < 2) {
                 drivetrain.currentHeight++;
             }
@@ -33,7 +38,7 @@ public class SwerveDrive extends CommandBase {
             if(pov >= 270 - SwerveDriveConstants.dPadInputRange && pov <= 270 + SwerveDriveConstants.dPadInputRange && drivetrain.currentNum > 0) {
                 drivetrain.currentNum--;
             }
-        }
+        } 
         drivetrain.drive(
             Util.deadband(-driver.getLeftY(), SwerveDriveConstants.controllerDeadband) * SwerveDriveConstants.speedMultiplier,
             Util.deadband(-driver.getLeftX(), SwerveDriveConstants.controllerDeadband) * SwerveDriveConstants.speedMultiplier, 

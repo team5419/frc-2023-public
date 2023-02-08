@@ -57,26 +57,26 @@ public class Constants {
 
         // order: main motor, indexer
         public static final Map<String, TesterSetting> percents = Map.of(TargetHeights.LOW, new TesterSetting(new double[] { 
-            -1.0, -0.6
+            0.4, -0.6
         }), TargetHeights.MID, new TesterSetting(new double[] { 
-            -1.0, -0.6
+            0.4, -0.6
         }), TargetHeights.HIGH, new TesterSetting(new double[] { 
-            -1.0, -0.6
+            0.4, -0.6
         }), TargetHeights.INTAKE, new TesterSetting(new double[] { 
-            0.25, 0.1
+            -0.25, 0.1
         }));
 
         public static final Map<String, TesterSetting> velocities = Map.of(TargetHeights.LOW, new TesterSetting(new double[] { 
-            -5000.0, -3000.0
+            5000.0, -3000.0
         }), TargetHeights.MID, new TesterSetting(new double[] { 
-            -5000.0, -3000.0
+            5000.0, -3000.0
         }), TargetHeights.HIGH, new TesterSetting(new double[] { 
-            -5000.0, -3000.0
+            5000.0, -3000.0
         }), TargetHeights.INTAKE, new TesterSetting(new double[] { 
-             1250.0, 500.0
+            -1250.0, 500.0
         }));
 
-        public static final double indexerSlowBackwardsSpeed = 0.1;
+        public static final double indexerSlowBackwardsSpeed = 0.05;
     }
     public static final class EverybotConeConstants {
         // order: main motor
@@ -229,7 +229,7 @@ public class Constants {
         public static final PID PID = new PID(1.0, 0.0, 0.0);
         public static final double inPosition = 0.0;
         public static final double outPosition = 1000.0;
-        public static final double moveSpeed = 0.1;
+        public static final double moveSpeed = 0.3;
     }
     public static final class Ports {
         public static final int intake = 14;
@@ -240,14 +240,15 @@ public class Constants {
         public static final int rightFollower = 4;
         public static final int gyro = 13;
         public static final int claw = 15;
-        public static final int coneTop = 16;
-        public static final int coneBottom = 17;
+        public static final int coneTop = 17;
+        public static final int coneBottom = 16;
         public static final int everyIntakeMotor = 19;
         public static final int everyArm0 = 20;
         public static final int everyArm1 = 21;
 
-        public static final int solenoidA = 8;
-        public static final int solenoidB = 15;
+        public static final int cuberSolenoid = 0;
+        public static final int conerSolenoidA = 1;
+        public static final int conerSolenoidB = 2;
         public static final int solenoidC = 1;
     }
 };

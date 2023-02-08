@@ -5,6 +5,8 @@ import frc.robot.subsystems.*;
 
 import java.util.function.Supplier;
 
+import edu.wpi.first.wpilibj.Compressor;
+import edu.wpi.first.wpilibj.PneumaticHub;
 import edu.wpi.first.wpilibj.XboxController;
 
 import edu.wpi.first.wpilibj2.command.Command;
@@ -16,7 +18,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 
 public class RobotContainer {
     private GenericShootIntake cuber;
-    private IntakeDeploy deploy;
+    //private IntakeDeploy deploy;
     private Vision vision;
     private SendableChooser<Supplier<SequentialCommandGroup>> autoSelector;
     private SendableChooser<Supplier<GenericShootIntake>> coneShooterSelector;
@@ -28,21 +30,23 @@ public class RobotContainer {
   	//private Claw claw;
   	private GenericShootIntake coner;
   	private EverybotArm arm;
+    private PneumaticHub hub;
 
   	public RobotContainer(ShuffleboardTab tab) {
     	driver = new XboxController(0);
     	codriver = new XboxController(1);
-    	vision = new Vision(tab, false, true);
+    	vision = new Vision(tab, false, false);
     
     	//claw = new Claw();
     	arm = null; 
     	coner = null;
     	cuber = null; // to be set up later
+      hub = null;
     
     	swerve = new Swerve(vision, true); /* CHOOSE ONE!!! */
     	//drivetrain = new Drivetrain(); /* ^^^ */
 
-    	deploy = new IntakeDeploy();
+    	// = new IntakeDeploy();
 		
     	autoSelector = new SendableChooser<Supplier<SequentialCommandGroup>>();
     	tab.add("Auto selector", autoSelector);
@@ -52,13 +56,13 @@ public class RobotContainer {
 
 		coneShooterSelector = new SendableChooser<Supplier<GenericShootIntake>>();
 		tab.add("Cone shooter", coneShooterSelector);
-		coneShooterSelector.setDefaultOption("Low Coner", () -> new Coner(true, false));
+		coneShooterSelector.setDefaultOption("Low Coner", () -> new Coner(generateHub(), true, false));
 		coneShooterSelector.addOption("Everybot arm w/ motors", () -> new EverybotConer(generateArm(), false));
 		coneShooterSelector.addOption("Everybot arm w/ suction", () -> new Suction(generateArm()));
 
 		cubeShooterSelector = new SendableChooser<Supplier<GenericShootIntake>>();
 		tab.add("Cube shooter", cubeShooterSelector);
-		cubeShooterSelector.setDefaultOption("Low Cuber", () -> new Cuber(false));
+		cubeShooterSelector.setDefaultOption("Low Cuber", () -> new Cuber(generateHub(), false));
   	}
 
 	private EverybotArm generateArm() {
@@ -67,6 +71,15 @@ public class RobotContainer {
 		}
 		return arm;
 	}
+
+  private PneumaticHub generateHub() {
+    if(hub == null) {
+      hub = new PneumaticHub();
+      Compressor compressor = hub.makeCompressor();
+      compressor.enableDigital();
+    }
+    return hub;
+  }
 
 	public void setUpShooters() {
 		if(coner == null) {
@@ -96,8 +109,10 @@ public class RobotContainer {
 		// yButtonDriver.whileTrue(new RunIntake(cuber));
 
 		// for testing:
-		aButtonDriver.whileTrue(new Prep(cuber, cuber, swerve));
-		bButtonDriver.whileTrue(new Shoot(cuber, cuber, swerve));
+		aButtonDriver.onTrue(new Prep(coner, cuber, swerve));
+		bButtonDriver.whileTrue(new Shoot(coner, cuber, swerve));
+    xButtonDriver.whileTrue(new RunIntake(coner));
+    yButtonDriver.whileTrue(new RunIntake(cuber));
 		
 		//bButtonDriver.onTrue(new SpecialRamseteSwerve(swerve, vision, driver, true));
 		//rightBumper.toggleOnTrue(Commands.runEnd(() -> arm.gotoPosition(Arm.outPosition), () -> arm.gotoPosition(Arm.inPosition)))

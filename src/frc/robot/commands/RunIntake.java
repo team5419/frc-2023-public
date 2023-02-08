@@ -21,6 +21,6 @@ public class RunIntake extends CommandBase {
         return false;
     }
     public void end(boolean interrupted) {
-        shooter.stop();
+        shooter.stop(TargetHeights.INTAKE);
     }
 }

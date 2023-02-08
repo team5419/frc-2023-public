@@ -20,10 +20,11 @@ public class Shoot extends CommandBase {
         addRequirements(cubeShooter.subsystem());
     }
     public void initialize() {
-        isCone = (drivetrain.currentNum - 1) % 3 != 0;
+        isCone = drivetrain.currentNum != 1;
         height = drivetrain.currentHeight; 
     }
     public void execute() {
+        System.out.println("going to shoot, height: " + height);
         GenericShootIntake shooter = isCone ? coneShooter : cubeShooter;
         shooter.shoot(TargetHeights.heights[height]);
     }
@@ -32,9 +33,9 @@ public class Shoot extends CommandBase {
     }
     public void end(boolean interrupted) {
         if(isCone) {
-            coneShooter.stop();
+            coneShooter.stop(TargetHeights.heights[height]);
         } else {
-            cubeShooter.stop();
+            cubeShooter.stop(TargetHeights.heights[height]);
         }
     }
 }

@@ -40,7 +40,7 @@ public class Swerve extends SubsystemBase { // our swerve drive subsystem
         slowMode = false; // slow mode starts off
         previousMove = new ChassisSpeeds(); // the last chassisspeeds were zero
         if(pigeon) { // if the gyro is used, set it up and set it to zero
-            gyro = new Pigeon2(Ports.gyro, "canivore");
+            gyro = new Pigeon2(Ports.gyro);
             gyro.configFactoryDefault(100);
             gyro.configMountPose(90.0, 0.0, -1.7); // this configures our gyro pose so that we can read the pitch value
             yawOffset = gyro.getYaw(); // reset gyro at the beginning
@@ -80,9 +80,9 @@ public class Swerve extends SubsystemBase { // our swerve drive subsystem
         ShuffleboardTab selectionTab = Shuffleboard.getTab("Shot Selection");
         for(int i = 0; i < 3; i++) {
             for(int j = 0; j < 3; j++) {
-                int savedI = i;
+                int savedI = 2 - i;
                 int savedJ = j;
-                selectionTab.addBoolean("row " + i + ", col " + j, () -> (currentNum == savedI && currentHeight == savedJ))
+                selectionTab.addBoolean("row " + i + ", col " + j, () -> (currentHeight == savedI && currentNum == savedJ))
                     .withSize(1, 1)
                     .withPosition(j, i);
             }

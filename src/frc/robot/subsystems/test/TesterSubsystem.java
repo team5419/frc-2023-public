@@ -27,6 +27,7 @@ public class TesterSubsystem extends SubsystemBase {
     public void run(String setting) {
         TesterSetting theSetting = stateMap.get(setting);
         for(int i = 0; i < motors.length; i++) {
+            //System.out.println("setting inner motor");
             theSetting.setMotor(i, motors[i]);
         }
     }

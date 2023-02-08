@@ -43,6 +43,7 @@ public class TesterSetting {
         if(velocityControl) {
             motor.setVelocity(setpoint);
         } else {
+            //System.out.println("Calling tester motor");
             motor.run(setpoint);
         }
     }
