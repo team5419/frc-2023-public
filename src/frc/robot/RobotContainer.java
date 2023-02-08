@@ -32,10 +32,13 @@ public class RobotContainer {
   	private EverybotArm arm;
     private PneumaticHub hub;
 
+	private boolean setUp;
+
   	public RobotContainer(ShuffleboardTab tab) {
+		setUp = false;
     	driver = new XboxController(0);
     	codriver = new XboxController(1);
-    	vision = new Vision(tab, false, false);
+    	vision = new Vision(tab, false, true);
     
     	//claw = new Claw();
     	arm = null; 
@@ -91,10 +94,13 @@ public class RobotContainer {
 	}
   
   	public void configureButtonBindings() {
+		if(setUp) {
+			return;
+		}
     	Trigger aButtonDriver = new Trigger(() -> driver.getAButton());
     	Trigger bButtonDriver = new Trigger(() -> driver.getBButton());
     	Trigger xButtonDriver = new Trigger(() -> driver.getXButton());
-    	Trigger yButtonDriver = new Trigger(() -> driver.getYButton());
+    	Trigger yButtonDriver = new Trigger(() -> driver.getRightBumper());
 
     	Trigger leftBumper = new Trigger(() -> driver.getLeftBumper());
     	Trigger rightBumper = new Trigger(() -> driver.getRightBumper());
@@ -119,6 +125,7 @@ public class RobotContainer {
 		// bButtonDriver.onTrue(deploy.twoPhase());
 		// bButtonDriver.onTrue(new Balance(swerve, driver));
 		//aButtonCodriver.toggleOnTrue(Commands.runOnce(() -> swerve.brake()));
+		setUp = true;
   	}
 
 	public Command getAutonomousCommand() {
@@ -126,6 +133,9 @@ public class RobotContainer {
 	}
 
 	public void setDefaults() {
+		if(setUp) {
+			return;
+		}
 		swerve.setDefaultCommand(new SwerveDrive(swerve, driver));
 		if(arm != null) {
 			arm.setDefaultCommand(new ManualMoveArm(arm, codriver));

@@ -12,12 +12,12 @@ public class Balance extends CommandBase {
     public Balance(Swerve drivetrain, XboxController controller) {
         this.drivetrain = drivetrain;
         this.controller = controller;
-        this.targetYaw = Math.round(drivetrain.angle() / 180.0) * 180.0;
+        this.targetYaw = 0.0;
         shouldFinish = false;
         addRequirements(drivetrain);
     }
     public void initialize() {
-        
+        this.targetYaw = Math.round(drivetrain.angle() / 180.0) * 180.0;
     }
     public void execute() { 
         double yawDiff = targetYaw - drivetrain.angle(); //how far to turn (rotate) into correct postion

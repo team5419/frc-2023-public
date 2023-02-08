@@ -29,6 +29,7 @@ public class TesterSetting {
     public void initialize(ShuffleboardTab tab, TesterMotor[] motors, String name, int y) {
         entries = new GenericEntry[motors.length];
             for(int j = 0; j < motors.length; j++) {
+                System.out.println("adding " + name + ": " + motors[j].getName());
                 double max = velocityControl ? motors[j].getMaxVelocity() : 1.0;
                 entries[j] = tab.add(name + ": " + motors[j].getName(), motorDefaults == null ? 0.0 : motorDefaults[j])
                     .withPosition(j * 2, y)

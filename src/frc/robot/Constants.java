@@ -57,13 +57,13 @@ public class Constants {
 
         // order: main motor, indexer
         public static final Map<String, TesterSetting> percents = Map.of(TargetHeights.LOW, new TesterSetting(new double[] { 
-            0.4, -0.6
+            0.25, -1.0
         }), TargetHeights.MID, new TesterSetting(new double[] { 
-            0.4, -0.6
+            0.35, -1.0
         }), TargetHeights.HIGH, new TesterSetting(new double[] { 
-            0.4, -0.6
+            0.75, -1.0
         }), TargetHeights.INTAKE, new TesterSetting(new double[] { 
-            -0.25, 0.1
+            -0.4, 0.1
         }));
 
         public static final Map<String, TesterSetting> velocities = Map.of(TargetHeights.LOW, new TesterSetting(new double[] { 
@@ -76,7 +76,7 @@ public class Constants {
             -1250.0, 500.0
         }));
 
-        public static final double indexerSlowBackwardsSpeed = 0.05;
+        public static final double indexerSlowBackwardsSpeed = 0.10;
     }
     public static final class EverybotConeConstants {
         // order: main motor
@@ -217,7 +217,7 @@ public class Constants {
             2.0 // low
         };
         public static double cubeRotation = 0.0;
-        public static double coneRotation = 0.0;
+        public static double coneRotation = 180.0; // degrees, we want to be facing backwards when shooting cones
         public static final double xPosBeforeBarriers = 1.6; // to be measured
         public static final double xEndOfChargingStation = 2.55; // to be measured
         public static final double yOutsideRightChargingStation = -1.0;
