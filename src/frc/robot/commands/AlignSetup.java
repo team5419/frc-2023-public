@@ -10,7 +10,7 @@ public class AlignSetup extends ParallelCommandGroup {
     public AlignSetup(GenericShootIntake coneShooter, GenericShootIntake cubeShooter, Swerve drivetrain, Vision vision, XboxController driver) {
         addCommands(
                 new Prep(coneShooter, cubeShooter, drivetrain),
-                new SpecialRamseteSwerve(drivetrain, vision, driver, true)
+                new SpecialRamseteSwerve(drivetrain, vision, driver, coneShooter, cubeShooter, true)
         );
     }
 }

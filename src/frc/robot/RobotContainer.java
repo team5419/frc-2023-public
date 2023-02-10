@@ -52,19 +52,19 @@ public class RobotContainer {
     	// = new IntakeDeploy();
 		
     	autoSelector = new SendableChooser<Supplier<SequentialCommandGroup>>();
-    	tab.add("Auto selector", autoSelector);
+    	tab.add("Auto selector", autoSelector).withSize(2, 1).withPosition(0, 0);
     	autoSelector.setDefaultOption("Baseline", () -> new Baseline());
     	//sautoSelector.addOption("Proto Routine", new ProtoRoutine(drivetrain));
-    	// autoSelector.addOption("Proto Routine", new SwerveRoutine(swerve, vision));
+    	autoSelector.addOption("Proto Routine", () -> new SwerveRoutine(swerve, vision, coner, cuber));
 
 		coneShooterSelector = new SendableChooser<Supplier<GenericShootIntake>>();
-		tab.add("Cone shooter", coneShooterSelector);
+		tab.add("Cone shooter", coneShooterSelector).withSize(2, 1).withPosition(2, 0);
 		coneShooterSelector.setDefaultOption("Low Coner", () -> new Coner(generateHub(), true, false));
 		coneShooterSelector.addOption("Everybot arm w/ motors", () -> new EverybotConer(generateArm(), false));
 		coneShooterSelector.addOption("Everybot arm w/ suction", () -> new Suction(generateArm()));
 
 		cubeShooterSelector = new SendableChooser<Supplier<GenericShootIntake>>();
-		tab.add("Cube shooter", cubeShooterSelector);
+		tab.add("Cube shooter", cubeShooterSelector).withSize(2, 1).withPosition(4, 0);
 		cubeShooterSelector.setDefaultOption("Low Cuber", () -> new Cuber(generateHub(), false));
   	}
 

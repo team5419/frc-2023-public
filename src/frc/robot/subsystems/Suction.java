@@ -27,4 +27,13 @@ public class Suction extends SubsystemBase implements GenericShootIntake {
     public void setup(String height) {
         arm.gotoPosition(EverybotArmConstants.outPosition);
     }
+    public final double getAngle() {
+        return 90.0;
+    }
+    public final double getOffset() {
+        return 0.0;
+    }
+    public final double getDistance(String height) {
+        return 2.0;
+    }
 }

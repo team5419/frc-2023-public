@@ -5,6 +5,8 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.PneumaticHub;
 import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.CubeShooterConstants;
 import frc.robot.Constants.Ports;
@@ -13,9 +15,11 @@ import frc.robot.subsystems.test.TesterMotor;
 import frc.robot.subsystems.test.TesterNeo;
 import frc.robot.subsystems.test.TesterSubsystem;
 import frc.robot.Util;
+import edu.wpi.first.wpilibj.AnalogInput;
 
 public class Cuber extends TesterSubsystem implements GenericShootIntake {
     private Solenoid soOne;
+    private AnalogInput sensor;
     public Cuber(PneumaticHub hub, boolean velocityControl) {
         super("Cube Shooter", new TesterMotor[] {
             new TesterNeo("Main", Util.setUpMotor(
@@ -28,6 +32,14 @@ public class Cuber extends TesterSubsystem implements GenericShootIntake {
 
         soOne = hub.makeSolenoid(Ports.cuberSolenoid);
         soOne.set(false);
+
+        sensor = new AnalogInput(Ports.cuberSensor);
+
+        ShuffleboardTab main = Shuffleboard.getTab("Master");
+        main.addNumber("Cuber sensor", () -> getSensorValue()).withSize(1, 1).withPosition(2, 1);
+    }
+    public double getSensorValue() {
+        return sensor.getValue();
     }
     public void shoot(String height) {
         run(height);
@@ -51,5 +63,21 @@ public class Cuber extends TesterSubsystem implements GenericShootIntake {
     }
     public void simulationPeriodic() {
 
+    }
+    public final double getAngle() {
+        return 0.0;
+    }
+    public final double getDistance(String height) {
+        return 2.0;
+    }
+    public double getOffset() {
+        double val = getSensorValue();
+        if(val < CubeShooterConstants.sensorThresholdLeft) {
+            return CubeShooterConstants.adjustmentLeft;
+        }
+        if(val > CubeShooterConstants.sensorThresholdRight) {
+            return CubeShooterConstants.adjustmentRight;
+        }
+        return 0.0;
     }
 }

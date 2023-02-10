@@ -38,4 +38,13 @@ public class EverybotConer extends TesterSubsystem implements GenericShootIntake
     public void simulationPeriodic() {
 
     }
+    public final double getAngle() {
+        return 90.0;
+    }
+    public final double getOffset() {
+        return 0.0;
+    }
+    public final double getDistance(String height) {
+        return 2.0;
+    }
 }

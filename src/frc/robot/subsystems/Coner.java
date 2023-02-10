@@ -46,6 +46,15 @@ public class Coner extends TesterSubsystem implements GenericShootIntake {
         soTwo.set(true);
     }
     public SubsystemBase subsystem() {return this;}
+    public final double getAngle() {
+        return 180.0;
+    }
+    public final double getOffset() {
+        return 0.0;
+    }
+    public final double getDistance(String height) {
+        return 2.0;
+    }
     public void periodic() {
 
     }

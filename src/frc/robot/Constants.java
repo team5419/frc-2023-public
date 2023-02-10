@@ -77,6 +77,12 @@ public class Constants {
         }));
 
         public static final double indexerSlowBackwardsSpeed = 0.10;
+
+        public static final double sensorThresholdLeft = -1.0;
+        public static final double sensorThresholdRight = 100000.0;
+
+        public static final double adjustmentLeft = -0.1;
+        public static final double adjustmentRight = 0.1;
     }
     public static final class EverybotConeConstants {
         // order: main motor
@@ -121,9 +127,9 @@ public class Constants {
         public static final PID TurnPID = new PID(8.0 / 12.0, 0.0, 0.0);
         public static final double slow = 0.2;
         public static final double maxVelocity = 4.0;  
-        public static final double kv = (2.1737 / 12); // 2.298
-        public static final double ka = (0.29281 / 12); // 0.17118
-        public static final double ks = (0.63566 / 12); // 0.10352
+        public static final double kv = (2.298 / 12); // 2.1737
+        public static final double ka = (0.17118 / 12); // 0.29281
+        public static final double ks = (0.10352 / 12); // 0.63566
         public static final SimpleMotorFeedforward feedForward = new SimpleMotorFeedforward(ks, kv, ka);
         public static final PIDController turnController = new PIDController(TurnPID.p, TurnPID.i, TurnPID.d);
 
@@ -145,10 +151,10 @@ public class Constants {
         public static final double turnMultiplier = 2.5;
         public static final double controllerDeadband = 0.1;
 
-        public static final double pXY = 0.27;
+        public static final double pXY = 1.08;
         public static final double pTheta = 4.0;
-        public static final double epsilonXY = 0.1;
-        public static final double epsilonTheta = 1.0;
+        public static final double epsilonXY = 0.0254;
+        public static final double epsilonTheta = 3.0;
         public static final ModuleInfo[] info = {
             new ModuleInfo(7, 8, true, true, 12, 0.35895 + 1.6229), // 1.6229
             new ModuleInfo(5, 6, false, true, 11, 0.91578 + 4.7247), //4.7247            
@@ -189,7 +195,7 @@ public class Constants {
     public static final class AprilTagConstants {
         public static Pose2d[] robotToCam = new Pose2d[] { 
             new Pose2d( // we can prob just leave this at 0 and use camera as a reference to our robot 
-                0.0, 0.0, new Rotation2d(0.0)), // however we should change angle to keep in accordance with gyro angle
+                0.05, 0.05, new Rotation2d(0.0)), // however we should change angle to keep in accordance with gyro angle
             new Pose2d(
                 0.1, 0.0, Rotation2d.fromDegrees(180.0))
         };
@@ -206,24 +212,13 @@ public class Constants {
             4.4244, // top cube
             4.9832 // top pole
         };
-        public static double[] cubeDists = {
-            2.0, // high
-            2.0, // mid
-            2.0 // low
-        };
-        public static double[] coneDists = {
-            2.0, // high
-            2.0, // mid
-            2.0 // low
-        };
-        public static double cubeRotation = 0.0;
-        public static double coneRotation = 180.0; // degrees, we want to be facing backwards when shooting cones
         public static final double xPosBeforeBarriers = 1.6; // to be measured
         public static final double xEndOfChargingStation = 2.55; // to be measured
         public static final double yOutsideRightChargingStation = -1.0;
         public static final double yInsideRightChargingStation = -1.0;
         public static final double yInsideLeftChargingStation = 1000.0;
         public static final double yOutsideLeftChargingStation = 1000.0;
+        public static final double ambiguityRequirement = 0.2;
     }
     public static final class EverybotArmConstants {
         public static final PID PID = new PID(1.0, 0.0, 0.0);
@@ -250,5 +245,7 @@ public class Constants {
         public static final int conerSolenoidA = 1;
         public static final int conerSolenoidB = 2;
         public static final int solenoidC = 1;
+
+        public static final int cuberSensor = 1;
     }
 };

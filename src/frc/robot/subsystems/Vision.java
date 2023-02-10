@@ -18,6 +18,8 @@ import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
+
+import java.util.ConcurrentModificationException;
 import java.util.Optional;
 
 public class Vision extends SubsystemBase { // this keeps track of our limelight and photon camera
@@ -34,7 +36,7 @@ public class Vision extends SubsystemBase { // this keeps track of our limelight
     private AprilTagFieldLayout tagLayout;
     public Vision(ShuffleboardTab tab, boolean _limelight, boolean _photon) { // the boolean parameters tell the code if we're using limelight and photon vision
         team = Team.NONE; // we don't know what team we're on yet
-        layout = tab.getLayout("Vision", BuiltInLayouts.kList).withPosition(1, 0).withSize(2, 4); // create a shuffleboard layout to print data
+        layout = tab.getLayout("Vision", BuiltInLayouts.kList).withPosition(0, 1).withSize(2, 4); // create a shuffleboard layout to print data
         if(_limelight) { // if we're using a limelight, set it up and add some values to shuffleboard
             limelight = NetworkTableInstance.getDefault().getTable("limelight");            
             layout.addNumber("Offset", () -> getHorizontalOffset());
@@ -107,7 +109,7 @@ public class Vision extends SubsystemBase { // this keeps track of our limelight
             PhotonPipelineResult res = cameras[i].getLatestResult();
             if(res != null && res.hasTargets()) {
                 PhotonTrackedTarget target = res.getBestTarget();
-                if(target != null) {
+                if(target != null && target.getPoseAmbiguity() <= AprilTagConstants.ambiguityRequirement) {
                     Transform3d transform = target.getBestCameraToTarget();
                     Pose2d reference = AprilTagConstants.robotToCam[i];
                     //double theta = target.getYaw() * Math.PI / 180.0; use this to rely on apriltag angle instead of gyro
@@ -130,7 +132,12 @@ public class Vision extends SubsystemBase { // this keeps track of our limelight
                     if(!foundPosition) {
                         return pose2d;
                     }
-                    poser.addVisionMeasurement(pose2d, res.getTimestampSeconds());
+                    try {
+                        poser.addVisionMeasurement(pose2d, res.getTimestampSeconds());
+                    } catch(ConcurrentModificationException ex) {
+                        System.out.println(ex.getMessage());
+                    }
+                    
                 }
             }
         }

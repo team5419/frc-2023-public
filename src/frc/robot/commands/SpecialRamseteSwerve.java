@@ -2,11 +2,13 @@ package frc.robot.commands;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.XboxController;
+import frc.robot.subsystems.GenericShootIntake;
 import frc.robot.subsystems.Swerve;
 import frc.robot.subsystems.Vision;
 import frc.robot.Util;
 import frc.robot.Constants.AprilTagConstants;
 import frc.robot.Constants.SwerveDriveConstants;
+import frc.robot.Constants.TargetHeights;
 
 public class SpecialRamseteSwerve extends RamseteSwerve {
     enum State {
@@ -19,13 +21,17 @@ public class SpecialRamseteSwerve extends RamseteSwerve {
     private double targetY;
     private boolean imBasic;
     private XboxController driver;
-    public SpecialRamseteSwerve(Swerve drivetrain, Vision vision, XboxController driver, boolean imBasic) {
+    private GenericShootIntake coner;
+    private GenericShootIntake cuber;
+    public SpecialRamseteSwerve(Swerve drivetrain, Vision vision, XboxController driver, GenericShootIntake coner, GenericShootIntake cuber, boolean imBasic) {
         super(drivetrain, vision, new Pose2d(), false);
         this.state = State.PREDIAGONAL;
         this.targetX = 0.0;
         this.targetY = 0.0;
         this.imBasic = imBasic;
         this.driver = driver;
+        this.coner = coner;
+        this.cuber = cuber;
     }
     public void initialize() {
         System.out.println("Special init");
@@ -46,10 +52,11 @@ public class SpecialRamseteSwerve extends RamseteSwerve {
                 }
             }
             num += 3 * (closestNum / 3); // sketchy fr
-        Rotation2d converted = Rotation2d.fromDegrees(isCone ? AprilTagConstants.coneRotation : AprilTagConstants.cubeRotation);
+        GenericShootIntake shooter = isCone ? coner : cuber;
+        Rotation2d converted = Rotation2d.fromDegrees(shooter.getAngle());
         double effectiveX = pose.getX();
-        this.targetX = isCone ? AprilTagConstants.coneDists[height] : AprilTagConstants.cubeDists[height];
-        this.targetY = AprilTagConstants.yPositions[num];
+        this.targetX = shooter.getDistance(TargetHeights.heights[height]);//isCone ? AprilTagConstants.coneDists[height] : AprilTagConstants.cubeDists[height];
+        this.targetY = AprilTagConstants.yPositions[num] + shooter.getOffset();
         if(team == Vision.Team.RED) {
             this.targetY = AprilTagConstants.totalY - targetY;
         }
