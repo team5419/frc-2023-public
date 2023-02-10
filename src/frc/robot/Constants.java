@@ -122,6 +122,7 @@ public class Constants {
         public static final double ticksPerRotation = 2048.0 * 10.3333;
     };
     public static final class SwerveDriveConstants {
+        public static final double triggerDeadband = 0.5;
         public static final int dPadInputRange = 30;
         public static final PID DrivePID = new PID(0.1, 0.0, 0.0);
         public static final PID TurnPID = new PID(8.0 / 12.0, 0.0, 0.0);
@@ -151,8 +152,8 @@ public class Constants {
         public static final double turnMultiplier = 2.5;
         public static final double controllerDeadband = 0.1;
 
-        public static final double pXY = 1.08;
-        public static final double pTheta = 4.0;
+        public static final double pXY = 3.5;
+        public static final double pTheta = 3.0;
         public static final double epsilonXY = 0.0254;
         public static final double epsilonTheta = 3.0;
         public static final ModuleInfo[] info = {
@@ -195,7 +196,7 @@ public class Constants {
     public static final class AprilTagConstants {
         public static Pose2d[] robotToCam = new Pose2d[] { 
             new Pose2d( // we can prob just leave this at 0 and use camera as a reference to our robot 
-                0.05, 0.05, new Rotation2d(0.0)), // however we should change angle to keep in accordance with gyro angle
+                0.0, 0.0, new Rotation2d(0.0)), // however we should change angle to keep in accordance with gyro angle
             new Pose2d(
                 0.1, 0.0, Rotation2d.fromDegrees(180.0))
         };
@@ -212,6 +213,8 @@ public class Constants {
             4.4244, // top cube
             4.9832 // top pole
         };
+
+            public static final double targetYOffset = 2.813 - 2.748;
         public static final double xPosBeforeBarriers = 1.6; // to be measured
         public static final double xEndOfChargingStation = 2.55; // to be measured
         public static final double yOutsideRightChargingStation = -1.0;

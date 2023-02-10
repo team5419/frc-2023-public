@@ -127,7 +127,8 @@ public class Vision extends SubsystemBase { // this keeps track of our limelight
                         pose2d = new Pose2d(AprilTagConstants.totalX - pose2d.getX(), AprilTagConstants.totalY - pose2d.getY(), theta);
                     }
                     if(i == 0) {
-                        lastTagPositionFront = pose2d; // actually this is the back reading
+                        lastTagPositionFront = pose2d;
+                        //lastTagPositionFront = new Pose2d(transform.getX(), transform.getY(), new Rotation2d(0.0)); // actually this is the back reading
                     }
                     if(!foundPosition) {
                         return pose2d;

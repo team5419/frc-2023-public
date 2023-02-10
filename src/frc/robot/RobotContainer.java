@@ -1,4 +1,5 @@
 package frc.robot;
+import frc.robot.Constants.SwerveDriveConstants;
 import frc.robot.auto.*;
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
@@ -100,8 +101,9 @@ public class RobotContainer {
     	Trigger aButtonDriver = new Trigger(() -> driver.getAButton());
     	Trigger bButtonDriver = new Trigger(() -> driver.getBButton());
     	Trigger xButtonDriver = new Trigger(() -> driver.getXButton());
-    	Trigger yButtonDriver = new Trigger(() -> driver.getRightBumper());
-
+		Trigger yButtonDriver = new Trigger(() -> driver.getYButton());
+    	Trigger rightTrigger = new Trigger(() -> driver.getRightTriggerAxis() > SwerveDriveConstants.triggerDeadband);
+		Trigger leftTrigger = new Trigger(() -> driver.getLeftTriggerAxis() > SwerveDriveConstants.triggerDeadband);
     	Trigger leftBumper = new Trigger(() -> driver.getLeftBumper());
     	Trigger rightBumper = new Trigger(() -> driver.getRightBumper());
 
@@ -117,9 +119,10 @@ public class RobotContainer {
 		// for testing:
 		aButtonDriver.onTrue(new Prep(coner, cuber, swerve));
 		bButtonDriver.whileTrue(new Shoot(coner, cuber, swerve));
-    xButtonDriver.whileTrue(new RunIntake(coner));
-    yButtonDriver.whileTrue(new RunIntake(cuber));
+    leftTrigger.whileTrue(new RunIntake(coner));
+    rightTrigger.whileTrue(new RunIntake(cuber));
 		
+	rightBumper.onTrue(new SpecialRamseteSwerve(swerve, vision, driver, coner, cuber, true));
 		//bButtonDriver.onTrue(new SpecialRamseteSwerve(swerve, vision, driver, true));
 		//rightBumper.toggleOnTrue(Commands.runEnd(() -> arm.gotoPosition(Arm.outPosition), () -> arm.gotoPosition(Arm.inPosition)))
 		// bButtonDriver.onTrue(deploy.twoPhase());

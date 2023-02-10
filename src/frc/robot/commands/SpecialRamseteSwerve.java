@@ -52,16 +52,18 @@ public class SpecialRamseteSwerve extends RamseteSwerve {
                 }
             }
             num += 3 * (closestNum / 3); // sketchy fr
+            System.out.println(num);
         GenericShootIntake shooter = isCone ? coner : cuber;
         Rotation2d converted = Rotation2d.fromDegrees(shooter.getAngle());
         double effectiveX = pose.getX();
         this.targetX = shooter.getDistance(TargetHeights.heights[height]);//isCone ? AprilTagConstants.coneDists[height] : AprilTagConstants.cubeDists[height];
-        this.targetY = AprilTagConstants.yPositions[num] + shooter.getOffset();
+        this.targetY = AprilTagConstants.yPositions[num] + shooter.getOffset() + AprilTagConstants.targetYOffset;
         if(team == Vision.Team.RED) {
             this.targetY = AprilTagConstants.totalY - targetY;
         }
         int section = Util.getSection(currentY);
-        this.goal = pose;
+        this.goal = new Pose2d(targetX, targetY, converted);
+        System.out.println("going to x: " + targetX + ", y: " + targetY + ", theta: " + converted.getDegrees());
         if((section == Util.getSection(AprilTagConstants.yPositions[num]) && section != -1) || imBasic) {
             this.state = State.POSTDIAGONAL;
         } else {
@@ -77,6 +79,7 @@ public class SpecialRamseteSwerve extends RamseteSwerve {
 
     public boolean isFinished() {
         if(Math.abs(driver.getLeftX()) > SwerveDriveConstants.controllerDeadband || Math.abs(driver.getLeftY()) > SwerveDriveConstants.controllerDeadband || Math.abs(driver.getRightX()) > SwerveDriveConstants.controllerDeadband || Math.abs(driver.getRightY()) > SwerveDriveConstants.controllerDeadband) {
+            System.out.println("controller on");
             return true;
         }
         if(isFinished) {
