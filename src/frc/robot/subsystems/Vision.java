@@ -14,7 +14,9 @@ import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
@@ -32,6 +34,7 @@ public class Vision extends SubsystemBase { // this keeps track of our limelight
     //private PhotonPoseEstimator[] poseEstimator; // the photon camera has its own pose estimator that interacts with the overall pose estimator
     public Team team; // keep track of the team that we think we're on
     private Pose2d lastTagPositionFront;
+    private Translation2d rawData;
     private double lastTagRotation;
     private AprilTagFieldLayout tagLayout;
     public Vision(ShuffleboardTab tab, boolean _limelight, boolean _photon) { // the boolean parameters tell the code if we're using limelight and photon vision
@@ -46,6 +49,7 @@ public class Vision extends SubsystemBase { // this keeps track of our limelight
         }
         lastTagRotation = 0.0;
         lastTagPositionFront = new Pose2d();
+        rawData = new Translation2d();
         tagLayout = null;
         try {
             tagLayout = AprilTagFieldLayout.loadFromResource(AprilTagFields.k2023ChargedUp.m_resourceFile);
@@ -67,6 +71,8 @@ public class Vision extends SubsystemBase { // this keeps track of our limelight
             layout.addDouble("Last tag x", () -> lastTagPositionFront.getX());
             layout.addDouble("Last tag y", () -> lastTagPositionFront.getY());
             layout.addDouble("last tag theta", () -> lastTagRotation);
+            layout.addDouble("x before transform", () -> rawData.getX());
+            layout.addDouble("y before transform", () -> rawData.getY());
         cameras = new PhotonCamera[] { new PhotonCamera("back")/* , new PhotonCamera("front") */}; // MAKE SURE BACK IS FIRST
         } else {
             cameras = null;
@@ -128,6 +134,7 @@ public class Vision extends SubsystemBase { // this keeps track of our limelight
                     }
                     if(i == 0) {
                         lastTagPositionFront = pose2d;
+                        rawData = new Translation2d(transform.getX(), transform.getY());
                         //lastTagPositionFront = new Pose2d(transform.getX(), transform.getY(), new Rotation2d(0.0)); // actually this is the back reading
                     }
                     if(!foundPosition) {

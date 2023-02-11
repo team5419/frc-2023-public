@@ -196,7 +196,7 @@ public class Constants {
     public static final class AprilTagConstants {
         public static Pose2d[] robotToCam = new Pose2d[] { 
             new Pose2d( // we can prob just leave this at 0 and use camera as a reference to our robot 
-                0.0, 0.0, new Rotation2d(0.0)), // however we should change angle to keep in accordance with gyro angle
+                0.1, 0.1, new Rotation2d(0.0)), // however we should change angle to keep in accordance with gyro angle
             new Pose2d(
                 0.1, 0.0, Rotation2d.fromDegrees(180.0))
         };
