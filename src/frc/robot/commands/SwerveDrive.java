@@ -7,11 +7,13 @@ import frc.robot.Constants.SwerveDriveConstants;
 
 public class SwerveDrive extends CommandBase {
     private XboxController driver;
+    private XboxController codriver;
     private Swerve drivetrain;
     private boolean letGo;
 
-    public SwerveDrive(Swerve drivetrain, XboxController _driver){
+    public SwerveDrive(Swerve drivetrain, XboxController _driver, XboxController _codriver){
         driver = _driver;
+        codriver = _codriver;
         this.drivetrain = drivetrain;
         addRequirements(drivetrain);
         letGo = true;
@@ -21,7 +23,7 @@ public class SwerveDrive extends CommandBase {
         letGo = true;
     }
     public void execute() {
-        int pov = driver.getPOV();
+        int pov = codriver.getPOV();
         if(pov == -1) {
             letGo = true;
         } else if(letGo) {

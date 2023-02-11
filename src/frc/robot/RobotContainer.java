@@ -139,7 +139,7 @@ public class RobotContainer {
 		if(setUp) {
 			return;
 		}
-		swerve.setDefaultCommand(new SwerveDrive(swerve, driver));
+		swerve.setDefaultCommand(new SwerveDrive(swerve, driver, codriver));
 		if(arm != null) {
 			arm.setDefaultCommand(new ManualMoveArm(arm, codriver));
 		}

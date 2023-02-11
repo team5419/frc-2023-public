@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ConerConstants;
 import frc.robot.Constants.Ports;
+import frc.robot.Constants.TargetHeights;
 import frc.robot.subsystems.test.TesterFalcon;
 import frc.robot.subsystems.test.TesterMotor;
 import frc.robot.subsystems.test.TesterNeo;
@@ -38,12 +39,16 @@ public class Coner extends TesterSubsystem implements GenericShootIntake {
     }
     public void stop(String height) {
         super.stop();
-        soOne.set(true);
-        soTwo.set(false);
+        if(height != TargetHeights.INTAKE) {
+            soOne.set(true);
+            soTwo.set(false);
+        }
     }
-    public void setup(String a) {
-        soOne.set(false);
-        soTwo.set(true);
+    public void setup(String height) {
+        if(height == TargetHeights.INTAKE) {
+            soOne.set(false);
+            soTwo.set(true);
+        }
     }
     public SubsystemBase subsystem() {return this;}
     public final double getAngle() {
