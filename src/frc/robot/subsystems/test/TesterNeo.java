@@ -33,6 +33,9 @@ public class TesterNeo implements TesterMotor {
     public double getVelocity() {
         return encoder.getVelocity();
     }
+    public double getPosition() {
+        return encoder.getPosition();
+    }
     public void setVelocity(double velocity) {
         neo.set(pidController.calculate(getVelocity(), velocity));
     }

@@ -28,7 +28,7 @@ public class RunIntake extends CommandBase {
             timer.reset();
             timer.start();
         }
-        shooter.setup(TargetHeights.INTAKE);// -1 indicates that we're intaking, not shooting
+        shooter.setup(TargetHeights.INTAKE, true);// -1 indicates that we're intaking, not shooting
     }
     public void execute() {
         shooter.shoot(TargetHeights.INTAKE);

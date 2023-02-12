@@ -24,6 +24,7 @@ public class Robot extends TimedRobot {
   }
 
   public void disabledInit() {
+    robotContainer.useVision(true);
   }
 
   public void disabledPeriodic() {}

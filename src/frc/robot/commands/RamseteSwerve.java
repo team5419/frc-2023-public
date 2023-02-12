@@ -41,7 +41,6 @@ public class RamseteSwerve extends CommandBase {
         //System.out.println(xdiff);
         double ydiff = goal.getY() - pose.getY();
         //System.out.println(ydiff);
-
         double dx = SwerveDriveConstants.pXY * Util.deadband(xdiff, SwerveDriveConstants.epsilonXY);
         double dy = SwerveDriveConstants.pXY * Util.deadband(ydiff, SwerveDriveConstants.epsilonXY);
         double magnitude = Math.sqrt(Math.pow(dx, 2.0) + Math.pow(dy, 2.0));
@@ -56,13 +55,13 @@ public class RamseteSwerve extends CommandBase {
         //System.out.println("theta: ${DriveConstants.pTheta * (Math.PI / 180) * (target - theta)}");
         drivetrain.drive(dx, dy, dtheta, true, true);
 
-        isFinished = dx == 0 && dy == 0 && dtheta == 0 && drivetrain.getAverageSpeed() < 0.05;
+        isFinished = dx == 0 && dy == 0 && dtheta == 0 && drivetrain.getAverageSpeed() < 0.1;
     }
     public boolean isFinished() {
         System.out.println("finished");
         return isFinished;
     }
     public void end(boolean interrupted) {
-        drivetrain.brake();
+        drivetrain.stop();
     }
 }

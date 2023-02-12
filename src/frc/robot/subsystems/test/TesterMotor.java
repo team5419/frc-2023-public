@@ -9,4 +9,5 @@ public interface TesterMotor {
     public void configurePID(PID pid);
     public void setVelocity(double velocity);
     public double getMaxVelocity();
+    public double getPosition();
 }

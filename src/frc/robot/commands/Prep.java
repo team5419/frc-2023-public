@@ -7,25 +7,35 @@ public class Prep extends CommandBase {
     private Swerve drivetrain;
     private GenericShootIntake coneShooter;
     private GenericShootIntake cubeShooter;
+    private boolean isCone;
+    private int height;
     public Prep(GenericShootIntake coneShooter, GenericShootIntake cubeShooter, Swerve drivetrain) {
         this.drivetrain = drivetrain;
         this.coneShooter = coneShooter;
         this.cubeShooter = cubeShooter;
         addRequirements(coneShooter.subsystem());
         addRequirements(cubeShooter.subsystem());
+        isCone = false;
+        height = 0;;
     }
     public void initialize() {
-        boolean isCone = drivetrain.currentNum != 1;
-        int height = drivetrain.currentHeight; 
+        isCone = drivetrain.currentNum != 1;
+        height = drivetrain.currentHeight; 
         if(isCone) {
-            coneShooter.setup(TargetHeights.heights[height]);
+            coneShooter.setup(TargetHeights.heights[height], true);
         } else {
-            cubeShooter.setup(TargetHeights.heights[height]);
+            cubeShooter.setup(TargetHeights.heights[height], true);
         }
     }
-    public void execute() {}
+    public void execute() {
+        if(isCone) {
+            coneShooter.setup(TargetHeights.heights[height], false);
+        } else {
+            cubeShooter.setup(TargetHeights.heights[height], false);
+        }
+    }
     public boolean isFinished() {
-        return true;
+        return false;
     }
     public void end(boolean interrupted) {
     }

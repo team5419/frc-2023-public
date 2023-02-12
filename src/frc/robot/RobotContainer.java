@@ -1,11 +1,14 @@
 package frc.robot;
 import frc.robot.Constants.SwerveDriveConstants;
+import frc.robot.Constants.TargetHeights;
 import frc.robot.auto.*;
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
 
 import java.util.function.Supplier;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.PneumaticHub;
 import edu.wpi.first.wpilibj.XboxController;
@@ -57,6 +60,9 @@ public class RobotContainer {
     	autoSelector.setDefaultOption("Baseline", () -> new Baseline());
     	//sautoSelector.addOption("Proto Routine", new ProtoRoutine(drivetrain));
     	autoSelector.addOption("Proto Routine", () -> new SwerveRoutine(swerve, vision, coner, cuber));
+		autoSelector.addOption("Proto Routine with Vision", () -> new SwerveWithVision(swerve, vision, coner, cuber));
+		autoSelector.addOption("Go to zero", () -> new SequentialCommandGroup(
+			new RamseteSwerve(swerve, vision, new Pose2d(1.80, 1.02, new Rotation2d(0.0)), true)));
 
 		coneShooterSelector = new SendableChooser<Supplier<GenericShootIntake>>();
 		tab.add("Cone shooter", coneShooterSelector).withSize(2, 1).withPosition(2, 0);
@@ -79,8 +85,8 @@ public class RobotContainer {
   private PneumaticHub generateHub() {
     if(hub == null) {
       hub = new PneumaticHub();
-      Compressor compressor = hub.makeCompressor();
-      compressor.enableDigital();
+      Compressor compressor = null;//hub.makeCompressor();
+      //compressor.enableDigital();
     }
     return hub;
   }
@@ -100,39 +106,46 @@ public class RobotContainer {
 		}
     	Trigger aButtonDriver = new Trigger(() -> driver.getAButton());
     	Trigger bButtonDriver = new Trigger(() -> driver.getBButton());
-    	Trigger xButtonDriver = new Trigger(() -> driver.getXButton());
-		Trigger yButtonDriver = new Trigger(() -> driver.getYButton());
+    	//Trigger xButtonDriver = new Trigger(() -> driver.getXButton());
+		//Trigger yButtonDriver = new Trigger(() -> driver.getYButton());
     	Trigger rightTrigger = new Trigger(() -> driver.getRightTriggerAxis() > SwerveDriveConstants.triggerDeadband);
 		Trigger leftTrigger = new Trigger(() -> driver.getLeftTriggerAxis() > SwerveDriveConstants.triggerDeadband);
     	Trigger leftBumper = new Trigger(() -> driver.getLeftBumper());
     	Trigger rightBumper = new Trigger(() -> driver.getRightBumper());
 
+		Trigger rightTriggerCodriver = new Trigger(() -> codriver.getRightTriggerAxis() > SwerveDriveConstants.triggerDeadband);
+
     	leftBumper.whileTrue(Commands.runEnd(() -> { swerve.slowMode = true; }, () -> { swerve.slowMode = false; }));
     
 		// eventually, this is what the code will look like: 
-		// aButtonDriver.onTrue(new AlignSetup(coner, cuber, swerve, vision, driver));
+		rightBumper.onTrue(new AlignSetup(coner, cuber, swerve, vision, driver));
 		// bButtonDriver.whileTrue(new Shoot(coner, cuber, swerve));
 		
 		// xButtonDriver.whileTrue(new RunIntake(coner));
 		// yButtonDriver.whileTrue(new RunIntake(cuber));
 
 		// for testing:
-		aButtonDriver.onTrue(new Prep(coner, cuber, swerve));
+		aButtonDriver.whileTrue(new Prep(coner, cuber, swerve));
 		bButtonDriver.whileTrue(new Shoot(coner, cuber, swerve));
-    leftTrigger.whileTrue(new RunIntake(coner));
-    rightTrigger.whileTrue(new RunIntake(cuber));
-		
-	rightBumper.onTrue(new SpecialRamseteSwerve(swerve, vision, driver, coner, cuber, true));
-		//bButtonDriver.onTrue(new SpecialRamseteSwerve(swerve, vision, driver, true));
-		//rightBumper.toggleOnTrue(Commands.runEnd(() -> arm.gotoPosition(Arm.outPosition), () -> arm.gotoPosition(Arm.inPosition)))
-		// bButtonDriver.onTrue(deploy.twoPhase());
+    	leftTrigger.whileTrue(new RunIntake(coner));
+    	rightTrigger.whileTrue(new RunIntake(cuber));
+		rightTriggerCodriver.whileTrue(Commands.runEnd(() -> cuber.shoot(TargetHeights.INTAKE), () -> cuber.stop(TargetHeights.LOW), cuber.subsystem()));
+		//rightBumper.onTrue(new SpecialRamseteSwerve(swerve, vision, driver, coner, cuber, true));
+		// rightBumper.toggleOnTrue(Commands.runEnd(() -> arm.gotoPosition(Arm.outPosition), () -> arm.gotoPosition(Arm.inPosition)))
 		// bButtonDriver.onTrue(new Balance(swerve, driver));
-		//aButtonCodriver.toggleOnTrue(Commands.runOnce(() -> swerve.brake()));
+		// aButtonCodriver.toggleOnTrue(Commands.runOnce(() -> swerve.brake()));
 		setUp = true;
   	}
 
 	public Command getAutonomousCommand() {
 		return autoSelector.getSelected().get();
+	}
+
+	public void useVision(boolean use) {
+		swerve.usingVision = use;
+		if(use) {
+			swerve.foundPosition = false;
+		}
 	}
 
 	public void setDefaults() {

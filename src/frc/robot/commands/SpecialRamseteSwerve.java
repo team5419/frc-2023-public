@@ -78,10 +78,6 @@ public class SpecialRamseteSwerve extends RamseteSwerve {
     }
 
     public boolean isFinished() {
-        if(Math.abs(driver.getLeftX()) > SwerveDriveConstants.controllerDeadband || Math.abs(driver.getLeftY()) > SwerveDriveConstants.controllerDeadband || Math.abs(driver.getRightX()) > SwerveDriveConstants.controllerDeadband || Math.abs(driver.getRightY()) > SwerveDriveConstants.controllerDeadband) {
-            System.out.println("controller on");
-            return true;
-        }
         if(isFinished) {
             isFinished = false;
             if(state == State.PREDIAGONAL) {
@@ -91,8 +87,7 @@ public class SpecialRamseteSwerve extends RamseteSwerve {
                 state = State.POSTDIAGONAL;
                 this.goal = new Pose2d(targetX, targetY, this.goal.getRotation());
             } else {
-                System.out.println("finished");
-                return true;
+                return Math.abs(driver.getLeftX()) > SwerveDriveConstants.controllerDeadband || Math.abs(driver.getLeftY()) > SwerveDriveConstants.controllerDeadband || Math.abs(driver.getRightX()) > SwerveDriveConstants.controllerDeadband || Math.abs(driver.getRightY()) > SwerveDriveConstants.controllerDeadband;
             }
         }
         return false;

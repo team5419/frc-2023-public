@@ -20,16 +20,17 @@ import edu.wpi.first.wpilibj.AnalogInput;
 public class Cuber extends TesterSubsystem implements GenericShootIntake {
     private Solenoid soOne;
     private AnalogInput sensor;
+    private double startingPoint;
     public Cuber(PneumaticHub hub, boolean velocityControl) {
         super("Cube Shooter", new TesterMotor[] {
             new TesterNeo("Main", Util.setUpMotor(
                 new CANSparkMax(Ports.intake, MotorType.kBrushless), false, false
             )),
             new TesterNeo("Indexer", Util.setUpMotor(
-                new CANSparkMax(Ports.indexer, MotorType.kBrushless), false, false
+                new CANSparkMax(Ports.indexer, MotorType.kBrushless), false, true
             ))
         }, velocityControl ? CubeShooterConstants.velocities : CubeShooterConstants.percents);
-
+        startingPoint = 0.0;
         soOne = hub.makeSolenoid(Ports.cuberSolenoid);
         soOne.set(false);
 
@@ -37,6 +38,8 @@ public class Cuber extends TesterSubsystem implements GenericShootIntake {
 
         ShuffleboardTab main = Shuffleboard.getTab("Master");
         main.addNumber("Cuber sensor", () -> getSensorValue()).withSize(1, 1).withPosition(2, 1);
+        main.addNumber("Backwards setpoint", () -> startingPoint);
+        main.addNumber("Cuber position", () -> motors[1].getPosition());
     }
     public double getSensorValue() {
         return sensor.getValue();
@@ -51,15 +54,27 @@ public class Cuber extends TesterSubsystem implements GenericShootIntake {
         super.stop();
     }
     public SubsystemBase subsystem() {return this;}
-    public void setup(String height) {
-        motors[1].run(CubeShooterConstants.indexerSlowBackwardsSpeed);
-        runSingle(height, 0);
+    public void setup(String height, boolean first) {
         if(height == TargetHeights.INTAKE) {
             soOne.set(true);
+            if(first) {
+                runSingle(height, 0);
+            }
+        } else {
+            double pos = motors[1].getPosition();
+            if(first) {
+                startingPoint = pos;
+                motors[1].run(CubeShooterConstants.indexerSlowBackwardsSpeed);
+            } else {
+                runSingle(height, 0);
+                if(pos - startingPoint > 5) {
+                    motors[1].run(0.0);
+                }
+            }
         }
     }
     public void periodic() {
-
+        //System.out.println(motors[1].getPosition());
     }
     public void simulationPeriodic() {
 
@@ -68,7 +83,10 @@ public class Cuber extends TesterSubsystem implements GenericShootIntake {
         return 0.0;
     }
     public final double getDistance(String height) {
-        return 2.17;
+        if(height == TargetHeights.HIGH) {
+            return 2.0;
+        }
+        return 1.84;
     }
     public double getOffset() {
         double val = getSensorValue();

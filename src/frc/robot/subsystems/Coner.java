@@ -44,8 +44,8 @@ public class Coner extends TesterSubsystem implements GenericShootIntake {
             soTwo.set(false);
         }
     }
-    public void setup(String height) {
-        if(height == TargetHeights.INTAKE) {
+    public void setup(String height, boolean first) {
+        if(height == TargetHeights.INTAKE && first) {
             soOne.set(false);
             soTwo.set(true);
         }
@@ -58,7 +58,7 @@ public class Coner extends TesterSubsystem implements GenericShootIntake {
         return 0.0;
     }
     public final double getDistance(String height) {
-        return 2.17;
+        return 1.84;
     }
     public void periodic() {
 

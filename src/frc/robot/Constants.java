@@ -23,13 +23,13 @@ public class Constants {
     public static final class ConerConstants {
         // order: bottom motor, top motor
         public static final Map<String, TesterSetting> percents = Map.of(TargetHeights.LOW, new TesterSetting(new double[] { 
-            0.5, -0.5
-        }), TargetHeights.MID, new TesterSetting(new double[] { 
-            0.5, -0.5
-        }), TargetHeights.HIGH, new TesterSetting(new double[] { 
-            1.0, -1.0
-        }), TargetHeights.INTAKE, new TesterSetting(new double[] { 
             -0.5, 0.5
+        }), TargetHeights.MID, new TesterSetting(new double[] { 
+            -0.5, 1.0
+        }), TargetHeights.HIGH, new TesterSetting(new double[] { 
+            -1.0, 1.0
+        }), TargetHeights.INTAKE, new TesterSetting(new double[] { 
+            0.5, -0.5
         }));
 
         public static final Map<String, TesterSetting> neoVelocities = Map.of(TargetHeights.LOW, new TesterSetting(new double[] { 
@@ -61,7 +61,7 @@ public class Constants {
         }), TargetHeights.MID, new TesterSetting(new double[] { 
             0.35, -1.0
         }), TargetHeights.HIGH, new TesterSetting(new double[] { 
-            0.75, -1.0
+            0.45, -1.0
         }), TargetHeights.INTAKE, new TesterSetting(new double[] { 
             -0.4, 0.1
         }));
@@ -125,7 +125,7 @@ public class Constants {
         public static final double triggerDeadband = 0.5;
         public static final int dPadInputRange = 30;
         public static final PID DrivePID = new PID(0.1, 0.0, 0.0);
-        public static final PID TurnPID = new PID(8.0 / 12.0, 0.0, 0.0);
+        public static final PID TurnPID = new PID(8.0 / 12.0, 0.0, 0.0); // 8/12
         public static final double slow = 0.2;
         public static final double maxVelocity = 4.0;  
         public static final double kv = (2.298 / 12); // 2.1737
@@ -214,14 +214,14 @@ public class Constants {
             4.9832 // top pole
         };
 
-            public static final double targetYOffset = 2.813 - 2.748;
+            public static final double targetYOffset = 1.0 - 1.0716;
         public static final double xPosBeforeBarriers = 1.6; // to be measured
         public static final double xEndOfChargingStation = 2.55; // to be measured
         public static final double yOutsideRightChargingStation = -1.0;
         public static final double yInsideRightChargingStation = -1.0;
         public static final double yInsideLeftChargingStation = 1000.0;
         public static final double yOutsideLeftChargingStation = 1000.0;
-        public static final double ambiguityRequirement = 0.2;
+        public static final double ambiguityRequirement = 0.9;
     }
     public static final class EverybotArmConstants {
         public static final PID PID = new PID(1.0, 0.0, 0.0);
@@ -238,8 +238,8 @@ public class Constants {
         public static final int rightFollower = 4;
         public static final int gyro = 13;
         public static final int claw = 15;
-        public static final int coneTop = 17;
-        public static final int coneBottom = 16;
+        public static final int coneTop = 16;
+        public static final int coneBottom = 17;
         public static final int everyIntakeMotor = 19;
         public static final int everyArm0 = 20;
         public static final int everyArm1 = 21;

@@ -14,7 +14,6 @@ import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.networktables.NetworkTable;
@@ -37,6 +36,7 @@ public class Vision extends SubsystemBase { // this keeps track of our limelight
     private Translation2d rawData;
     private double lastTagRotation;
     private AprilTagFieldLayout tagLayout;
+    public boolean seesTag;
     public Vision(ShuffleboardTab tab, boolean _limelight, boolean _photon) { // the boolean parameters tell the code if we're using limelight and photon vision
         team = Team.NONE; // we don't know what team we're on yet
         layout = tab.getLayout("Vision", BuiltInLayouts.kList).withPosition(0, 1).withSize(2, 4); // create a shuffleboard layout to print data
@@ -47,6 +47,7 @@ public class Vision extends SubsystemBase { // this keeps track of our limelight
         } else {
             limelight = null;
         }
+        seesTag = false;
         lastTagRotation = 0.0;
         lastTagPositionFront = new Pose2d();
         rawData = new Translation2d();
@@ -70,10 +71,11 @@ public class Vision extends SubsystemBase { // this keeps track of our limelight
             });
             layout.addDouble("Last tag x", () -> lastTagPositionFront.getX());
             layout.addDouble("Last tag y", () -> lastTagPositionFront.getY());
-            layout.addDouble("last tag theta", () -> lastTagRotation);
-            layout.addDouble("x before transform", () -> rawData.getX());
-            layout.addDouble("y before transform", () -> rawData.getY());
-        cameras = new PhotonCamera[] { new PhotonCamera("back")/* , new PhotonCamera("front") */}; // MAKE SURE BACK IS FIRST
+            layout.addBoolean("sees tag", () -> seesTag);
+            // layout.addDouble("last tag theta", () -> lastTagRotation);
+            // layout.addDouble("x before transform", () -> rawData.getX());
+            // layout.addDouble("y before transform", () -> rawData.getY());
+        cameras = new PhotonCamera[] { new PhotonCamera("back lifecam")/* , new PhotonCamera("front") */}; // MAKE SURE BACK IS FIRST
         } else {
             cameras = null;
         }
@@ -113,9 +115,11 @@ public class Vision extends SubsystemBase { // this keeps track of our limelight
         }
         for(int i = 0; i < cameras.length; i++) {
             PhotonPipelineResult res = cameras[i].getLatestResult();
-            if(res != null && res.hasTargets()) {
+            seesTag = res != null && res.hasTargets();
+            if(seesTag) {
                 PhotonTrackedTarget target = res.getBestTarget();
-                if(target != null && target.getPoseAmbiguity() <= AprilTagConstants.ambiguityRequirement) {
+                seesTag = target != null && target.getPoseAmbiguity() <= AprilTagConstants.ambiguityRequirement;
+                if(seesTag) {
                     Transform3d transform = target.getBestCameraToTarget();
                     Pose2d reference = AprilTagConstants.robotToCam[i];
                     //double theta = target.getYaw() * Math.PI / 180.0; use this to rely on apriltag angle instead of gyro

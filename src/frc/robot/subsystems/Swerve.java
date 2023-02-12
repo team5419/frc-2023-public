@@ -26,7 +26,8 @@ public class Swerve extends SubsystemBase { // our swerve drive subsystem
     private SwerveDrivePoseEstimator poseEstimator; // specialized position estimator that uses motor data and vision data
     public SwerveModule[] drivers; // an array of 4 swerve modules for the four modules on the robot
     public Pigeon2 gyro; // keep a gyro to read our current angle
-    private boolean foundPosition; // keeps track of whether the robot has gotten an initial position reading from the vision system
+    public boolean usingVision;
+    public boolean foundPosition; // keeps track of whether the robot has gotten an initial position reading from the vision system
     public int currentNum; // keep track of the current station (0-2) that the driver wants to go to based on the button board
     public int currentHeight; // keep track of whether the driver wants to shoot low, mid, or high based on the button board
     private ChassisSpeeds previousMove; // keep track of the previous speeds of the modules for position tracking
@@ -34,6 +35,7 @@ public class Swerve extends SubsystemBase { // our swerve drive subsystem
     public double yawOffset; // keep track of a yaw offset for the gyro so that we can reset it to 0
     public Swerve(Vision vision, boolean pigeon) { // the pigeon parameter tells the code whether we are using a pigeon
         drivers = new SwerveModule[SwerveDriveConstants.info.length]; // instantiate the module array
+        usingVision = true;
         for(int i = 0; i < drivers.length; i++)  {
             drivers[i] = new SwerveModule(SwerveDriveConstants.info[i], i); // for each module, instantiate the module with predefined constant module info
         }
@@ -54,12 +56,12 @@ public class Swerve extends SubsystemBase { // our swerve drive subsystem
         Rotation2d tation = Rotation2d.fromDegrees(angle()); // get our current gyro angle
         // instantiate the pose estimator based on our current angle and motor data, with a pose at the origin
         Matrix<N3, N1> stateDevs = new Matrix<N3,N1>(N3.instance, N1.instance);
-            stateDevs.set(0, 0, 0.1);
-            stateDevs.set(1, 0, 0.1);
+            stateDevs.set(0, 0, 0.8);
+            stateDevs.set(1, 0, 0.8);
             stateDevs.set(2, 0, 0.1);
         Matrix<N3, N1> visionDevs = new Matrix<N3,N1>(N3.instance, N1.instance);
-            visionDevs.set(0, 0, 0.5);
-            visionDevs.set(1, 0, 0.5);
+            visionDevs.set(0, 0, 0.1);
+            visionDevs.set(1, 0, 0.1);
             visionDevs.set(2, 0, 99.0);
         poseEstimator = new SwerveDrivePoseEstimator(SwerveDriveConstants.kinematics, tation, getPositions(), new Pose2d(0.0, 0.0, tation), stateDevs, visionDevs);
         foundPosition = !vision.usesCamera(); // if no camera, just start at zero and move from there. otherwise, wait until the camera reads a value to update the pose tracker
@@ -108,7 +110,7 @@ public class Swerve extends SubsystemBase { // our swerve drive subsystem
     public void periodic() {
         Rotation2d angle = Rotation2d.fromDegrees(angle()); // read the current angle of the robot
         SwerveModulePosition[] positions = getPositions(); // get all the module positions
-        if(!foundPosition) { // if we're still waiting for the first vision position reading, do this
+        if(!foundPosition && usingVision) { // if we're still waiting for the first vision position reading, do this
             Pose2d measure = vision.updateRobotPose(poseEstimator, angle, new Pose2d(), false); // get the current vision measurement
             if(measure != null) {
                 foundPosition = true;
@@ -117,7 +119,9 @@ public class Swerve extends SubsystemBase { // our swerve drive subsystem
         } else {
             // otherwise, do the normal stuff
             Pose2d pose = poseEstimator.update(angle, positions); // update our position estimator using the current lag time, the robot angle, and the module positions
-            vision.updateRobotPose(poseEstimator, angle, pose, true); // try to get a reading from the vision system
+            if(usingVision) {
+                vision.updateRobotPose(poseEstimator, angle, pose, true); // try to get a reading from the vision system
+            }
         }
     }
     public void drive(double forward, double left, double rotation, boolean fieldCentric, boolean pid) {
@@ -133,7 +137,7 @@ public class Swerve extends SubsystemBase { // our swerve drive subsystem
         // if the driver isn't touching the controller, don't just turn to 0 for no reason. instead, don't move at all
     }
     public Pose2d pose() { // get the current position based on the estimator, or 0 if the position hasn't been estimated yet
-        return foundPosition ? poseEstimator.getEstimatedPosition() : new Pose2d();
+        return poseEstimator.getEstimatedPosition();
     }
     public double angle() { // get the yaw angle if we're using a gyro, and subtract the offset to adjust for when we zero the gyro
         return gyro == null ? 0.0 : (gyro.getYaw() - yawOffset);
