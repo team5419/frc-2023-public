@@ -39,4 +39,7 @@ public class Suction extends SubsystemBase implements GenericShootIntake {
     public final double getDistance(String height) {
         return 1.84;
     }
+    public final double getLimelightDistance(String height) {
+        return 1.84;
+    }
 }

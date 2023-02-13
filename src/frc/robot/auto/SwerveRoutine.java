@@ -13,9 +13,9 @@ public class SwerveRoutine extends SequentialCommandGroup { // basic routine for
     public SwerveRoutine(Swerve drivetrain, Vision vision, GenericShootIntake coneShooter, GenericShootIntake cubeShooter) {
         addCommands(
             new UseVision(drivetrain, false),
-            new RamseteSwerve(drivetrain, vision, new Pose2d(6.0, 0.95, Rotation2d.fromDegrees(180.0)), true),
+            new RamseteSwerve(drivetrain, vision, new Pose2d(6.0, 0.95, Rotation2d.fromDegrees(180.0)), true, false),
             //new UseVision(drivetrain, true),
-            new RamseteSwerve(drivetrain, vision, new Pose2d(4.0, 0.95, Rotation2d.fromDegrees(0.0)), true)
+            new RamseteSwerve(drivetrain, vision, new Pose2d(4.0, 0.95, Rotation2d.fromDegrees(0.0)), true, false)
             //new RamseteFromCurrent(drivetrain, vision, new Pose2d(1.0, 0.0, Rotation2d.fromDegrees(0.0)), true)//,
             // Commands.runOnce(() -> { drivetrain.currentNum = 1; drivetrain.currentHeight = 2; }),
             // new Prep(coneShooter, cubeShooter, drivetrain),

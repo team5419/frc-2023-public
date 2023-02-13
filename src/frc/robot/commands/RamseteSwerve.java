@@ -13,11 +13,13 @@ public class RamseteSwerve extends CommandBase {
     protected Pose2d goal;
     protected boolean teamRelative;
     protected Vision vision;
-    public RamseteSwerve(Swerve drivetrain, Vision vision, Pose2d goal, boolean teamRelative) {
+    private boolean preventDrive;
+    public RamseteSwerve(Swerve drivetrain, Vision vision, Pose2d goal, boolean teamRelative, boolean preventDrive) {
         this.drivetrain = drivetrain;
         this.teamRelative = teamRelative;
         this.goal = goal;
         this.vision = vision;
+        this.preventDrive = preventDrive;
         isFinished = false;
         addRequirements(drivetrain);
     }
@@ -41,8 +43,8 @@ public class RamseteSwerve extends CommandBase {
         //System.out.println(xdiff);
         double ydiff = goal.getY() - pose.getY();
         //System.out.println(ydiff);
-        double dx = SwerveDriveConstants.pXY * Util.deadband(xdiff, SwerveDriveConstants.epsilonXY);
-        double dy = SwerveDriveConstants.pXY * Util.deadband(ydiff, SwerveDriveConstants.epsilonXY);
+        double dx = preventDrive ? 0.0 : (SwerveDriveConstants.pXY * Util.deadband(xdiff, SwerveDriveConstants.epsilonXY));
+        double dy = preventDrive ? 0.0 : (SwerveDriveConstants.pXY * Util.deadband(ydiff, SwerveDriveConstants.epsilonXY));
         double magnitude = Math.sqrt(Math.pow(dx, 2.0) + Math.pow(dy, 2.0));
 
         if(magnitude > SwerveDriveConstants.maxVelocity) {
@@ -53,9 +55,9 @@ public class RamseteSwerve extends CommandBase {
         double dtheta = 1 * SwerveDriveConstants.pTheta * (Math.PI / 180.0) * Util.deadband(target - theta, SwerveDriveConstants.epsilonTheta);
         //System.out.println(dtheta);
         //System.out.println("theta: ${DriveConstants.pTheta * (Math.PI / 180) * (target - theta)}");
-        drivetrain.drive(dx, dy, dtheta, true, true);
+        drivetrain.drive(dx , dy , dtheta, true, true);
 
-        isFinished = dx == 0 && dy == 0 && dtheta == 0 && drivetrain.getAverageSpeed() < 0.1;
+        isFinished = (preventDrive || (dx == 0 && dy == 0)) && dtheta == 0 && drivetrain.getAverageSpeed() < 0.1;
     }
     public boolean isFinished() {
         System.out.println("finished");

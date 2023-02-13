@@ -18,6 +18,7 @@ import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 
 import java.util.ConcurrentModificationException;
@@ -28,7 +29,7 @@ public class Vision extends SubsystemBase { // this keeps track of our limelight
         NONE, BLUE, RED
     };
     private NetworkTable limelight; // keep track of the limelight
-    private ShuffleboardLayout layout; // keep track of a shuffleboard layout for printing data
+    private ShuffleboardTab layout; // keep track of a shuffleboard layout for printing data
     private PhotonCamera[] cameras; // keep track of the photon camera (april tags stuff)
     //private PhotonPoseEstimator[] poseEstimator; // the photon camera has its own pose estimator that interacts with the overall pose estimator
     public Team team; // keep track of the team that we think we're on
@@ -39,11 +40,14 @@ public class Vision extends SubsystemBase { // this keeps track of our limelight
     public boolean seesTag;
     public Vision(ShuffleboardTab tab, boolean _limelight, boolean _photon) { // the boolean parameters tell the code if we're using limelight and photon vision
         team = Team.NONE; // we don't know what team we're on yet
-        layout = tab.getLayout("Vision", BuiltInLayouts.kList).withPosition(0, 1).withSize(2, 4); // create a shuffleboard layout to print data
+        layout = Shuffleboard.getTab("Vision"); // create a shuffleboard layout to print data
         if(_limelight) { // if we're using a limelight, set it up and add some values to shuffleboard
             limelight = NetworkTableInstance.getDefault().getTable("limelight");            
-            layout.addNumber("Offset", () -> getHorizontalOffset());
+            layout.addNumber("Hor Offset", () -> getHorizontalOffset());
+            layout.addNumber("Ver Offset", () -> getVerticalOffset());
+            layout.addNumber("Distance", () -> getHorizontalDistance());
             layout.addBoolean("Sees target", () -> isTargetFound());
+            this.off();
         } else {
             limelight = null;
         }
@@ -127,12 +131,19 @@ public class Vision extends SubsystemBase { // this keeps track of our limelight
                     if(i == 0) {
                         lastTagRotation = _theta;
                     }
-                    double preTransformX = transform.getX() - reference.getX();
-                    double preTransformY = transform.getY() - reference.getY();
+                    double preTransformX = transform.getX();
+                    double preTransformY = transform.getY();
+                    if(team == Team.RED) {
+                        preTransformX = -preTransformX;
+                        preTransformY = -preTransformY;
+                    }
+                    preTransformX -= reference.getX();
+                    preTransformY -= reference.getY();
                     double transformedX = preTransformX * Math.cos(_theta) - preTransformY * Math.sin(_theta);
                     double transformedY = preTransformX * Math.sin(_theta) + preTransformY * Math.cos(_theta);
                     Optional<Pose3d> tagPose = tagLayout.getTagPose(target.getFiducialId());
                     Pose2d pose2d = new Pose2d(transformedX + tagPose.get().getX(), transformedY + tagPose.get().getY(), theta);
+                    //lastTagPositionFront = pose2d;
                     if(team == Team.RED) {
                         pose2d = new Pose2d(AprilTagConstants.totalX - pose2d.getX(), AprilTagConstants.totalY - pose2d.getY(), theta);
                     }
@@ -166,6 +177,10 @@ public class Vision extends SubsystemBase { // this keeps track of our limelight
 
     public double getHorizontalDistance() { 
         if(limelight == null) {
+            return 0.0;
+        }
+        double offset = getVerticalOffset();
+        if(LimelightConstants.cameraAngle + offset == 0.0) {
             return 0.0;
         }
         return (LimelightConstants.lowTargetHeight - LimelightConstants.cameraHeight) / Math.tan(Math.toRadians(LimelightConstants.cameraAngle + getVerticalOffset()));

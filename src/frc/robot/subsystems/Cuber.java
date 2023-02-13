@@ -86,7 +86,11 @@ public class Cuber extends TesterSubsystem implements GenericShootIntake {
         if(height == TargetHeights.HIGH) {
             return 2.0;
         }
-        return 1.84;
+        return 1.95;
+        //return 1.84;
+    }
+    public final double getLimelightDistance(String height) {
+        return -1.0;
     }
     public double getOffset() {
         double val = getSensorValue();

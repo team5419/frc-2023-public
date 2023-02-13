@@ -12,7 +12,7 @@ import frc.robot.subsystems.Vision;
 public class SwerveWithVision extends SequentialCommandGroup { // basic routine for diff drive
     public SwerveWithVision(Swerve drivetrain, Vision vision, GenericShootIntake coneShooter, GenericShootIntake cubeShooter) {
         addCommands(
-            new RamseteSwerve(drivetrain, vision, new Pose2d(6.8, 1.1, Rotation2d.fromDegrees(0.0)), true)
+            new RamseteSwerve(drivetrain, vision, new Pose2d(6.8, 1.1, Rotation2d.fromDegrees(0.0)), true, false)
             
             //new RamseteFromCurrent(drivetrain, vision, new Pose2d(1.0, 0.0, Rotation2d.fromDegrees(0.0)), true)//,
             // Commands.runOnce(() -> { drivetrain.currentNum = 1; drivetrain.currentHeight = 2; }),

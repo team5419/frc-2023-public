@@ -9,5 +9,6 @@ public interface GenericShootIntake {
     public double getAngle();
     public double getOffset();
     public double getDistance(String height);
+    public double getLimelightDistance(String height);
     public SubsystemBase subsystem();
 }

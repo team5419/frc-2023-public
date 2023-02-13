@@ -2,6 +2,8 @@ package frc.robot.commands;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import frc.robot.subsystems.GenericShootIntake;
 import frc.robot.subsystems.Swerve;
 import frc.robot.subsystems.Vision;
@@ -16,6 +18,11 @@ public class SpecialRamseteSwerve extends RamseteSwerve {
         DIAGONAL,
         POSTDIAGONAL
     };
+    enum ControllerState {
+        NOTOFFYET,
+        OFF,
+        ONAGAIN
+    }
     private State state;
     private double targetX;
     private double targetY;
@@ -23,8 +30,12 @@ public class SpecialRamseteSwerve extends RamseteSwerve {
     private XboxController driver;
     private GenericShootIntake coner;
     private GenericShootIntake cuber;
+    private ControllerState controller;
+    private boolean isCone;
+    private int height;
+    private static int count;
     public SpecialRamseteSwerve(Swerve drivetrain, Vision vision, XboxController driver, GenericShootIntake coner, GenericShootIntake cuber, boolean imBasic) {
-        super(drivetrain, vision, new Pose2d(), false);
+        super(drivetrain, vision, new Pose2d(), false, false);
         this.state = State.PREDIAGONAL;
         this.targetX = 0.0;
         this.targetY = 0.0;
@@ -32,19 +43,26 @@ public class SpecialRamseteSwerve extends RamseteSwerve {
         this.driver = driver;
         this.coner = coner;
         this.cuber = cuber;
+        this.controller = ControllerState.NOTOFFYET;
+        this.isCone = false;
+        this.height = 0;
+        ShuffleboardTab tab = Shuffleboard.getTab("Master");
+        // count++;
+        // tab.addNumber("ramsete target y + " + count, () -> goal.getY());
     }
     public void initialize() {
+        this.controller = ControllerState.NOTOFFYET;
         System.out.println("Special init");
         int num = drivetrain.currentNum;
-        boolean isCone = num != 1; 
-        int height = drivetrain.currentHeight;
+        isCone = num != 1; 
+        height = drivetrain.currentHeight;
         Pose2d pose = drivetrain.pose();
         Vision.Team team = vision.team;
         double currentY = pose.getY();
         if(team == Vision.Team.RED) {
             currentY = AprilTagConstants.totalY - currentY;
         }
-            int closestNum = 0;
+            int closestNum = AprilTagConstants.yPositions.length - 1;
             for(int i = 1; i < AprilTagConstants.yPositions.length; i++) {
                 if(AprilTagConstants.yPositions[i] > currentY) {
                     closestNum = (Math.abs(AprilTagConstants.yPositions[i - 1] - currentY) < Math.abs(AprilTagConstants.yPositions[i] - currentY)) ? (i - 1) : i;
@@ -54,7 +72,7 @@ public class SpecialRamseteSwerve extends RamseteSwerve {
             num += 3 * (closestNum / 3); // sketchy fr
             System.out.println(num);
         GenericShootIntake shooter = isCone ? coner : cuber;
-        Rotation2d converted = Rotation2d.fromDegrees(shooter.getAngle());
+        Rotation2d converted = Rotation2d.fromDegrees(/*shooter.getAngle()*//* if we have front and back cameras, use this, otherwise --> */ AprilTagConstants.cameraAngle);
         double effectiveX = pose.getX();
         this.targetX = shooter.getDistance(TargetHeights.heights[height]);//isCone ? AprilTagConstants.coneDists[height] : AprilTagConstants.cubeDists[height];
         this.targetY = AprilTagConstants.yPositions[num] + shooter.getOffset() + AprilTagConstants.targetYOffset;
@@ -74,10 +92,23 @@ public class SpecialRamseteSwerve extends RamseteSwerve {
                 this.goal = new Pose2d(AprilTagConstants.xPosBeforeBarriers, pose.getY(), converted);
             }
         }
-        
+    }
+
+    public void execute() {
+        super.execute();
+        if(Math.abs(driver.getLeftX()) > SwerveDriveConstants.controllerDeadband || Math.abs(driver.getLeftY()) > SwerveDriveConstants.controllerDeadband || Math.abs(driver.getRightX()) > SwerveDriveConstants.controllerDeadband || Math.abs(driver.getRightY()) > SwerveDriveConstants.controllerDeadband) {
+            if(controller == ControllerState.OFF) {
+                controller = ControllerState.ONAGAIN;
+            }
+        } else {
+            controller = ControllerState.OFF;
+        }
     }
 
     public boolean isFinished() {
+        if(controller == ControllerState.ONAGAIN) {
+            return true;
+        }
         if(isFinished) {
             isFinished = false;
             if(state == State.PREDIAGONAL) {
@@ -87,9 +118,18 @@ public class SpecialRamseteSwerve extends RamseteSwerve {
                 state = State.POSTDIAGONAL;
                 this.goal = new Pose2d(targetX, targetY, this.goal.getRotation());
             } else {
-                return Math.abs(driver.getLeftX()) > SwerveDriveConstants.controllerDeadband || Math.abs(driver.getLeftY()) > SwerveDriveConstants.controllerDeadband || Math.abs(driver.getRightX()) > SwerveDriveConstants.controllerDeadband || Math.abs(driver.getRightY()) > SwerveDriveConstants.controllerDeadband;
+                return isCone;
             }
         }
         return false;
+    }
+
+    public void end(boolean interrupted) {
+        System.out.println("SPECIAL SWERVE ENDED!!");
+        super.end(interrupted);
+        if(isCone && controller != ControllerState.ONAGAIN) {
+            AutoAlign aligner = new AutoAlign(drivetrain, vision, driver, coner.getLimelightDistance(TargetHeights.heights[height]));
+            aligner.schedule();
+        }
     }
 }

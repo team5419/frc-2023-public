@@ -21,15 +21,16 @@ public class Constants {
         public static final String[] heights = { LOW, MID, HIGH };
     }
     public static final class ConerConstants {
+        public static final double inOutVelocity = 0.05;
         // order: bottom motor, top motor
         public static final Map<String, TesterSetting> percents = Map.of(TargetHeights.LOW, new TesterSetting(new double[] { 
-            -0.5, 0.5
+            0.06, -0.34
         }), TargetHeights.MID, new TesterSetting(new double[] { 
-            -0.5, 1.0
+            0.14, -0.44//0.14, -0.36
         }), TargetHeights.HIGH, new TesterSetting(new double[] { 
-            -1.0, 1.0
+            0.22, -1.0
         }), TargetHeights.INTAKE, new TesterSetting(new double[] { 
-            0.5, -0.5
+            -0.2, 0.2
         }));
 
         public static final Map<String, TesterSetting> neoVelocities = Map.of(TargetHeights.LOW, new TesterSetting(new double[] { 
@@ -149,13 +150,13 @@ public class Constants {
         public static final double epsilonYawBalance = 0.5;
 
         public static final double speedMultiplier = 4.0;
-        public static final double turnMultiplier = 2.5;
+        public static final double turnMultiplier = 4.0;
         public static final double controllerDeadband = 0.1;
 
         public static final double pXY = 3.5;
         public static final double pTheta = 3.0;
         public static final double epsilonXY = 0.0254;
-        public static final double epsilonTheta = 3.0;
+        public static final double epsilonTheta = 1.5;
         public static final ModuleInfo[] info = {
             new ModuleInfo(7, 8, true, true, 12, 0.35895 + 1.6229), // 1.6229
             new ModuleInfo(5, 6, false, true, 11, 0.91578 + 4.7247), //4.7247            
@@ -180,20 +181,23 @@ public class Constants {
         public static final double closedPosition = 1.0;
     }
     public static final class LimelightConstants {
-        public static final double lowTargetHeight = 1.0;
-        public static final double cameraAngle = 0.0;
-        public static final double cameraHeight = 0.5;
-        public static final PIDController horizontalPID = new PIDController(1.0, 0.0, 0.0);
-        public static final PIDController turnPID = new PIDController(1.0, 0.0, 0.0);
-        public static final PIDController forwardPID = new PIDController(1.0, 0.0, 0.0);
-        public static final double desiredAngle = 0.0;
+        public static final double lowTargetHeight = 0.6096;
+        public static final double cameraAngle = 6.0;
+        public static final double cameraHeight = 0.3048;
+        public static final PIDController horizontalPID = new PIDController(0.04, 0.0, 0.0);
+        public static final PIDController turnPID = new PIDController(0.1, 0.0, 0.0);
+        public static final PIDController forwardPID = new PIDController(3.5, 0.0, 0.0);
+        public static final double desiredAngle = 180.0;
         public static final double desiredDistance = 0.0;
 
         public static final double epsilonTurn = 1.0;
-        public static final double epsilonHorizontal = 0.1;
-        public static final double epsilonForward = 0.1;
+        public static final double epsilonHorizontal = 1.0;
+        public static final double epsilonForward = 0.02;
     }
     public static final class AprilTagConstants {
+
+        public static final double cameraAngle = 0.0;
+
         public static Pose2d[] robotToCam = new Pose2d[] { 
             new Pose2d( // we can prob just leave this at 0 and use camera as a reference to our robot 
                 0.1, 0.1, new Rotation2d(0.0)), // however we should change angle to keep in accordance with gyro angle
@@ -214,7 +218,7 @@ public class Constants {
             4.9832 // top pole
         };
 
-            public static final double targetYOffset = 1.0 - 1.0716;
+            public static final double targetYOffset = 4.2837 - 4.4244;
         public static final double xPosBeforeBarriers = 1.6; // to be measured
         public static final double xEndOfChargingStation = 2.55; // to be measured
         public static final double yOutsideRightChargingStation = -1.0;
@@ -238,8 +242,8 @@ public class Constants {
         public static final int rightFollower = 4;
         public static final int gyro = 13;
         public static final int claw = 15;
-        public static final int coneTop = 16;
-        public static final int coneBottom = 17;
+        public static final int coneTop = 17;
+        public static final int coneBottom = 16;
         public static final int everyIntakeMotor = 19;
         public static final int everyArm0 = 20;
         public static final int everyArm1 = 21;

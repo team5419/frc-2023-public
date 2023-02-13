@@ -23,7 +23,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 public class RobotContainer {
     private GenericShootIntake cuber;
     //private IntakeDeploy deploy;
-    private Vision vision;
+    public Vision vision;
     private SendableChooser<Supplier<SequentialCommandGroup>> autoSelector;
     private SendableChooser<Supplier<GenericShootIntake>> coneShooterSelector;
     private SendableChooser<Supplier<GenericShootIntake>> cubeShooterSelector;
@@ -42,7 +42,7 @@ public class RobotContainer {
 		setUp = false;
     	driver = new XboxController(0);
     	codriver = new XboxController(1);
-    	vision = new Vision(tab, false, true);
+    	vision = new Vision(tab, true, true);
     
     	//claw = new Claw();
     	arm = null; 
@@ -62,7 +62,7 @@ public class RobotContainer {
     	autoSelector.addOption("Proto Routine", () -> new SwerveRoutine(swerve, vision, coner, cuber));
 		autoSelector.addOption("Proto Routine with Vision", () -> new SwerveWithVision(swerve, vision, coner, cuber));
 		autoSelector.addOption("Go to zero", () -> new SequentialCommandGroup(
-			new RamseteSwerve(swerve, vision, new Pose2d(1.80, 1.02, new Rotation2d(0.0)), true)));
+			new RamseteSwerve(swerve, vision, new Pose2d(1.80, 1.02, new Rotation2d(0.0)), true, false)));
 
 		coneShooterSelector = new SendableChooser<Supplier<GenericShootIntake>>();
 		tab.add("Cone shooter", coneShooterSelector).withSize(2, 1).withPosition(2, 0);
@@ -106,8 +106,8 @@ public class RobotContainer {
 		}
     	Trigger aButtonDriver = new Trigger(() -> driver.getAButton());
     	Trigger bButtonDriver = new Trigger(() -> driver.getBButton());
-    	//Trigger xButtonDriver = new Trigger(() -> driver.getXButton());
-		//Trigger yButtonDriver = new Trigger(() -> driver.getYButton());
+    	Trigger xButtonDriver = new Trigger(() -> driver.getXButton());
+		Trigger yButtonDriver = new Trigger(() -> driver.getYButton());
     	Trigger rightTrigger = new Trigger(() -> driver.getRightTriggerAxis() > SwerveDriveConstants.triggerDeadband);
 		Trigger leftTrigger = new Trigger(() -> driver.getLeftTriggerAxis() > SwerveDriveConstants.triggerDeadband);
     	Trigger leftBumper = new Trigger(() -> driver.getLeftBumper());
@@ -127,6 +127,10 @@ public class RobotContainer {
 		// for testing:
 		aButtonDriver.whileTrue(new Prep(coner, cuber, swerve));
 		bButtonDriver.whileTrue(new Shoot(coner, cuber, swerve));
+		if(coner instanceof Coner) {
+			xButtonDriver.whileTrue(new InOut((Coner)coner));
+		}
+		yButtonDriver.onTrue(new ResetGyro(swerve));
     	leftTrigger.whileTrue(new RunIntake(coner));
     	rightTrigger.whileTrue(new RunIntake(cuber));
 		rightTriggerCodriver.whileTrue(Commands.runEnd(() -> cuber.shoot(TargetHeights.INTAKE), () -> cuber.stop(TargetHeights.LOW), cuber.subsystem()));

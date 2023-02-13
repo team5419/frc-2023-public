@@ -8,7 +8,7 @@ import frc.robot.subsystems.Vision;
 public class RamseteFromCurrent extends RamseteSwerve {
     private Pose2d change;
     public RamseteFromCurrent(Swerve swerve, Vision vision, Pose2d change, boolean flipYForRed) {
-        super(swerve, vision, new Pose2d(), flipYForRed);
+        super(swerve, vision, new Pose2d(), flipYForRed, false);
         this.change = change;
     }
     public void initialize() {
