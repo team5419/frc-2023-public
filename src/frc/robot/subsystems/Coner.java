@@ -6,6 +6,7 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.PneumaticHub;
 import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ConerConstants;
 import frc.robot.Constants.Ports;
@@ -20,6 +21,7 @@ import frc.robot.Util;
 public class Coner extends TesterSubsystem implements GenericShootIntake {
     private Solenoid soOne;
     private Solenoid soTwo;
+    private double timestamp;
     public Coner(PneumaticHub hub, boolean falcons, boolean velocityControl) {
         super("Cone Shooter", new TesterMotor[] {
             generateTesterMotor("Low motor", falcons, Ports.coneBottom),
@@ -30,6 +32,8 @@ public class Coner extends TesterSubsystem implements GenericShootIntake {
         soTwo = hub.makeSolenoid(Ports.conerSolenoidB);
         soOne.set(false);
         soTwo.set(false);
+
+        timestamp = -1.0;
     }
     public static TesterMotor generateTesterMotor(String name, boolean falcons, int id) {
         return falcons ? new TesterFalcon(name, Util.setUpMotor(new TalonFX(id, "canivore"), new PID(0, 0, 0), true, 1.0))
@@ -37,6 +41,7 @@ public class Coner extends TesterSubsystem implements GenericShootIntake {
     }
     public void shoot(String height) {
         run(height);
+        timestamp = -1.0;
     }
     public void stop(String height) {
         super.stop();
@@ -45,18 +50,19 @@ public class Coner extends TesterSubsystem implements GenericShootIntake {
             // soTwo.set(false);
         }
     }
-    public void setup(String height, boolean first) {
-        if(height == TargetHeights.INTAKE && first) {
+    public void setup(String height) {
+        if(height == TargetHeights.INTAKE) {
             soOne.set(false);
             soTwo.set(true);
-        } else if(first) {
+        } else {
             run(TargetHeights.INTAKE);
-            // if(readyToPrep) {
-            //     run(TargetHeights.INTAKE);
-            // } else {
-            //     super.stop();
-            // }
+            if(timestamp == -1.0) {
+                timestamp = Timer.getFPGATimestamp();
+            }
         }
+    }
+    public boolean donePrepping(String height) {
+        return timestamp >= 0.0 && Timer.getFPGATimestamp() - timestamp >= 1.0;
     }
     public SubsystemBase subsystem() {return this;}
     public final double getAngle() {
@@ -65,8 +71,11 @@ public class Coner extends TesterSubsystem implements GenericShootIntake {
     public final double getOffset() {
         return 0.0;
     }
+    public final boolean prepsByDefault() {
+        return false;
+    }
     public final double getDistance(String height) {
-        return 2.4; // a little off so that we can rotate freely
+        return 2.1; // a little off so that we can rotate freely
     }
     public final double getLimelightDistance(String height) {
         return 0.5; // 0.569

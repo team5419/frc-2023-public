@@ -2,6 +2,7 @@ package frc.robot;
 import frc.robot.Constants.SwerveDriveConstants;
 import frc.robot.Constants.TargetHeights;
 import frc.robot.auto.*;
+import frc.robot.classes.RamseteOptions;
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
 
@@ -62,7 +63,7 @@ public class RobotContainer {
     	autoSelector.addOption("Proto Routine", () -> new SwerveRoutine(swerve, vision, coner, cuber));
 		autoSelector.addOption("Proto Routine with Vision", () -> new SwerveWithVision(swerve, vision, coner, cuber));
 		autoSelector.addOption("Go to zero", () -> new SequentialCommandGroup(
-			new RamseteSwerve(swerve, vision, new Pose2d(1.80, 1.02, new Rotation2d(0.0)), true, false)));
+			new RamseteSwerve(swerve, vision, new Pose2d(1.80, 1.02, new Rotation2d(0.0)), new RamseteOptions())));
 
 		coneShooterSelector = new SendableChooser<Supplier<GenericShootIntake>>();
 		tab.add("Cone shooter", coneShooterSelector).withSize(2, 1).withPosition(2, 0);
@@ -118,7 +119,7 @@ public class RobotContainer {
     	leftBumper.whileTrue(Commands.runEnd(() -> { swerve.slowMode = true; }, () -> { swerve.slowMode = false; }));
     
 		// eventually, this is what the code will look like: 
-		rightBumper.onTrue(new AlignSetup(coner, cuber, swerve, vision, driver));
+		rightBumper.onTrue(new SpecialRamseteTurn(swerve, vision, driver, coner, cuber));
 		// bButtonDriver.whileTrue(new Shoot(coner, cuber, swerve));
 		
 		// xButtonDriver.whileTrue(new RunIntake(coner));

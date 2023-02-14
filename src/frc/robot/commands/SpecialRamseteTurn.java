@@ -10,63 +10,49 @@ import frc.robot.Util;
 import frc.robot.Constants.AprilTagConstants;
 import frc.robot.Constants.SwerveDriveConstants;
 import frc.robot.Constants.TargetHeights;
+import frc.robot.classes.RamseteOptions;
 
 public class SpecialRamseteTurn extends CommandBase {
     private Swerve swerve;
     private double targetRotation;
     private GenericShootIntake coner;
     private GenericShootIntake cuber;
-    private FinishState isFinished;
+    private boolean isFinished;
     private Vision vision;
     private boolean hasSeenTag;
     private XboxController driver;
     private int currentNum;
     private int currentHeight;
-    private double overrideAngleOffset;
-    private enum FinishState {
-        NOT, 
-        REGULAR,
-        SKIP
-    }
     public SpecialRamseteTurn(Swerve drivetrain, Vision vision, XboxController controller, GenericShootIntake coner, GenericShootIntake cuber) {
         this.coner = coner;
         this.vision = vision;
         this.cuber = cuber;
         this.swerve = drivetrain;
         this.targetRotation = 0.0;
-        this.isFinished = FinishState.NOT;
+        this.isFinished = false;
         this.hasSeenTag = false;
         this.driver = controller;
         currentNum = 0;
         currentHeight = 0;
-        overrideAngleOffset = 0.0;
-    }
-    public SpecialRamseteTurn(Swerve drivetrain, Vision vision, XboxController controller, GenericShootIntake coner, GenericShootIntake cuber, double overrideAngle) {
-        this.coner = coner;
-        this.vision = vision;
-        this.cuber = cuber;
-        this.swerve = drivetrain;
-        this.targetRotation = 0.0;
-        this.isFinished = FinishState.NOT;
-        this.hasSeenTag = false;
-        this.driver = controller;
-        currentNum = 0;
-        currentHeight = 0;
-        overrideAngleOffset = overrideAngle;
+        addRequirements(drivetrain, coner.subsystem(), cuber.subsystem());
     }
     public void initialize() {
-        vision.on();
-        isFinished = FinishState.NOT;
+        isFinished = false;
         hasSeenTag = false;
         System.out.println("Special init");
         currentNum = swerve.currentNum;
         currentHeight = swerve.currentHeight;
         boolean isCone = currentNum != 1; 
         GenericShootIntake shooter = isCone ? coner : cuber;
-        this.targetRotation = shooter.getAngle() + overrideAngleOffset;
+        this.targetRotation = shooter.getAngle();
     }
 
     public void execute() {
+        GenericShootIntake shooter = (currentNum != 1) ? coner : cuber;
+        if(shooter.prepsByDefault()) {
+            shooter.setup(TargetHeights.heights[currentHeight]);
+        }
+
         double theta = swerve.angle();
         double target = Math.round((theta - targetRotation) / 360.0) * 360.0 + targetRotation;
 
@@ -80,33 +66,27 @@ public class SpecialRamseteTurn extends CommandBase {
         if(vision.seesTag) {
             hasSeenTag = true;
         }
-        if(swerve.getAverageSpeed() < 0.2) {
-            // if(currentNum != 1) {
-            //     if(vision.isTargetFound()) {
-            //         isFinished = FinishState.SKIP;
-            //     }
-            /* } else*/ if(dtheta == 0 && hasSeenTag) {
-                isFinished = FinishState.REGULAR;
+        //if(swerve.getAverageSpeed() < 0.2) { may not need speed requirement for this?
+            if(dtheta == 0 && hasSeenTag) {
+                isFinished = true;
             }
-        }
+        //}
     }
 
     public boolean isFinished() {
-        return isFinished != FinishState.NOT;
+        return isFinished;
     }
 
     public void end(boolean interrupted) {
-        System.out.println("SPECIAL TURN ENDED!!!");
         swerve.stop();
         if(interrupted) {
-            System.out.println("I was interrupted");
+            GenericShootIntake shooter = (currentNum != 1) ? coner : cuber;
+            shooter.stop(TargetHeights.heights[currentHeight]);
             return;
         }
-        if(isFinished == FinishState.SKIP) {
-            AutoAlign aligner = new AutoAlign(swerve, coner, vision, driver, coner.getLimelightDistance(TargetHeights.heights[currentHeight]));
-            aligner.schedule();
-        } else if(isFinished == FinishState.REGULAR) {
-            SpecialRamseteSwerve regularer = new SpecialRamseteSwerve(swerve, vision, driver, coner, cuber, true);
+        if(isFinished) {
+            SpecialRamseteSwerve regularer = new SpecialRamseteSwerve(swerve, vision, driver, currentNum == 1 ? cuber : coner, true, currentNum, currentHeight, 
+                currentNum == 1 ? new RamseteOptions() : new RamseteOptions(false, 5.0)); // if we're on cones, up epsilons hella and don't enforce a speed limit so we're fast before limelight
             regularer.schedule();
         }
     }

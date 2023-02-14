@@ -22,17 +22,12 @@ public class Prep extends CommandBase {
     public void initialize() {
         isCone = drivetrain.currentNum != 1;
         height = drivetrain.currentHeight; 
-        if(isCone) {
-            coneShooter.setup(TargetHeights.heights[height], true);
-        } else {
-            cubeShooter.setup(TargetHeights.heights[height], true);
-        }
     }
     public void execute() {
         if(isCone) {
-            coneShooter.setup(TargetHeights.heights[height], false);
+            coneShooter.setup(TargetHeights.heights[height]);
         } else {
-            cubeShooter.setup(TargetHeights.heights[height], false);
+            cubeShooter.setup(TargetHeights.heights[height]);
         }
     }
     public boolean isFinished() {

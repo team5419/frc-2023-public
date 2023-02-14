@@ -24,10 +24,11 @@ public class EverybotConer extends TesterSubsystem implements GenericShootIntake
     public void shoot(String height) {
         run(height);
     }
-    public void setup(String height, boolean first) {
-        if(first) {
-            arm.gotoPosition(EverybotArmConstants.outPosition);
-        }
+    public void setup(String height) {
+        arm.gotoPosition(EverybotArmConstants.outPosition);
+    }
+    public boolean donePrepping(String height) {
+        return true;
     }
     public SubsystemBase subsystem() {return this;}
     public void stop(String height) {
@@ -51,5 +52,8 @@ public class EverybotConer extends TesterSubsystem implements GenericShootIntake
     }
     public final double getLimelightDistance(String height) {
         return 1.84;
+    }
+    public final boolean prepsByDefault() {
+        return true;
     }
 }

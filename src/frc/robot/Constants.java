@@ -67,6 +67,8 @@ public class Constants {
             -0.4, 0.1
         }));
 
+        public static final Map<String, Double> measuredVelocities = Map.of(TargetHeights.LOW, 1250.0, TargetHeights.MID, 1750.0, TargetHeights.HIGH, 2250.0, TargetHeights.INTAKE, 0.0);
+
         public static final Map<String, TesterSetting> velocities = Map.of(TargetHeights.LOW, new TesterSetting(new double[] { 
             5000.0, -3000.0
         }), TargetHeights.MID, new TesterSetting(new double[] { 
@@ -96,7 +98,6 @@ public class Constants {
         }), TargetHeights.INTAKE, new TesterSetting(new double[] { 
             0.25
         }));
-
         public static final Map<String, TesterSetting> velocities = Map.of(TargetHeights.LOW, new TesterSetting(new double[] { 
             -5000.0
         }), TargetHeights.MID, new TesterSetting(new double[] { 
@@ -154,7 +155,7 @@ public class Constants {
         public static final double controllerDeadband = 0.1;
 
         public static final double pXY = 3.5;
-        public static final double pTheta = 3.0;
+        public static final double pTheta = 5.3;
         public static final double epsilonXY = 0.0254;
         public static final double epsilonTheta = 1.5;
         public static final ModuleInfo[] info = {

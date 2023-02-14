@@ -24,11 +24,8 @@ public class Suction extends SubsystemBase implements GenericShootIntake {
         suctioner.set(false);
         arm.gotoPosition(EverybotArmConstants.inPosition);
     }
-    public void setup(String height, boolean first) {
-        if(first) {
-            arm.gotoPosition(EverybotArmConstants.outPosition);
-        }
-        
+    public void setup(String height) {
+        arm.gotoPosition(EverybotArmConstants.outPosition);
     }
     public final double getAngle() {
         return 90.0;
@@ -41,5 +38,11 @@ public class Suction extends SubsystemBase implements GenericShootIntake {
     }
     public final double getLimelightDistance(String height) {
         return 1.84;
+    }
+    public boolean donePrepping(String height) {
+        return true;
+    }
+    public final boolean prepsByDefault() {
+        return true;
     }
 }

@@ -5,6 +5,7 @@ import frc.robot.subsystems.Vision;
 import frc.robot.Util;
 import frc.robot.Constants.AprilTagConstants;
 import frc.robot.Constants.SwerveDriveConstants;
+import frc.robot.classes.RamseteOptions;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 
@@ -12,21 +13,19 @@ public class RamseteSwerve extends CommandBase {
     protected Swerve drivetrain;
     protected boolean isFinished;
     protected Pose2d goal;
-    protected boolean teamRelative;
+    protected RamseteOptions options;
     protected Vision vision;
-    private boolean preventDrive;
-    public RamseteSwerve(Swerve drivetrain, Vision vision, Pose2d goal, boolean teamRelative, boolean preventDrive) {
+    public RamseteSwerve(Swerve drivetrain, Vision vision, Pose2d goal, RamseteOptions options) {
         this.drivetrain = drivetrain;
-        this.teamRelative = teamRelative;
+        this.options = options;
         this.goal = goal;
         this.vision = vision;
-        this.preventDrive = preventDrive;
         isFinished = false;
         addRequirements(drivetrain);
     }
     public void initialize() {
         System.out.println("initializing");
-        if(teamRelative && vision.team() == Alliance.Red) {
+        if(options.teamRelative && vision.team() == Alliance.Red) {
             this.goal = new Pose2d(AprilTagConstants.totalX - goal.getX(), AprilTagConstants.totalY - goal.getY(), goal.getRotation());
         }
     }
@@ -44,8 +43,8 @@ public class RamseteSwerve extends CommandBase {
         //System.out.println(xdiff);
         double ydiff = goal.getY() - pose.getY();
         //System.out.println(ydiff);
-        double dx = preventDrive ? 0.0 : (SwerveDriveConstants.pXY * Util.deadband(xdiff, SwerveDriveConstants.epsilonXY));
-        double dy = preventDrive ? 0.0 : (SwerveDriveConstants.pXY * Util.deadband(ydiff, SwerveDriveConstants.epsilonXY));
+        double dx = options.preventDrive ? 0.0 : (SwerveDriveConstants.pXY * Util.deadband(xdiff, SwerveDriveConstants.epsilonXY * options.epsilonMultiplier));
+        double dy = options.preventDrive ? 0.0 : (SwerveDriveConstants.pXY * Util.deadband(ydiff, SwerveDriveConstants.epsilonXY * options.epsilonMultiplier));
         double magnitude = Math.sqrt(Math.pow(dx, 2.0) + Math.pow(dy, 2.0));
 
         if(magnitude > SwerveDriveConstants.maxVelocity) {
@@ -53,12 +52,12 @@ public class RamseteSwerve extends CommandBase {
             dy *= (SwerveDriveConstants.maxVelocity / magnitude);
         }
 
-        double dtheta = 1 * SwerveDriveConstants.pTheta * (Math.PI / 180.0) * Util.deadband(target - theta, SwerveDriveConstants.epsilonTheta);
+        double dtheta = 1 * SwerveDriveConstants.pTheta * (Math.PI / 180.0) * Util.deadband(target - theta, SwerveDriveConstants.epsilonTheta * options.epsilonMultiplier);
         //System.out.println(dtheta);
         //System.out.println("theta: ${DriveConstants.pTheta * (Math.PI / 180) * (target - theta)}");
         drivetrain.drive(dx , dy , dtheta, true, true);
 
-        isFinished = (preventDrive || (dx == 0 && dy == 0)) && dtheta == 0 && drivetrain.getAverageSpeed() < 0.1;
+        isFinished = (options.preventDrive || (dx == 0 && dy == 0)) && dtheta == 0 && (!options.speedLimit || drivetrain.getAverageSpeed() < 0.1);
     }
     public boolean isFinished() {
         System.out.println("finished");

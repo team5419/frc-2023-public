@@ -41,7 +41,12 @@ public class Shoot extends CommandBase {
     public void execute() {
         System.out.println("going to shoot, height: " + height);
         GenericShootIntake shooter = isCone ? coneShooter : cubeShooter;
-        shooter.shoot(TargetHeights.heights[height]);
+        String realHeight = TargetHeights.heights[height];
+        if(shooter.donePrepping(realHeight)) {
+            shooter.shoot(realHeight);
+        } else {
+            shooter.setup(realHeight);
+        }
     }
     public boolean isFinished() {
         return time != 0.0 && timer.get() >= time;
