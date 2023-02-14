@@ -51,6 +51,11 @@ public class Coner extends TesterSubsystem implements GenericShootIntake {
             soTwo.set(true);
         } else if(first) {
             run(TargetHeights.INTAKE);
+            // if(readyToPrep) {
+            //     run(TargetHeights.INTAKE);
+            // } else {
+            //     super.stop();
+            // }
         }
     }
     public SubsystemBase subsystem() {return this;}
@@ -64,7 +69,7 @@ public class Coner extends TesterSubsystem implements GenericShootIntake {
         return 2.4; // a little off so that we can rotate freely
     }
     public final double getLimelightDistance(String height) {
-        return 0.52; // 0.569
+        return 0.5; // 0.569
     }
     public void periodic() {
 

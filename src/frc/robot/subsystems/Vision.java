@@ -17,6 +17,8 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
@@ -25,21 +27,17 @@ import java.util.ConcurrentModificationException;
 import java.util.Optional;
 
 public class Vision extends SubsystemBase { // this keeps track of our limelight and photon camera
-    public enum Team { // whether vision thinks we are on red team or blue team (starts out as Team.NONE until one is found)
-        NONE, BLUE, RED
-    };
+
     private NetworkTable limelight; // keep track of the limelight
     private ShuffleboardTab layout; // keep track of a shuffleboard layout for printing data
     private PhotonCamera[] cameras; // keep track of the photon camera (april tags stuff)
-    //private PhotonPoseEstimator[] poseEstimator; // the photon camera has its own pose estimator that interacts with the overall pose estimator
-    public Team team; // keep track of the team that we think we're on
+    //private PhotonPoseEstimator[] poseEstimator; // the photon camera has its own pose estimator that interacts with the overall pose estimator// keep track of the team that we think we're on
     private Pose2d lastTagPositionFront;
     private Translation2d rawData;
     private double lastTagRotation;
     private AprilTagFieldLayout tagLayout;
     public boolean seesTag;
     public Vision(ShuffleboardTab tab, boolean _limelight, boolean _photon) { // the boolean parameters tell the code if we're using limelight and photon vision
-        team = Team.NONE; // we don't know what team we're on yet
         layout = Shuffleboard.getTab("Vision"); // create a shuffleboard layout to print data
         if(_limelight) { // if we're using a limelight, set it up and add some values to shuffleboard
             limelight = NetworkTableInstance.getDefault().getTable("limelight");            
@@ -64,10 +62,10 @@ public class Vision extends SubsystemBase { // this keeps track of our limelight
         
         if(_photon) { // if we're using photon camera, set it up and add a value to shuffleboard for what team we're on
             layout.addString("Team", () -> {
-                switch(team) {
-                    case RED:
+                switch(team()) {
+                    case Red:
                         return "Red";
-                    case BLUE:
+                    case Blue:
                         return "Blue";
                     default:
                         return "None";
@@ -79,7 +77,7 @@ public class Vision extends SubsystemBase { // this keeps track of our limelight
             // layout.addDouble("last tag theta", () -> lastTagRotation);
             // layout.addDouble("x before transform", () -> rawData.getX());
             // layout.addDouble("y before transform", () -> rawData.getY());
-        cameras = new PhotonCamera[] { new PhotonCamera("back lifecam")/* , new PhotonCamera("front") */}; // MAKE SURE BACK IS FIRST
+        cameras = new PhotonCamera[] { new PhotonCamera("bottom port"), new PhotonCamera("top port") }; // MAKE SURE BACK IS FIRST
         } else {
             cameras = null;
         }
@@ -90,50 +88,35 @@ public class Vision extends SubsystemBase { // this keeps track of our limelight
         return cameras != null;
     }
 
-    private Team getTeam() {
-        //System.out.println("getting team");
-        if(cameras == null) {
-            return Team.NONE;
-        }
-        PhotonPipelineResult result = cameras[0].getLatestResult(); // first camera is the back
-        if(!result.hasTargets()) {
-            return Team.NONE;
-        }
-        PhotonTrackedTarget best = result.getBestTarget();
-        // System.out.println(best.getYaw());
-        // System.out.println(best.getPitch());
-        // System.out.println(best.getBestCameraToTarget());
-        int id = best.getFiducialId();
-        if(id < 1 || id > 8) {
-            return Team.NONE;
-        }
-        if(id >= 5) {
-            return Team.BLUE;
-        }
-        return Team.RED;
+    private Alliance getTeam() {
+        Alliance alliance = DriverStation.getAlliance();
+        return alliance;
     }
 
     public Pose2d updateRobotPose(SwerveDrivePoseEstimator poser, Rotation2d theta, Pose2d previous, boolean foundPosition) {
-        if(team == Team.NONE) {
+        Alliance team = team();
+        if(team == Alliance.Invalid) {
             return null;
         }
+        boolean seenTag = false;
         for(int i = 0; i < cameras.length; i++) {
             PhotonPipelineResult res = cameras[i].getLatestResult();
-            seesTag = res != null && res.hasTargets();
-            if(seesTag) {
+            if(res != null && res.hasTargets()) {
                 PhotonTrackedTarget target = res.getBestTarget();
-                seesTag = target != null && target.getPoseAmbiguity() <= AprilTagConstants.ambiguityRequirement;
-                if(seesTag) {
+                if(target != null && target.getPoseAmbiguity() <= AprilTagConstants.ambiguityRequirement) {
+                    if(!seenTag) {
+                        seenTag = true;
+                    }
                     Transform3d transform = target.getBestCameraToTarget();
                     Pose2d reference = AprilTagConstants.robotToCam[i];
                     //double theta = target.getYaw() * Math.PI / 180.0; use this to rely on apriltag angle instead of gyro
                     double _theta = theta.getRadians() - reference.getRotation().getRadians();
-                    if(i == 0) {
+                    if(i == 1) {
                         lastTagRotation = _theta;
                     }
                     double preTransformX = transform.getX();
                     double preTransformY = transform.getY();
-                    if(team == Team.RED) {
+                    if(team == Alliance.Red) {
                         preTransformX = -preTransformX;
                         preTransformY = -preTransformY;
                     }
@@ -142,28 +125,31 @@ public class Vision extends SubsystemBase { // this keeps track of our limelight
                     double transformedX = preTransformX * Math.cos(_theta) - preTransformY * Math.sin(_theta);
                     double transformedY = preTransformX * Math.sin(_theta) + preTransformY * Math.cos(_theta);
                     Optional<Pose3d> tagPose = tagLayout.getTagPose(target.getFiducialId());
-                    Pose2d pose2d = new Pose2d(transformedX + tagPose.get().getX(), transformedY + tagPose.get().getY(), theta);
-                    //lastTagPositionFront = pose2d;
-                    if(team == Team.RED) {
-                        pose2d = new Pose2d(AprilTagConstants.totalX - pose2d.getX(), AprilTagConstants.totalY - pose2d.getY(), theta);
-                    }
-                    if(i == 0) {
-                        lastTagPositionFront = pose2d;
-                        rawData = new Translation2d(transform.getX(), transform.getY());
-                        //lastTagPositionFront = new Pose2d(transform.getX(), transform.getY(), new Rotation2d(0.0)); // actually this is the back reading
-                    }
-                    if(!foundPosition) {
-                        return pose2d;
-                    }
-                    try {
-                        poser.addVisionMeasurement(pose2d, res.getTimestampSeconds());
-                    } catch(ConcurrentModificationException ex) {
-                        System.out.println(ex.getMessage());
+                    if(tagPose.isPresent()) {
+                        Pose2d pose2d = new Pose2d(transformedX + tagPose.get().getX(), transformedY + tagPose.get().getY(), theta);
+                        //lastTagPositionFront = pose2d;
+                        if(team == Alliance.Red) {
+                            pose2d = new Pose2d(AprilTagConstants.totalX - pose2d.getX(), AprilTagConstants.totalY - pose2d.getY(), theta);
+                        }
+                        if(i == 1) {
+                            lastTagPositionFront = pose2d;
+                            rawData = new Translation2d(transform.getX(), transform.getY());
+                            //lastTagPositionFront = new Pose2d(transform.getX(), transform.getY(), new Rotation2d(0.0)); // actually this is the back reading
+                        }
+                        if(!foundPosition) {
+                            return pose2d;
+                        }
+                        try {
+                            poser.addVisionMeasurement(pose2d, res.getTimestampSeconds());
+                        } catch(ConcurrentModificationException ex) {
+                            System.out.println(ex.getMessage());
+                        }
                     }
                     
                 }
             }
         }
+        seesTag = seenTag;
         return null;
     }
 
@@ -202,12 +188,13 @@ public class Vision extends SubsystemBase { // this keeps track of our limelight
         if(limelight == null) {
             return;
         }
-        limelight.getEntry("ledMode").setNumber(1);
+        limelight.getEntry("ledMode").setNumber(3);
+    }
+
+    public Alliance team() {
+        return DriverStation.getAlliance();
     }
 
     public void periodic() {
-        if(team == Team.NONE) {
-            team = getTeam();
-        }
     }
 }

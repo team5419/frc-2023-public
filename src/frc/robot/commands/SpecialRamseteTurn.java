@@ -81,11 +81,11 @@ public class SpecialRamseteTurn extends CommandBase {
             hasSeenTag = true;
         }
         if(swerve.getAverageSpeed() < 0.2) {
-            if(currentNum != 1) {
-                if(vision.isTargetFound()) {
-                    isFinished = FinishState.SKIP;
-                }
-            } else if(dtheta == 0 && hasSeenTag) {
+            // if(currentNum != 1) {
+            //     if(vision.isTargetFound()) {
+            //         isFinished = FinishState.SKIP;
+            //     }
+            /* } else*/ if(dtheta == 0 && hasSeenTag) {
                 isFinished = FinishState.REGULAR;
             }
         }
@@ -99,10 +99,11 @@ public class SpecialRamseteTurn extends CommandBase {
         System.out.println("SPECIAL TURN ENDED!!!");
         swerve.stop();
         if(interrupted) {
+            System.out.println("I was interrupted");
             return;
         }
         if(isFinished == FinishState.SKIP) {
-            AutoAlign aligner = new AutoAlign(swerve, vision, driver, coner.getLimelightDistance(TargetHeights.heights[currentHeight]));
+            AutoAlign aligner = new AutoAlign(swerve, coner, vision, driver, coner.getLimelightDistance(TargetHeights.heights[currentHeight]));
             aligner.schedule();
         } else if(isFinished == FinishState.REGULAR) {
             SpecialRamseteSwerve regularer = new SpecialRamseteSwerve(swerve, vision, driver, coner, cuber, true);

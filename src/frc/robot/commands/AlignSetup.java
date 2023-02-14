@@ -8,7 +8,7 @@ import frc.robot.subsystems.GenericShootIntake;
 import frc.robot.subsystems.Swerve;
 import frc.robot.subsystems.Vision;
 
-public class AlignSetup extends ParallelCommandGroup {
+public class AlignSetup extends ParallelRaceGroup {
     public AlignSetup(GenericShootIntake coneShooter, GenericShootIntake cubeShooter, Swerve drivetrain, Vision vision, XboxController driver) {
         addCommands(
                 new Prep(coneShooter, cubeShooter, drivetrain),

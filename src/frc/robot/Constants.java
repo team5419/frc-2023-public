@@ -26,7 +26,7 @@ public class Constants {
         public static final Map<String, TesterSetting> percents = Map.of(TargetHeights.LOW, new TesterSetting(new double[] { 
             0.06, -0.34
         }), TargetHeights.MID, new TesterSetting(new double[] { 
-            0.14, -0.44//0.14, -0.36
+            0.14, -0.41//0.14, -0.36
         }), TargetHeights.HIGH, new TesterSetting(new double[] { 
             0.22, -1.0
         }), TargetHeights.INTAKE, new TesterSetting(new double[] { 
@@ -192,7 +192,7 @@ public class Constants {
 
         public static final double epsilonTurn = 1.0;
         public static final double epsilonHorizontal = 1.0;
-        public static final double epsilonForward = 0.02;
+        public static final double epsilonForward = 0.07;
     }
     public static final class AprilTagConstants {
 
@@ -200,9 +200,9 @@ public class Constants {
 
         public static Pose2d[] robotToCam = new Pose2d[] { 
             new Pose2d( // we can prob just leave this at 0 and use camera as a reference to our robot 
-                0.1, 0.1, new Rotation2d(0.0)), // however we should change angle to keep in accordance with gyro angle
+                -0.04, 0.0762, new Rotation2d(0.0)), // however we should change angle to keep in accordance with gyro angle
             new Pose2d(
-                0.1, 0.0, Rotation2d.fromDegrees(180.0))
+                0.1, -0.20955, Rotation2d.fromDegrees(180.0))
         };
         public static double totalX = 16.54175;
         public static double totalY = 8.0137;
@@ -218,7 +218,7 @@ public class Constants {
             4.9832 // top pole
         };
 
-            public static final double targetYOffset = 4.2837 - 4.4244;
+            public static final double targetYOffset = 2.792 - 2.748;
         public static final double xPosBeforeBarriers = 1.6; // to be measured
         public static final double xEndOfChargingStation = 2.55; // to be measured
         public static final double yOutsideRightChargingStation = -1.0;

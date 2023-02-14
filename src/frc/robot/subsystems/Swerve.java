@@ -30,6 +30,7 @@ public class Swerve extends SubsystemBase { // our swerve drive subsystem
     public boolean foundPosition; // keeps track of whether the robot has gotten an initial position reading from the vision system
     public int currentNum; // keep track of the current station (0-2) that the driver wants to go to based on the button board
     public int currentHeight; // keep track of whether the driver wants to shoot low, mid, or high based on the button board
+   
     private ChassisSpeeds previousMove; // keep track of the previous speeds of the modules for position tracking
     public boolean slowMode; // whether the swerve drive is in slowmode
     public double yawOffset; // keep track of a yaw offset for the gyro so that we can reset it to 0

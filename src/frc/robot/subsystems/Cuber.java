@@ -55,6 +55,7 @@ public class Cuber extends TesterSubsystem implements GenericShootIntake {
     }
     public SubsystemBase subsystem() {return this;}
     public void setup(String height, boolean first) {
+        System.out.println("prep");
         if(height == TargetHeights.INTAKE) {
             soOne.set(true);
             if(first) {
@@ -86,7 +87,7 @@ public class Cuber extends TesterSubsystem implements GenericShootIntake {
         if(height == TargetHeights.HIGH) {
             return 2.0;
         }
-        return 1.95;
+        return 1.926;
         //return 1.84;
     }
     public final double getLimelightDistance(String height) {

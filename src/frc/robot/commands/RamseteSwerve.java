@@ -6,6 +6,7 @@ import frc.robot.Util;
 import frc.robot.Constants.AprilTagConstants;
 import frc.robot.Constants.SwerveDriveConstants;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 
 public class RamseteSwerve extends CommandBase {
     protected Swerve drivetrain;
@@ -25,7 +26,7 @@ public class RamseteSwerve extends CommandBase {
     }
     public void initialize() {
         System.out.println("initializing");
-        if(teamRelative && vision.team == Vision.Team.RED) {
+        if(teamRelative && vision.team() == Alliance.Red) {
             this.goal = new Pose2d(AprilTagConstants.totalX - goal.getX(), AprilTagConstants.totalY - goal.getY(), goal.getRotation());
         }
     }

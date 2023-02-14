@@ -7,6 +7,8 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants.LimelightConstants;
 import frc.robot.Constants.SwerveDriveConstants;
+import frc.robot.subsystems.Coner;
+import frc.robot.subsystems.GenericShootIntake;
 import frc.robot.subsystems.Swerve;
 import frc.robot.subsystems.Vision;
 public class AutoAlign extends CommandBase {
@@ -15,12 +17,14 @@ public class AutoAlign extends CommandBase {
     private boolean shouldFinish;
     private double distance;
     private XboxController driver;
-    public AutoAlign(Swerve drivetrain, Vision vision, XboxController driver, double distance) {
+    private GenericShootIntake shooter;
+    public AutoAlign(Swerve drivetrain, GenericShootIntake shooter, Vision vision, XboxController driver, double distance) {
         this.drivetrain = drivetrain;
         this.vision = vision;
         this.distance = distance;
         this.driver = driver;
         shouldFinish = false;
+        this.shooter = shooter;
         addRequirements(drivetrain);
     }
     public void initialize() {
