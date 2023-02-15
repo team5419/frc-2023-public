@@ -30,10 +30,9 @@ public class Swerve extends SubsystemBase { // our swerve drive subsystem
     public boolean foundPosition; // keeps track of whether the robot has gotten an initial position reading from the vision system
     public int currentNum; // keep track of the current station (0-2) that the driver wants to go to based on the button board
     public int currentHeight; // keep track of whether the driver wants to shoot low, mid, or high based on the button board
-   
+    public int currentStation;
     private ChassisSpeeds previousMove; // keep track of the previous speeds of the modules for position tracking
     public boolean slowMode; // whether the swerve drive is in slowmode
-    public double yawOffset; // keep track of a yaw offset for the gyro so that we can reset it to 0
     public Swerve(Vision vision, boolean pigeon) { // the pigeon parameter tells the code whether we are using a pigeon
         drivers = new SwerveModule[SwerveDriveConstants.info.length]; // instantiate the module array
         usingVision = true;
@@ -46,11 +45,11 @@ public class Swerve extends SubsystemBase { // our swerve drive subsystem
             gyro = new Pigeon2(Ports.gyro);
             gyro.configFactoryDefault(100);
             gyro.configMountPose(90.0, 0.0, -1.7); // this configures our gyro pose so that we can read the pitch value
-            yawOffset = gyro.getYaw(); // reset gyro at the beginning
+            gyro.setYaw(0.0);
         } else {
             gyro = null;
         }
-        
+        currentStation = 1;
         currentNum = 1; // set default values for these (to be changed later by the codriver) 
         currentHeight = 1;
         this.vision = vision; // keep track of the vision system
@@ -87,8 +86,15 @@ public class Swerve extends SubsystemBase { // our swerve drive subsystem
                 int savedJ = j;
                 selectionTab.addBoolean("row " + i + ", col " + j, () -> (currentHeight == savedI && currentNum == savedJ))
                     .withSize(1, 1)
-                    .withPosition(j, i);
+                    .withPosition(2 - j, i);
             }
+        }
+
+        for(int i = 0; i < 3; i++) {
+            int savedI = i;
+            selectionTab.addBoolean("STATION " + i, () -> currentStation == savedI)
+                .withSize(1, 1)
+                .withPosition(8 - i, 0);
         }
     }
     private SwerveModulePosition[] getPositions() { // get the total lengths driven by each module as an array
@@ -141,7 +147,10 @@ public class Swerve extends SubsystemBase { // our swerve drive subsystem
         return poseEstimator.getEstimatedPosition();
     }
     public double angle() { // get the yaw angle if we're using a gyro, and subtract the offset to adjust for when we zero the gyro
-        return gyro == null ? 0.0 : (gyro.getYaw() - yawOffset);
+        return gyro == null ? 0.0 : (gyro.getYaw());
+    }
+    public void resetGyro() {
+        gyro.setYaw(0.0);
     }
     public double anglePitch() { // get the pitch angle of the gyro
         return gyro == null ? 0.0 : gyro.getPitch();

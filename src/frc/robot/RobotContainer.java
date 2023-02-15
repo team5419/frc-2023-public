@@ -113,6 +113,8 @@ public class RobotContainer {
 		Trigger leftTrigger = new Trigger(() -> driver.getLeftTriggerAxis() > SwerveDriveConstants.triggerDeadband);
 		Trigger leftBumper = new Trigger(() -> driver.getLeftBumper());
 		Trigger rightBumper = new Trigger(() -> driver.getRightBumper());
+		Trigger leftBumperCodriver = new Trigger(() -> codriver.getLeftBumper());
+		Trigger rightBumperCodriver = new Trigger(() -> codriver.getRightBumper());
 		Trigger dpad = new Trigger(() -> driver.getPOV() != -1);
 
 		Trigger rightTriggerCodriver = new Trigger(() -> codriver.getRightTriggerAxis() > SwerveDriveConstants.triggerDeadband);
@@ -124,7 +126,16 @@ public class RobotContainer {
 		// eventually, this is what the code will look like: 
 		rightBumper.onTrue(new SpecialRamseteTurn(swerve, vision, driver, coner, cuber));
 		// bButtonDriver.whileTrue(new Shoot(coner, cuber, swerve));
-		
+		rightBumperCodriver.onTrue(Commands.runOnce(() -> {
+			if(swerve.currentStation > 0) {
+				swerve.currentStation--;
+			}
+		}));
+		leftBumperCodriver.onTrue(Commands.runOnce(() -> {
+			if(swerve.currentStation < 2) {
+				swerve.currentStation++;
+			}
+		}));
 		// xButtonDriver.whileTrue(new RunIntake(coner));
 		// yButtonDriver.whileTrue(new RunIntake(cuber));
 

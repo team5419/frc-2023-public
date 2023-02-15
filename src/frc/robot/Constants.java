@@ -64,10 +64,10 @@ public class Constants {
         }), TargetHeights.HIGH, new TesterSetting(new double[] { 
             0.45, -1.0
         }), TargetHeights.INTAKE, new TesterSetting(new double[] { 
-            -0.4, 0.1
+            -0.55, 0.1
         }));
 
-        public static final Map<String, Double> measuredVelocities = Map.of(TargetHeights.LOW, 1250.0, TargetHeights.MID, 1750.0, TargetHeights.HIGH, 2250.0, TargetHeights.INTAKE, 0.0);
+        public static final Map<String, Double> measuredVelocities = Map.of(TargetHeights.LOW, 870.0, TargetHeights.MID, 1330.0, TargetHeights.HIGH, 1770.0, TargetHeights.INTAKE, 0.0);
 
         public static final Map<String, TesterSetting> velocities = Map.of(TargetHeights.LOW, new TesterSetting(new double[] { 
             5000.0, -3000.0
@@ -79,7 +79,7 @@ public class Constants {
             -1250.0, 500.0
         }));
 
-        public static final double indexerSlowBackwardsSpeed = 0.10;
+        public static final double indexerSlowBackwardsSpeed = 0.1;
 
         public static final double sensorThresholdLeft = -1.0;
         public static final double sensorThresholdRight = 100000.0;
@@ -191,8 +191,8 @@ public class Constants {
         public static final double desiredAngle = 180.0;
         public static final double desiredDistance = 0.0;
 
-        public static final double epsilonTurn = 1.0;
-        public static final double epsilonHorizontal = 1.0;
+        public static final double epsilonTurn = 0.3;
+        public static final double epsilonHorizontal = 0.3;
         public static final double epsilonForward = 0.07;
     }
     public static final class AprilTagConstants {

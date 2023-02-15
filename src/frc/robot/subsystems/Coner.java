@@ -46,8 +46,8 @@ public class Coner extends TesterSubsystem implements GenericShootIntake {
     public void stop(String height) {
         super.stop();
         if(height != TargetHeights.INTAKE) {
-            // soOne.set(true);
-            // soTwo.set(false);
+            soOne.set(true);
+            soTwo.set(false);
         }
     }
     public void setup(String height) {

@@ -31,14 +31,14 @@ public class SwerveDrive extends CommandBase {
             if((pov <= SwerveDriveConstants.dPadInputRange || pov >= 360 - SwerveDriveConstants.dPadInputRange) && drivetrain.currentHeight < 2) {
                 drivetrain.currentHeight++;
             }
-            if(pov >= 90 - SwerveDriveConstants.dPadInputRange && pov <= 90 + SwerveDriveConstants.dPadInputRange && drivetrain.currentNum < 2) {
-                drivetrain.currentNum++;
+            if(pov >= 90 - SwerveDriveConstants.dPadInputRange && pov <= 90 + SwerveDriveConstants.dPadInputRange && drivetrain.currentNum > 0) {
+                drivetrain.currentNum--;
             }
             if(pov >= 180 - SwerveDriveConstants.dPadInputRange && pov <= 180 + SwerveDriveConstants.dPadInputRange && drivetrain.currentHeight > 0) {
                 drivetrain.currentHeight--;
             }
-            if(pov >= 270 - SwerveDriveConstants.dPadInputRange && pov <= 270 + SwerveDriveConstants.dPadInputRange && drivetrain.currentNum > 0) {
-                drivetrain.currentNum--;
+            if(pov >= 270 - SwerveDriveConstants.dPadInputRange && pov <= 270 + SwerveDriveConstants.dPadInputRange && drivetrain.currentNum < 2) {
+                drivetrain.currentNum++;
             }
         } 
         drivetrain.drive(

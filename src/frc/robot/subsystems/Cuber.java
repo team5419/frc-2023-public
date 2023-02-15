@@ -38,14 +38,15 @@ public class Cuber extends TesterSubsystem implements GenericShootIntake {
 
         ShuffleboardTab main = Shuffleboard.getTab("Master");
         main.addNumber("Cuber sensor", () -> getSensorValue()).withSize(1, 1).withPosition(2, 1);
-        main.addNumber("Backwards setpoint", () -> startingPoint);
-        main.addNumber("Cuber position", () -> motors[1].getPosition());
+        //main.addNumber("Backwards setpoint", () -> startingPoint == null ? 0.0 : startingPoint);
+        main.addNumber("Cuber velocity", () -> motors[0].getVelocity());
     }
     public double getSensorValue() {
         return sensor.getValue();
     }
     public void shoot(String height) {
         run(height);
+        System.out.println(height);
         startingPoint = null;
     }
     public void stop(String height) {
@@ -74,7 +75,7 @@ public class Cuber extends TesterSubsystem implements GenericShootIntake {
         }
     }
     public boolean donePrepping(String height) {
-        return startingPoint != null && motors[1].getPosition() - startingPoint > 5 && (motors[0].getVelocity() >= CubeShooterConstants.measuredVelocities.get(height));
+        return (motors[0].getVelocity() >= CubeShooterConstants.measuredVelocities.get(height));
     }
     public void periodic() {
         //System.out.println(motors[1].getPosition());

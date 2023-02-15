@@ -56,14 +56,15 @@ public class SpecialRamseteSwerve extends RamseteSwerve {
         if(team == Alliance.Red) {
             currentY = AprilTagConstants.totalY - currentY;
         }
-            int closestNum = AprilTagConstants.yPositions.length - 1;
-            for(int i = 1; i < AprilTagConstants.yPositions.length; i++) {
-                if(AprilTagConstants.yPositions[i] > currentY) {
-                    closestNum = (Math.abs(AprilTagConstants.yPositions[i - 1] - currentY) < Math.abs(AprilTagConstants.yPositions[i] - currentY)) ? (i - 1) : i;
-                    break;
-                }
-            }
-            num += 3 * (closestNum / 3); // sketchy fr
+            int closestNum = drivetrain.currentStation;
+            // int closestNum = AprilTagConstants.yPositions.length - 1;
+            // for(int i = 1; i < AprilTagConstants.yPositions.length; i++) {
+            //     if(AprilTagConstants.yPositions[i] > currentY) {
+            //         closestNum = (Math.abs(AprilTagConstants.yPositions[i - 1] - currentY) < Math.abs(AprilTagConstants.yPositions[i] - currentY)) ? (i - 1) : i;
+            //         break;
+            //     }
+            // }
+            num += 3 * closestNum; // sketchy fr
             System.out.println(num);
         Rotation2d converted = Rotation2d.fromDegrees(shooter.getAngle()/* if we have front and back cameras, use this, otherwise --> */ /*AprilTagConstants.cameraAngle*/);
         double effectiveX = pose.getX();

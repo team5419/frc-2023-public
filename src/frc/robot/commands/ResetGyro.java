@@ -23,7 +23,7 @@ public class ResetGyro extends CommandBase {
 
     public void end(boolean interrupted) {
         if(swerve.gyro != null) {
-            swerve.yawOffset = swerve.gyro.getYaw() - angle;
+            swerve.resetGyro();
         }
     }
 

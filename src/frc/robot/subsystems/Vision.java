@@ -74,7 +74,7 @@ public class Vision extends SubsystemBase { // this keeps track of our limelight
             layout.addDouble("Last tag x", () -> lastTagPositionFront.getX());
             layout.addDouble("Last tag y", () -> lastTagPositionFront.getY());
             layout.addBoolean("sees tag", () -> seesTag);
-            // layout.addDouble("last tag theta", () -> lastTagRotation);
+            layout.addDouble("last tag theta", () -> lastTagRotation);
             // layout.addDouble("x before transform", () -> rawData.getX());
             // layout.addDouble("y before transform", () -> rawData.getY());
         cameras = new PhotonCamera[] { new PhotonCamera("bottom port"), new PhotonCamera("top port") }; // MAKE SURE BACK IS FIRST
@@ -133,6 +133,7 @@ public class Vision extends SubsystemBase { // this keeps track of our limelight
                         }
                         if(i == 1) {
                             lastTagPositionFront = pose2d;
+                            lastTagRotation = target.getYaw();
                             rawData = new Translation2d(transform.getX(), transform.getY());
                             //lastTagPositionFront = new Pose2d(transform.getX(), transform.getY(), new Rotation2d(0.0)); // actually this is the back reading
                         }

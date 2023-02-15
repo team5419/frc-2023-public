@@ -13,12 +13,14 @@ public class Shoot extends CommandBase {
     private int height;
     private double time;
     private Timer timer;
+    private boolean hasBeenReady;
     private void init(GenericShootIntake coneShooter, GenericShootIntake cubeShooter, Swerve drivetrain, double time) {
         this.coneShooter = coneShooter;
         this.cubeShooter = cubeShooter;
         this.drivetrain = drivetrain;
         isCone = false;
         height = 0;
+        hasBeenReady = false;
         this.time = time;
         this.timer = new Timer();
         addRequirements(coneShooter.subsystem());
@@ -35,6 +37,7 @@ public class Shoot extends CommandBase {
             timer.reset();
             timer.start();
         }
+        hasBeenReady = false;
         isCone = drivetrain.currentNum != 1;
         height = drivetrain.currentHeight; 
     }
@@ -42,11 +45,12 @@ public class Shoot extends CommandBase {
         System.out.println("going to shoot, height: " + height);
         GenericShootIntake shooter = isCone ? coneShooter : cubeShooter;
         String realHeight = TargetHeights.heights[height];
-        if(shooter.donePrepping(realHeight)) {
+       if(shooter.donePrepping(realHeight) || hasBeenReady) {
+            hasBeenReady = true;
             shooter.shoot(realHeight);
-        } else {
+       } else {
             shooter.setup(realHeight);
-        }
+       }
     }
     public boolean isFinished() {
         return time != 0.0 && timer.get() >= time;
