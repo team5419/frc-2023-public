@@ -18,6 +18,7 @@ public class Constants {
         public static final String MID = "MID";
         public static final String HIGH = "HIGH";
         public static final String INTAKE = "INTAKE";
+        public static final String FAR = "FAR";
         public static final String[] heights = { LOW, MID, HIGH };
     }
     public static final class ConerConstants {
@@ -55,7 +56,6 @@ public class Constants {
     }
     public static final class CubeShooterConstants {
         public static final PIDController outtakePID = new PIDController(0.0001, 0, 0);
-
         // order: main motor, indexer
         public static final Map<String, TesterSetting> percents = Map.of(TargetHeights.LOW, new TesterSetting(new double[] { 
             0.25, -1.0
@@ -65,9 +65,11 @@ public class Constants {
             0.45, -1.0
         }), TargetHeights.INTAKE, new TesterSetting(new double[] { 
             -0.55, 0.1
+        }), TargetHeights.FAR, new TesterSetting(new double[] {
+            0.85, -1.0
         }));
 
-        public static final Map<String, Double> measuredVelocities = Map.of(TargetHeights.LOW, 870.0, TargetHeights.MID, 1330.0, TargetHeights.HIGH, 1770.0, TargetHeights.INTAKE, 0.0);
+        public static final Map<String, Double> measuredVelocities = Map.of(TargetHeights.LOW, 870.0, TargetHeights.MID, 1330.0, TargetHeights.HIGH, 1770.0, TargetHeights.INTAKE, 0.0, TargetHeights.FAR, 1770.0);
 
         public static final Map<String, TesterSetting> velocities = Map.of(TargetHeights.LOW, new TesterSetting(new double[] { 
             5000.0, -3000.0
@@ -145,7 +147,8 @@ public class Constants {
         public static final double wheelDiameter = wheelRadius * 2.0; // m
         public static final double wheelCircumference = wheelDiameter * Math.PI; // m
 
-        public static final PIDController balanceController = new PIDController(0.02, 0.0, 0.0);
+        public static final PIDController balanceController = new PIDController(0.08, 0.0, 0.0);
+        public static final PIDController slowBalanceController = new PIDController(0.02, 0.0, 0.0);
         public static final PIDController yawBalanceController = new PIDController(0.04, 0.0, 0.0);
         public static final double epsilonBalance = 0.5;
         public static final double epsilonYawBalance = 0.5;

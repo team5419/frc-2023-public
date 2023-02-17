@@ -24,6 +24,7 @@ public class Robot extends TimedRobot {
   }
 
   public void disabledInit() {
+    robotContainer.swerve.stop();
     robotContainer.useVision(true);
     robotContainer.vision.off();
   }
@@ -44,6 +45,7 @@ public class Robot extends TimedRobot {
     robotContainer.setUpShooters(); // in case we're just testing and not running auto
     robotContainer.setDefaults(); // wait to call these functions until auto has started (A.K.A.)
     robotContainer.configureButtonBindings();
+    robotContainer.useVision(true);
     if(autoCommand != null) {
       autoCommand.cancel();
     }

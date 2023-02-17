@@ -46,21 +46,24 @@ public class Cuber extends TesterSubsystem implements GenericShootIntake {
     }
     public void shoot(String height) {
         run(height);
-        System.out.println(height);
         startingPoint = null;
     }
     public void stop(String height) {
         if(height == TargetHeights.INTAKE) {
             soOne.set(false);
         }
-        super.stop();
+        if(height == TargetHeights.FAR) {
+            this.setup(TargetHeights.INTAKE);
+            this.shoot(TargetHeights.INTAKE); // special setting
+        } else {
+            super.stop();
+        }
     }
     public SubsystemBase subsystem() {return this;}
     public void setup(String height) {
         System.out.println("prep");
         if(height == TargetHeights.INTAKE) {
             soOne.set(true);
-            runSingle(height, 0);
         } else {
             double pos = motors[1].getPosition();
             motors[1].run(CubeShooterConstants.indexerSlowBackwardsSpeed);

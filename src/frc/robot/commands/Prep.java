@@ -20,7 +20,7 @@ public class Prep extends CommandBase {
         height = 0;;
     }
     public void initialize() {
-        isCone = drivetrain.currentNum != 1;
+        isCone = drivetrain.usingCones;
         height = drivetrain.currentHeight; 
     }
     public void execute() {

@@ -21,7 +21,7 @@ public class SpecialRamseteTurn extends CommandBase {
     private Vision vision;
     private boolean hasSeenTag;
     private XboxController driver;
-    private int currentNum;
+    private boolean cones;
     private int currentHeight;
     public SpecialRamseteTurn(Swerve drivetrain, Vision vision, XboxController controller, GenericShootIntake coner, GenericShootIntake cuber) {
         this.coner = coner;
@@ -32,7 +32,7 @@ public class SpecialRamseteTurn extends CommandBase {
         this.isFinished = false;
         this.hasSeenTag = false;
         this.driver = controller;
-        currentNum = 0;
+        cones = false;
         currentHeight = 0;
         addRequirements(drivetrain, coner.subsystem(), cuber.subsystem());
     }
@@ -40,15 +40,14 @@ public class SpecialRamseteTurn extends CommandBase {
         isFinished = false;
         hasSeenTag = false;
         System.out.println("Special init");
-        currentNum = swerve.currentNum;
+        cones = swerve.usingCones;
         currentHeight = swerve.currentHeight;
-        boolean isCone = currentNum != 1; 
-        GenericShootIntake shooter = isCone ? coner : cuber;
+        GenericShootIntake shooter = cones ? coner : cuber;
         this.targetRotation = shooter.getAngle();
     }
 
     public void execute() {
-        GenericShootIntake shooter = (currentNum != 1) ? coner : cuber;
+        GenericShootIntake shooter = cones ? coner : cuber;
         if(shooter.prepsByDefault()) {
             shooter.setup(TargetHeights.heights[currentHeight]);
         }
@@ -67,7 +66,7 @@ public class SpecialRamseteTurn extends CommandBase {
             hasSeenTag = true;
         }
         //if(swerve.getAverageSpeed() < 0.2) { may not need speed requirement for this?
-            if(dtheta == 0 && hasSeenTag) {
+            if(dtheta == 0 && (cones || hasSeenTag)) {
                 isFinished = true;
             }
         //}
@@ -80,13 +79,14 @@ public class SpecialRamseteTurn extends CommandBase {
     public void end(boolean interrupted) {
         swerve.stop();
         if(interrupted) {
-            GenericShootIntake shooter = (currentNum != 1) ? coner : cuber;
+            GenericShootIntake shooter = cones ? coner : cuber;
             shooter.stop(TargetHeights.heights[currentHeight]);
             return;
         }
         if(isFinished) {
-            SpecialRamseteSwerve regularer = new SpecialRamseteSwerve(swerve, vision, driver, currentNum == 1 ? cuber : coner, true, currentNum, currentHeight, 
-                currentNum == 1 ? new RamseteOptions() : new RamseteOptions(false, 5.0)); // if we're on cones, up epsilons hella and don't enforce a speed limit so we're fast before limelight
+            CommandBase regularer = 
+                !cones ? new SpecialRamseteSwerve(swerve, vision, driver, cuber, true, currentHeight, false, new RamseteOptions()) 
+                : new AutoAlign(swerve, coner, vision, driver, coner.getLimelightDistance(TargetHeights.heights[currentHeight]), currentHeight);// if we're on cones, up epsilons hella and don't enforce a speed limit so we're fast before limelight
             regularer.schedule();
         }
     }

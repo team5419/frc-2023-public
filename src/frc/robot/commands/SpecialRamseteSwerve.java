@@ -32,9 +32,9 @@ public class SpecialRamseteSwerve extends RamseteSwerve {
     private XboxController driver;
     private GenericShootIntake shooter;
     private ControllerState controller;
-    private int num;
+    private boolean cones;
     private int height;
-    public SpecialRamseteSwerve(Swerve drivetrain, Vision vision, XboxController driver, GenericShootIntake shooter, boolean imBasic, int num, int height, RamseteOptions options) {
+    public SpecialRamseteSwerve(Swerve drivetrain, Vision vision, XboxController driver, GenericShootIntake shooter, boolean imBasic, int height, boolean cones, RamseteOptions options) {
         super(drivetrain, vision, new Pose2d(), options);
         addRequirements(shooter.subsystem());
         this.state = State.PREDIAGONAL;
@@ -44,7 +44,7 @@ public class SpecialRamseteSwerve extends RamseteSwerve {
         this.driver = driver;
         this.shooter = shooter;
         this.controller = ControllerState.NOTOFFYET;
-        this.num = num;
+        this.cones = cones;
         this.height = height;
     }
     public void initialize() {
@@ -56,27 +56,30 @@ public class SpecialRamseteSwerve extends RamseteSwerve {
         if(team == Alliance.Red) {
             currentY = AprilTagConstants.totalY - currentY;
         }
-            int closestNum = drivetrain.currentStation;
-            // int closestNum = AprilTagConstants.yPositions.length - 1;
-            // for(int i = 1; i < AprilTagConstants.yPositions.length; i++) {
-            //     if(AprilTagConstants.yPositions[i] > currentY) {
-            //         closestNum = (Math.abs(AprilTagConstants.yPositions[i - 1] - currentY) < Math.abs(AprilTagConstants.yPositions[i] - currentY)) ? (i - 1) : i;
-            //         break;
-            //     }
-            // }
-            num += 3 * closestNum; // sketchy fr
-            System.out.println(num);
+            int closestNum = 0;
+            double closestDist = -1;
+            
+            for(int i = 0; i < AprilTagConstants.yPositions.length; i++) {
+                if(cones == (i % 3 == 1)) {
+                    continue;
+                }
+                double dist = Math.abs(AprilTagConstants.yPositions[i] - currentY);
+                if(closestDist == -1 || dist < closestDist) {
+                    closestDist = dist;
+                    closestNum = i;
+                }
+            }
         Rotation2d converted = Rotation2d.fromDegrees(shooter.getAngle()/* if we have front and back cameras, use this, otherwise --> */ /*AprilTagConstants.cameraAngle*/);
         double effectiveX = pose.getX();
         this.targetX = shooter.getDistance(TargetHeights.heights[height]);
-        this.targetY = AprilTagConstants.yPositions[num] + shooter.getOffset() + AprilTagConstants.targetYOffset;
+        this.targetY = AprilTagConstants.yPositions[closestNum] + shooter.getOffset() + AprilTagConstants.targetYOffset;
         if(team == Alliance.Red) {
             this.targetY = AprilTagConstants.totalY - targetY;
         }
         int section = Util.getSection(currentY);
         this.goal = new Pose2d(targetX, targetY, converted);
         System.out.println("going to x: " + targetX + ", y: " + targetY + ", theta: " + converted.getDegrees());
-        if((section == Util.getSection(AprilTagConstants.yPositions[num]) && section != -1) || imBasic) {
+        if((section == Util.getSection(AprilTagConstants.yPositions[closestNum]) && section != -1) || imBasic) {
             this.state = State.POSTDIAGONAL;
         } else {
             this.state = State.PREDIAGONAL;
@@ -115,7 +118,7 @@ public class SpecialRamseteSwerve extends RamseteSwerve {
                 state = State.POSTDIAGONAL;
                 this.goal = new Pose2d(targetX, targetY, this.goal.getRotation());
             } else {
-                return num != 1;
+                return cones;
             }
         }
         return false;
@@ -124,9 +127,9 @@ public class SpecialRamseteSwerve extends RamseteSwerve {
     public void end(boolean interrupted) {
         System.out.println("SPECIAL SWERVE ENDED!!");
         super.end(interrupted);
-        if(!interrupted && num != 1 && controller != ControllerState.ONAGAIN) {
-            AutoAlign aligner = new AutoAlign(drivetrain, shooter, vision, driver, shooter.getLimelightDistance(TargetHeights.heights[height]), height);
-            aligner.schedule();
-        }
+        // if(!interrupted && num != 1 && controller != ControllerState.ONAGAIN) {
+        //     AutoAlign aligner = new AutoAlign(drivetrain, shooter, vision, driver, shooter.getLimelightDistance(TargetHeights.heights[height]), height);
+        //     aligner.schedule();
+        // }
     }
 }

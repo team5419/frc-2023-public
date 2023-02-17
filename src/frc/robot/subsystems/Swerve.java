@@ -28,9 +28,8 @@ public class Swerve extends SubsystemBase { // our swerve drive subsystem
     public Pigeon2 gyro; // keep a gyro to read our current angle
     public boolean usingVision;
     public boolean foundPosition; // keeps track of whether the robot has gotten an initial position reading from the vision system
-    public int currentNum; // keep track of the current station (0-2) that the driver wants to go to based on the button board
+    public boolean usingCones; // keep track of the current station (0-2) that the driver wants to go to based on the button board
     public int currentHeight; // keep track of whether the driver wants to shoot low, mid, or high based on the button board
-    public int currentStation;
     private ChassisSpeeds previousMove; // keep track of the previous speeds of the modules for position tracking
     public boolean slowMode; // whether the swerve drive is in slowmode
     public Swerve(Vision vision, boolean pigeon) { // the pigeon parameter tells the code whether we are using a pigeon
@@ -49,8 +48,7 @@ public class Swerve extends SubsystemBase { // our swerve drive subsystem
         } else {
             gyro = null;
         }
-        currentStation = 1;
-        currentNum = 1; // set default values for these (to be changed later by the codriver) 
+        usingCones = false; // set default values for these (to be changed later by the codriver) 
         currentHeight = 1;
         this.vision = vision; // keep track of the vision system
         Rotation2d tation = Rotation2d.fromDegrees(angle()); // get our current gyro angle
@@ -69,7 +67,7 @@ public class Swerve extends SubsystemBase { // our swerve drive subsystem
         ShuffleboardTab tab = Shuffleboard.getTab("Drivetrain"); // add a special drivetrain tab to shuffleboard
         ShuffleboardLayout layout = tab.getLayout("Main", BuiltInLayouts.kList).withPosition(0, 0).withSize(2, 5); // add a main layout within the tab
          layout.addNumber("yaw", () -> this.angle()); // print all 3 euler angles of the gyro at all times for testing
-        // layout.addNumber("pitch", () -> this.gyro.getPitch());
+        layout.addNumber("pitch", () -> this.gyro.getPitch());
         // layout.addNumber("roll", () -> this.gyro.getRoll());
         //layout.addNumber("compass", () -> this.gyro.getCompassHeading()); // wtf is this lmao
         layout.addBoolean("slow mode", () -> this.slowMode); // shows whether we are in slow mode
@@ -81,21 +79,13 @@ public class Swerve extends SubsystemBase { // our swerve drive subsystem
         layout.addNumber("turning (rad)", () -> previousMove.omegaRadiansPerSecond);
         ShuffleboardTab selectionTab = Shuffleboard.getTab("Shot Selection");
         for(int i = 0; i < 3; i++) {
-            for(int j = 0; j < 3; j++) {
                 int savedI = 2 - i;
-                int savedJ = j;
-                selectionTab.addBoolean("row " + i + ", col " + j, () -> (currentHeight == savedI && currentNum == savedJ))
+                selectionTab.addBoolean("row " + i, () -> (currentHeight == savedI))
                     .withSize(1, 1)
-                    .withPosition(2 - j, i);
-            }
+                    .withPosition(0, i);
         }
-
-        for(int i = 0; i < 3; i++) {
-            int savedI = i;
-            selectionTab.addBoolean("STATION " + i, () -> currentStation == savedI)
-                .withSize(1, 1)
-                .withPosition(8 - i, 0);
-        }
+        selectionTab.addBoolean("SHOOTING CONES", () -> usingCones)
+        .withSize(1, 1).withPosition(6, 0);
     }
     private SwerveModulePosition[] getPositions() { // get the total lengths driven by each module as an array
         SwerveModulePosition[] arr = new SwerveModulePosition[drivers.length];
@@ -117,7 +107,7 @@ public class Swerve extends SubsystemBase { // our swerve drive subsystem
     public void periodic() {
         Rotation2d angle = Rotation2d.fromDegrees(angle()); // read the current angle of the robot
         SwerveModulePosition[] positions = getPositions(); // get all the module positions
-        if(!foundPosition && usingVision) { // if we're still waiting for the first vision position reading, do this
+        if(!foundPosition && usingVision && vision.usesCamera()) { // if we're still waiting for the first vision position reading, do this
             Pose2d measure = vision.updateRobotPose(poseEstimator, angle, new Pose2d(), false); // get the current vision measurement
             if(measure != null) {
                 foundPosition = true;
@@ -149,8 +139,8 @@ public class Swerve extends SubsystemBase { // our swerve drive subsystem
     public double angle() { // get the yaw angle if we're using a gyro, and subtract the offset to adjust for when we zero the gyro
         return gyro == null ? 0.0 : (gyro.getYaw());
     }
-    public void resetGyro() {
-        gyro.setYaw(0.0);
+    public void resetGyro(double angle) {
+        gyro.setYaw(angle);
     }
     public double anglePitch() { // get the pitch angle of the gyro
         return gyro == null ? 0.0 : gyro.getPitch();

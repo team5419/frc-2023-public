@@ -29,7 +29,7 @@ public class RobotContainer {
 	private SendableChooser<Supplier<GenericShootIntake>> coneShooterSelector;
 	private SendableChooser<Supplier<GenericShootIntake>> cubeShooterSelector;
 	//private Drivetrain drivetrain;
-	private Swerve swerve;
+	public Swerve swerve;
 	private XboxController driver;
 	private XboxController codriver;
 	//private Claw claw;
@@ -127,18 +127,11 @@ public class RobotContainer {
 		rightBumper.onTrue(new SpecialRamseteTurn(swerve, vision, driver, coner, cuber));
 		// bButtonDriver.whileTrue(new Shoot(coner, cuber, swerve));
 		rightBumperCodriver.onTrue(Commands.runOnce(() -> {
-			if(swerve.currentStation > 0) {
-				swerve.currentStation--;
-			}
-		}));
-		leftBumperCodriver.onTrue(Commands.runOnce(() -> {
-			if(swerve.currentStation < 2) {
-				swerve.currentStation++;
-			}
+			swerve.usingCones = !swerve.usingCones;
 		}));
 		// xButtonDriver.whileTrue(new RunIntake(coner));
 		// yButtonDriver.whileTrue(new RunIntake(cuber));
-
+		leftBumperCodriver.onTrue(new Balance(swerve, driver));
 		// for testing:
 		aButtonDriver.whileTrue(new Prep(coner, cuber, swerve));
 		bButtonDriver.whileTrue(new Shoot(coner, cuber, swerve));

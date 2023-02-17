@@ -24,6 +24,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 
 import java.util.ConcurrentModificationException;
+import java.util.List;
 import java.util.Optional;
 
 public class Vision extends SubsystemBase { // this keeps track of our limelight and photon camera
@@ -77,7 +78,7 @@ public class Vision extends SubsystemBase { // this keeps track of our limelight
             layout.addDouble("last tag theta", () -> lastTagRotation);
             // layout.addDouble("x before transform", () -> rawData.getX());
             // layout.addDouble("y before transform", () -> rawData.getY());
-        cameras = new PhotonCamera[] { new PhotonCamera("bottom port"), new PhotonCamera("top port") }; // MAKE SURE BACK IS FIRST
+        cameras = new PhotonCamera[] { new PhotonCamera("bottom port") }; // MAKE SURE BACK IS FIRST
         } else {
             cameras = null;
         }
@@ -88,12 +89,30 @@ public class Vision extends SubsystemBase { // this keeps track of our limelight
         return cameras != null;
     }
 
-    private Alliance getTeam() {
-        Alliance alliance = DriverStation.getAlliance();
-        return alliance;
+    public double getHorizontalToTarget(int number) {
+        if(cameras == null) {
+            return 0.0;
+        }
+        seesTag = false;
+        PhotonPipelineResult res = cameras[0].getLatestResult();
+        
+        if(res != null && res.hasTargets()) {   
+            List<PhotonTrackedTarget> targets = res.getTargets();
+            for(int i = 0; i < targets.size(); i++) {
+                if(targets.get(i).getFiducialId() == number) {
+                    seesTag = true;
+                    System.out.println("found target");
+                    return targets.get(i).getBestCameraToTarget().getY();
+                }
+            }
+        }
+        return 0.0;
     }
 
     public Pose2d updateRobotPose(SwerveDrivePoseEstimator poser, Rotation2d theta, Pose2d previous, boolean foundPosition) {
+        if(cameras == null) {
+            return null;
+        }
         Alliance team = team();
         if(team == Alliance.Invalid) {
             return null;

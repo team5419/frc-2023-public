@@ -21,9 +21,11 @@ public class Balance extends CommandBase {
     }
     public void execute() { 
         double yawDiff = targetYaw - drivetrain.angle(); //how far to turn (rotate) into correct postion
-        double pitchDiff = -drivetrain.anglePitch();  //how far to get balanced
+        double pitchDiff = drivetrain.anglePitch();  //how far to get balanced
         double yawChange = -SwerveDriveConstants.yawBalanceController.calculate(yawDiff);
-        double pitchChange = -SwerveDriveConstants.balanceController.calculate(pitchDiff); //returns how far needed to drive in order to balance
+        double pitchChange = Math.abs(pitchDiff) <= 30.0 ? SwerveDriveConstants.balanceController.calculate(pitchDiff)
+        : SwerveDriveConstants.slowBalanceController.calculate(pitchDiff); //returns how far needed to drive in order to balance
+        
         drivetrain.drive(pitchChange, Util.deadband(controller.getLeftX(), SwerveDriveConstants.controllerDeadband) * SwerveDriveConstants.speedMultiplier, yawChange, true, true);
         shouldFinish = Math.abs(yawDiff) < SwerveDriveConstants.epsilonYawBalance && Math.abs(pitchDiff) < SwerveDriveConstants.epsilonBalance && drivetrain.getAverageSpeed() < 0.1;
     }

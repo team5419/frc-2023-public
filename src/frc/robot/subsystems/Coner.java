@@ -62,7 +62,7 @@ public class Coner extends TesterSubsystem implements GenericShootIntake {
         }
     }
     public boolean donePrepping(String height) {
-        return timestamp >= 0.0 && Timer.getFPGATimestamp() - timestamp >= 1.0;
+        return timestamp >= 0.0 && Timer.getFPGATimestamp() - timestamp >= 0.625;
     }
     public SubsystemBase subsystem() {return this;}
     public final double getAngle() {
