@@ -60,11 +60,9 @@ public class RobotContainer {
 		tab.add("Auto selector", autoSelector).withSize(2, 1).withPosition(0, 0);
 		autoSelector.setDefaultOption("Baseline", () -> new Baseline());
 		//sautoSelector.addOption("Proto Routine", new ProtoRoutine(drivetrain));
-		autoSelector.addOption("Proto Routine", () -> new SwerveRoutine(swerve, vision, coner, cuber));
-		autoSelector.addOption("Proto Routine with Vision", () -> new SwerveWithVision(swerve, vision, coner, cuber));
-		autoSelector.addOption("Go to zero", () -> new SequentialCommandGroup(
-			new RamseteSwerve(swerve, vision, new Pose2d(1.80, 1.02, new Rotation2d(0.0)), new RamseteOptions())));
-
+		autoSelector.addOption("Two Cube Balance", () -> new TwoCubeBalance(swerve, vision, coner, cuber, false));
+		autoSelector.addOption("Two Cube Balance, Short Side", () -> new TwoCubeBalance(swerve, vision, coner, cuber, true));
+		
 		coneShooterSelector = new SendableChooser<Supplier<GenericShootIntake>>();
 		tab.add("Cone shooter", coneShooterSelector).withSize(2, 1).withPosition(2, 0);
 		coneShooterSelector.setDefaultOption("Low Coner", () -> new Coner(generateHub(), true, false));

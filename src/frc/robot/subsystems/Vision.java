@@ -207,7 +207,7 @@ public class Vision extends SubsystemBase { // this keeps track of our limelight
         if(limelight == null) {
             return;
         }
-        limelight.getEntry("ledMode").setNumber(1);
+        limelight.getEntry("ledMode").setNumber(3);
     }
 
     public Alliance team() {

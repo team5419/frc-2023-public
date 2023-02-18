@@ -15,6 +15,7 @@ public class RamseteSwerve extends CommandBase {
     protected Pose2d goal;
     protected RamseteOptions options;
     protected Vision vision;
+    private Alliance alliance;
     public RamseteSwerve(Swerve drivetrain, Vision vision, Pose2d goal, RamseteOptions options) {
         this.drivetrain = drivetrain;
         this.options = options;
@@ -24,9 +25,10 @@ public class RamseteSwerve extends CommandBase {
         addRequirements(drivetrain);
     }
     public void initialize() {
+        alliance = vision.team();
         System.out.println("initializing");
         if(options.teamRelative && vision.team() == Alliance.Red) {
-            this.goal = new Pose2d(AprilTagConstants.totalX - goal.getX(), AprilTagConstants.totalY - goal.getY(), goal.getRotation());
+            this.goal = new Pose2d(-goal.getX(), -goal.getY(), goal.getRotation());
         }
     }
     public void execute() { 
@@ -34,9 +36,17 @@ public class RamseteSwerve extends CommandBase {
             System.out.println("goal is null");
             return;
         }
-        double theta = drivetrain.angle();
-        double targetRotation = goal.getRotation().getDegrees();
-        double target = Math.round((theta - targetRotation) / 360.0) * 360.0 + targetRotation;
+        double thetaDiff = 0.0;
+        if(options.turnToTag != -1) {
+            thetaDiff = vision.getHorizontalToTarget(alliance == Alliance.Blue ? (9 - options.turnToTag) : options.turnToTag);
+        }
+        if(options.turnToTag == -1 || !vision.seesTag) {
+            double theta = drivetrain.angle();
+            double targetRotation = goal.getRotation().getDegrees();
+            double target = Math.round((theta - targetRotation) / 360.0) * 360.0 + targetRotation;
+            thetaDiff = target - theta;
+        }
+        
         Pose2d pose = drivetrain.pose();
 
         double xdiff = goal.getX() - pose.getX();
@@ -52,12 +62,12 @@ public class RamseteSwerve extends CommandBase {
             dy *= (SwerveDriveConstants.maxVelocity / magnitude);
         }
 
-        double dtheta = 1 * SwerveDriveConstants.pTheta * (Math.PI / 180.0) * Util.deadband(target - theta, SwerveDriveConstants.epsilonTheta * options.epsilonMultiplier);
+        double dtheta = 1 * SwerveDriveConstants.pTheta * (Math.PI / 180.0) * Util.deadband(thetaDiff, SwerveDriveConstants.epsilonTheta * options.epsilonMultiplier);
         //System.out.println(dtheta);
         //System.out.println("theta: ${DriveConstants.pTheta * (Math.PI / 180) * (target - theta)}");
         drivetrain.drive(dx , dy , dtheta, true, true);
 
-        isFinished = (options.preventDrive || (dx == 0 && dy == 0)) && dtheta == 0 && (!options.speedLimit || drivetrain.getAverageSpeed() < 0.1);
+        isFinished = (options.preventDrive || (dx == 0 && dy == 0)) && dtheta == 0 && (!options.speedLimit || drivetrain.getAverageSpeed() < 0.1) && (options.turnToTag == -1 || vision.seesTag);
     }
     public boolean isFinished() {
         System.out.println("finished");

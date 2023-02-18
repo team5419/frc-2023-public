@@ -36,7 +36,7 @@ public class Coner extends TesterSubsystem implements GenericShootIntake {
         timestamp = -1.0;
     }
     public static TesterMotor generateTesterMotor(String name, boolean falcons, int id) {
-        return falcons ? new TesterFalcon(name, Util.setUpMotor(new TalonFX(id, "canivore"), new PID(0, 0, 0), true, 1.0))
+        return falcons ? new TesterFalcon(name, Util.setUpMotor(new TalonFX(id, "canivore"), new PID(0.1, 0, 0), true, 1.0))
         : new TesterNeo(name, Util.setUpMotor(new CANSparkMax(id, MotorType.kBrushless), false, true));
     }
     public void shoot(String height) {
@@ -78,7 +78,7 @@ public class Coner extends TesterSubsystem implements GenericShootIntake {
         return 2.1; // a little off so that we can rotate freely
     }
     public final double getLimelightDistance(String height) {
-        return 0.5; // 0.569
+        return 0.62; // 0.569
     }
     public void periodic() {
 

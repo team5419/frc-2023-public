@@ -31,6 +31,7 @@ public class TesterFalcon implements TesterMotor {
         return talon.getSelectedSensorVelocity(0);
     }
     public void setVelocity(double velocity) {
+        System.out.println("setting velocity to " + velocity);
         talon.set(ControlMode.Velocity, velocity);
     }
     public double getPosition() {

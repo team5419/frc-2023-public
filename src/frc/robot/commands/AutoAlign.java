@@ -49,7 +49,7 @@ public class AutoAlign extends CommandBase {
         } else if(Math.abs(forwardDiff) < 0.2) {
             shooter.setup(TargetHeights.heights[height]);
         }
-        drivetrain.drive(forward, -left, -turn, false, true);
+        drivetrain.drive(forward , -left , -turn, false, true);
     }
     public boolean isFinished() {
         return Math.abs(driver.getLeftX()) > SwerveDriveConstants.controllerDeadband || Math.abs(driver.getLeftY()) > SwerveDriveConstants.controllerDeadband || Math.abs(driver.getRightX()) > SwerveDriveConstants.controllerDeadband || Math.abs(driver.getRightY()) > SwerveDriveConstants.controllerDeadband;

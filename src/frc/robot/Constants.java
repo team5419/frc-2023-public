@@ -13,6 +13,14 @@ import java.lang.Math;
 import java.util.Map;
 
 public class Constants {
+    public static final class AutoConstants { // all relative to where you start, where positive y and positive x are towards the charge station
+        public static final Translation2d firstCube = new Translation2d(4.2, 0.5);
+        public static final Translation2d firstShot = new Translation2d(3.0, 0.5);
+        public static final Translation2d firstShotShortSide = new Translation2d(3.0, 1.0);
+        public static final Translation2d secondCube = new Translation2d(4.2, 1.5);
+        public static final Translation2d secondShot = new Translation2d(3.25, 2.25);
+        public static final Translation2d preBalancePosition = new Translation2d(2.0, 2.25);
+    }
     public static final class TargetHeights { // these need to be stored as strings for shuffleboard
         public static final String LOW = "LOW";
         public static final String MID = "MID";
@@ -25,9 +33,9 @@ public class Constants {
         public static final double inOutVelocity = 0.05;
         // order: bottom motor, top motor
         public static final Map<String, TesterSetting> percents = Map.of(TargetHeights.LOW, new TesterSetting(new double[] { 
-            0.06, -0.34
+            0.53, -0.22
         }), TargetHeights.MID, new TesterSetting(new double[] { 
-            0.14, -0.41//0.14, -0.36
+            0.14, -0.38//0.14, -0.36
         }), TargetHeights.HIGH, new TesterSetting(new double[] { 
             0.22, -1.0
         }), TargetHeights.INTAKE, new TesterSetting(new double[] { 
@@ -44,13 +52,13 @@ public class Constants {
             -2500.0, 2500.0
         }));
 
-        public static final Map<String, TesterSetting> falconVelocities = Map.of(TargetHeights.LOW, new TesterSetting(new double[] { 
+        public static final Map<String, TesterSetting> falconVelocities = Map.of(TargetHeights.LOW, new TesterSetting(true, new double[] { 
             10000.0, -10000.0
-        }), TargetHeights.MID, new TesterSetting(new double[] { 
+        }), TargetHeights.MID, new TesterSetting(true, new double[] { 
             10000.0, -10000.0
-        }), TargetHeights.HIGH, new TesterSetting(new double[] { 
+        }), TargetHeights.HIGH, new TesterSetting(true, new double[] { 
             20000.0, -20000.0
-        }), TargetHeights.INTAKE, new TesterSetting(new double[] { 
+        }), TargetHeights.INTAKE, new TesterSetting(true, new double[] { 
             -10000.0, 10000.0
         }));
     }
@@ -146,9 +154,9 @@ public class Constants {
         public static final double wheelRadius = 0.0508; // m
         public static final double wheelDiameter = wheelRadius * 2.0; // m
         public static final double wheelCircumference = wheelDiameter * Math.PI; // m
-
-        public static final PIDController balanceController = new PIDController(0.08, 0.0, 0.0);
-        public static final PIDController slowBalanceController = new PIDController(0.02, 0.0, 0.0);
+        public static final double regularBalanceP = 0.02;
+        public static final double slowBalanceP = 0.02;
+        public static final double constantBalanceSpeed = 0.15;
         public static final PIDController yawBalanceController = new PIDController(0.04, 0.0, 0.0);
         public static final double epsilonBalance = 0.5;
         public static final double epsilonYawBalance = 0.5;
@@ -186,17 +194,17 @@ public class Constants {
     }
     public static final class LimelightConstants {
         public static final double lowTargetHeight = 0.6096;
-        public static final double cameraAngle = 6.0;
+        public static final double cameraAngle = 9.0;
         public static final double cameraHeight = 0.3048;
         public static final PIDController horizontalPID = new PIDController(0.04, 0.0, 0.0);
-        public static final PIDController turnPID = new PIDController(0.1, 0.0, 0.0);
+        public static final PIDController turnPID = new PIDController(0.2, 0.0, 0.0);
         public static final PIDController forwardPID = new PIDController(3.5, 0.0, 0.0);
         public static final double desiredAngle = 180.0;
         public static final double desiredDistance = 0.0;
 
         public static final double epsilonTurn = 0.3;
         public static final double epsilonHorizontal = 0.3;
-        public static final double epsilonForward = 0.07;
+        public static final double epsilonForward = 0.01;
     }
     public static final class AprilTagConstants {
 
