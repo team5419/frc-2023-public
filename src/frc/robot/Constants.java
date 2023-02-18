@@ -240,9 +240,11 @@ public class Constants {
         public static final double ambiguityRequirement = 0.9;
     }
     public static final class EverybotArmConstants {
-        public static final PID PID = new PID(1.0, 0.0, 0.0);
-        public static final double inPosition = 0.0;
-        public static final double outPosition = 1000.0;
+        public static final PID PID = new PID(0.01, 0.0, 0.0);
+        public static final double inPosition = -3000.0;
+        public static final double outPosition = 62500.0;
+        public static final double realInPosition = 1800.0;
+        public static final double realOutPosition = 57000.0;
         public static final double moveSpeed = 0.3;
     }
     public static final class Ports {

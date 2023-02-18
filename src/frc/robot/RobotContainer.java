@@ -65,7 +65,7 @@ public class RobotContainer {
 		
 		coneShooterSelector = new SendableChooser<Supplier<GenericShootIntake>>();
 		tab.add("Cone shooter", coneShooterSelector).withSize(2, 1).withPosition(2, 0);
-		coneShooterSelector.setDefaultOption("Low Coner", () -> new Coner(generateHub(), true, false));
+		coneShooterSelector.setDefaultOption("Low Coner", () -> new Coner(generateHub(), true, true));
 		coneShooterSelector.addOption("Everybot arm w/ motors", () -> new EverybotConer(generateArm(), false));
 		coneShooterSelector.addOption("Everybot arm w/ suction", () -> new Suction(generateArm()));
 
@@ -76,7 +76,7 @@ public class RobotContainer {
 
 	private EverybotArm generateArm() {
 		if(arm == null) {
-			arm = new EverybotArm(false);
+			arm = new EverybotArm(true);
 		}
 		return arm;
 	}
