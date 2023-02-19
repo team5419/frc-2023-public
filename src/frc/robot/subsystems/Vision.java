@@ -15,13 +15,10 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 
 import java.util.ConcurrentModificationException;
 import java.util.List;
@@ -32,9 +29,7 @@ public class Vision extends SubsystemBase { // this keeps track of our limelight
     private NetworkTable limelight; // keep track of the limelight
     private ShuffleboardTab layout; // keep track of a shuffleboard layout for printing data
     private PhotonCamera[] cameras; // keep track of the photon camera (april tags stuff)
-    //private PhotonPoseEstimator[] poseEstimator; // the photon camera has its own pose estimator that interacts with the overall pose estimator// keep track of the team that we think we're on
     private Pose2d lastTagPositionFront;
-    private Translation2d rawData;
     private double lastTagRotation;
     private AprilTagFieldLayout tagLayout;
     public boolean seesTag;
@@ -53,7 +48,6 @@ public class Vision extends SubsystemBase { // this keeps track of our limelight
         seesTag = false;
         lastTagRotation = 0.0;
         lastTagPositionFront = new Pose2d();
-        rawData = new Translation2d();
         tagLayout = null;
         try {
             tagLayout = AprilTagFieldLayout.loadFromResource(AprilTagFields.k2023ChargedUp.m_resourceFile);
@@ -146,15 +140,12 @@ public class Vision extends SubsystemBase { // this keeps track of our limelight
                     Optional<Pose3d> tagPose = tagLayout.getTagPose(target.getFiducialId());
                     if(tagPose.isPresent()) {
                         Pose2d pose2d = new Pose2d(transformedX + tagPose.get().getX(), transformedY + tagPose.get().getY(), theta);
-                        //lastTagPositionFront = pose2d;
                         if(team == Alliance.Red) {
                             pose2d = new Pose2d(AprilTagConstants.totalX - pose2d.getX(), AprilTagConstants.totalY - pose2d.getY(), theta);
                         }
                         if(i == 1) {
                             lastTagPositionFront = pose2d;
                             lastTagRotation = target.getYaw();
-                            rawData = new Translation2d(transform.getX(), transform.getY());
-                            //lastTagPositionFront = new Pose2d(transform.getX(), transform.getY(), new Rotation2d(0.0)); // actually this is the back reading
                         }
                         if(!foundPosition) {
                             return pose2d;

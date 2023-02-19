@@ -13,6 +13,9 @@ import java.lang.Math;
 import java.util.Map;
 
 public class Constants {
+    public static enum ConerTypes {
+        LOW_CONER, EVERYBOT_MOTORS, EVERYBOT_SUCTION
+    }
     public static final class AutoConstants { // all relative to where you start, where positive y and positive x are towards the charge station
         public static final Translation2d firstCube = new Translation2d(4.2, 0.5);
         public static final Translation2d firstShot = new Translation2d(3.0, 0.5);
