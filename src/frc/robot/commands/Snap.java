@@ -13,14 +13,16 @@ public class Snap extends CommandBase {
     Swerve drivetrain;
     Vision vision;
     XboxController driver;
-    public Snap(Swerve drivetrain, Vision vision, XboxController driver) {
+    int mod;
+    public Snap(Swerve drivetrain, Vision vision, XboxController driver, int mod) {
         this.drivetrain = drivetrain;
         this.vision = vision;
         this.driver = driver;
+        this.mod = mod;
     }
 
     public void initialize() {
-        double deg = (((this.driver.getPOV() + 45) % 360) / 90) * 90;
+        double deg = (((this.driver.getPOV() + (180 / mod)) % (360 / mod)) / 90) * 90;
         RamseteSwerve ramsete = new RamseteSwerve(this.drivetrain, this.vision, new Pose2d(0.0, 0.0, Rotation2d.fromDegrees(deg)), new RamseteOptions(true, true));
         ramsete.schedule();
     }
