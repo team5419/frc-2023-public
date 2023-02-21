@@ -3,6 +3,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants.TargetHeights;
 import frc.robot.subsystems.GenericShootIntake;
+import frc.robot.subsystems.Lights;
 import frc.robot.subsystems.Swerve;
 
 public class Shoot extends CommandBase {
@@ -15,12 +16,14 @@ public class Shoot extends CommandBase {
     private Timer timer;
     private boolean hasBeenReady;
     private String overrideHeight;
-    private void init(GenericShootIntake coneShooter, GenericShootIntake cubeShooter, Swerve drivetrain, double time) {
+    private Lights lights;
+    private void init(GenericShootIntake coneShooter, GenericShootIntake cubeShooter, Swerve drivetrain, double time, Lights lights) {
         this.coneShooter = coneShooter;
         this.cubeShooter = cubeShooter;
         this.drivetrain = drivetrain;
         isCone = false;
         height = 0;
+        this.lights = lights;
         hasBeenReady = false;
         overrideHeight = null;
         this.time = time;
@@ -28,14 +31,14 @@ public class Shoot extends CommandBase {
         addRequirements(coneShooter.subsystem());
         addRequirements(cubeShooter.subsystem());
     }
-    public Shoot(GenericShootIntake coneShooter, GenericShootIntake cubeShooter, Swerve drivetrain) {
-        init(coneShooter, cubeShooter, drivetrain, 0.0);
+    public Shoot(GenericShootIntake coneShooter, GenericShootIntake cubeShooter, Swerve drivetrain, Lights lights) {
+        init(coneShooter, cubeShooter, drivetrain, 0.0, lights);
     }
-    public Shoot(GenericShootIntake coneShooter, GenericShootIntake cubeShooter, Swerve drivetrain, double time) {
-        init(coneShooter, cubeShooter, drivetrain, time);
+    public Shoot(GenericShootIntake coneShooter, GenericShootIntake cubeShooter, Swerve drivetrain, double time, Lights lights) {
+        init(coneShooter, cubeShooter, drivetrain, time, lights);
     }
-    public Shoot(GenericShootIntake coneShooter, GenericShootIntake cubeShooter, Swerve drivetrain, double time, String overrideHeight) {
-        init(coneShooter, cubeShooter, drivetrain, time);
+    public Shoot(GenericShootIntake coneShooter, GenericShootIntake cubeShooter, Swerve drivetrain, double time, String overrideHeight, Lights lights) {
+        init(coneShooter, cubeShooter, drivetrain, time, lights);
         this.overrideHeight = overrideHeight;
     }
     private String getHeight() {
@@ -49,6 +52,7 @@ public class Shoot extends CommandBase {
         hasBeenReady = false;
         isCone = drivetrain.usingCones;
             height = drivetrain.currentHeight; 
+        lights.setColor(0, 0, 255);
     }
     public void execute() {
         System.out.println("going to shoot, height: " + height);
@@ -74,5 +78,6 @@ public class Shoot extends CommandBase {
         if(time != 0.0) {
             timer.stop();
         }
+        lights.off(drivetrain);
     }
 }

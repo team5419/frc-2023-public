@@ -13,8 +13,12 @@ public class EverybotArm extends SubsystemBase {
     private TalonFX leftArm;
     private TalonFX rightArm;
     private boolean usePID;
+    public boolean isOut;
+    public boolean enabled;
     public EverybotArm(boolean usePID) {
         this.usePID = usePID;
+        this.isOut = false;
+        this.enabled = false;
         leftArm = new TalonFX(Ports.everyArm0);
         Util.setUpMotor(leftArm, false, true, EverybotArmConstants.PID, true, 1.0);
         leftArm.configMotionAcceleration(40000, 100);
@@ -32,28 +36,6 @@ public class EverybotArm extends SubsystemBase {
         tab.addNumber("arm motion control vel", () -> leftArm.getActiveTrajectoryVelocity());
     }
 
-    public void gotoPosition(double ticks) {
-        if(usePID) {
-            leftArm.set(ControlMode.MotionMagic, ticks);
-        }
-    }
-
-    public void goIn() {
-        if(leftArm.getSelectedSensorPosition() < EverybotArmConstants.realInPosition) {
-            leftArm.set(ControlMode.Velocity, 0.0);
-        } else {
-            leftArm.set(ControlMode.MotionMagic, EverybotArmConstants.inPosition);
-        }
-    }
-
-    public void goOut() {
-        if(leftArm.getSelectedSensorPosition() > EverybotArmConstants.realOutPosition) {
-            leftArm.set(ControlMode.Velocity, 0.0);
-        } else {
-            leftArm.set(ControlMode.MotionMagic, EverybotArmConstants.outPosition);
-        }
-    }
-
     public void resetEncoders() {
         leftArm.setSelectedSensorPosition(0.0);
         rightArm.setSelectedSensorPosition(0.0);
@@ -65,7 +47,21 @@ public class EverybotArm extends SubsystemBase {
     }
 
     public void periodic() {
-
+        if(usePID && enabled) {
+            if(isOut) {
+                if(leftArm.getSelectedSensorPosition() > EverybotArmConstants.realOutPosition) {
+                    leftArm.set(ControlMode.Velocity, 0.0);
+                } else {
+                    leftArm.set(ControlMode.MotionMagic, EverybotArmConstants.outPosition);
+                }
+            } else {
+                if(leftArm.getSelectedSensorPosition() < EverybotArmConstants.realInPosition) {
+                    leftArm.set(ControlMode.Velocity, 0.0);
+                } else {
+                    leftArm.set(ControlMode.MotionMagic, EverybotArmConstants.inPosition);
+                }
+            }
+        }
     }
 
     public void simulationPeriodic() {

@@ -4,6 +4,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import frc.robot.subsystems.GenericShootIntake;
+import frc.robot.subsystems.Lights;
 import frc.robot.subsystems.Swerve;
 import frc.robot.subsystems.Vision;
 import frc.robot.Util;
@@ -32,7 +33,8 @@ public class SpecialRamseteSwerve extends RamseteSwerve {
     private ControllerState controller;
     private boolean cones;
     private int height;
-    public SpecialRamseteSwerve(Swerve drivetrain, Vision vision, XboxController driver, GenericShootIntake shooter, boolean imBasic, int height, boolean cones, RamseteOptions options) {
+    private Lights lights;
+    public SpecialRamseteSwerve(Swerve drivetrain, Vision vision, XboxController driver, GenericShootIntake shooter, boolean imBasic, int height, boolean cones, RamseteOptions options, Lights lights) {
         super(drivetrain, vision, new Pose2d(), options);
         addRequirements(shooter.subsystem());
         this.state = State.PREDIAGONAL;
@@ -44,6 +46,7 @@ public class SpecialRamseteSwerve extends RamseteSwerve {
         this.controller = ControllerState.NOTOFFYET;
         this.cones = cones;
         this.height = height;
+        this.lights = lights;
     }
     public void initialize() {
         this.controller = ControllerState.NOTOFFYET;
@@ -105,9 +108,11 @@ public class SpecialRamseteSwerve extends RamseteSwerve {
 
     public boolean isFinished() {
         if(controller == ControllerState.ONAGAIN) {
+            lights.off(drivetrain);
             return true;
         }
         if(isFinished) {
+            lights.setColor(0, 255, 0);
             isFinished = false;
             if(state == State.PREDIAGONAL) {
                 state = State.DIAGONAL;
@@ -118,6 +123,8 @@ public class SpecialRamseteSwerve extends RamseteSwerve {
             } else {
                 return cones;
             }
+        } else {
+            lights.setColor(255, 0, 0);
         }
         return false;
     }

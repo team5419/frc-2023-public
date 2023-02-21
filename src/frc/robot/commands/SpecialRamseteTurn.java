@@ -4,6 +4,7 @@ import frc.robot.Util;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.GenericShootIntake;
+import frc.robot.subsystems.Lights;
 import frc.robot.subsystems.Swerve;
 import frc.robot.subsystems.Vision;
 import frc.robot.Constants.SwerveDriveConstants;
@@ -20,8 +21,9 @@ public class SpecialRamseteTurn extends CommandBase {
     private boolean hasSeenTag;
     private XboxController driver;
     private boolean cones;
+    private Lights lights;
     private int currentHeight;
-    public SpecialRamseteTurn(Swerve drivetrain, Vision vision, XboxController controller, GenericShootIntake coner, GenericShootIntake cuber) {
+    public SpecialRamseteTurn(Swerve drivetrain, Vision vision, XboxController controller, GenericShootIntake coner, GenericShootIntake cuber, Lights lights) {
         this.coner = coner;
         this.vision = vision;
         this.cuber = cuber;
@@ -30,6 +32,7 @@ public class SpecialRamseteTurn extends CommandBase {
         this.isFinished = false;
         this.hasSeenTag = false;
         this.driver = controller;
+        this.lights = lights;
         cones = false;
         currentHeight = 0;
         addRequirements(drivetrain, coner.subsystem(), cuber.subsystem());
@@ -42,6 +45,7 @@ public class SpecialRamseteTurn extends CommandBase {
         currentHeight = swerve.currentHeight;
         GenericShootIntake shooter = cones ? coner : cuber;
         this.targetRotation = shooter.getAngle();
+        lights.setColor(255, 0, 0);
     }
 
     public void execute() {
@@ -79,12 +83,13 @@ public class SpecialRamseteTurn extends CommandBase {
         if(interrupted) {
             GenericShootIntake shooter = cones ? coner : cuber;
             shooter.stop(TargetHeights.heights[currentHeight]);
+            lights.off(swerve);
             return;
         }
         if(isFinished) {
             CommandBase regularer = 
-                !cones ? new SpecialRamseteSwerve(swerve, vision, driver, cuber, true, currentHeight, false, new RamseteOptions()) 
-                : new AutoAlign(swerve, coner, vision, driver, coner.getLimelightDistance(TargetHeights.heights[currentHeight]), currentHeight);// if we're on cones, up epsilons hella and don't enforce a speed limit so we're fast before limelight
+                cones ? new AutoAlign(swerve, coner, vision, driver, coner.getLimelightDistance(TargetHeights.heights[currentHeight]), currentHeight, lights)
+                : new SpecialRamseteSwerve(swerve, vision, driver, cuber, true, currentHeight, false, new RamseteOptions(), lights);// if we're on cones, up epsilons hella and don't enforce a speed limit so we're fast before limelight
             regularer.schedule();
         }
     }

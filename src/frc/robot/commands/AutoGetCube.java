@@ -9,11 +9,12 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants.TargetHeights;
 import frc.robot.classes.RamseteOptions;
 import frc.robot.subsystems.GenericShootIntake;
+import frc.robot.subsystems.Lights;
 import frc.robot.subsystems.Swerve;
 import frc.robot.subsystems.Vision;
 
 public class AutoGetCube extends SequentialCommandGroup {
-    public AutoGetCube(Swerve drivetrain, GenericShootIntake cubeShooter, Vision vision, Translation2d cubePosition, Translation2d shootPosition, int aprilTagNumber) {
+    public AutoGetCube(Swerve drivetrain, GenericShootIntake cubeShooter, Vision vision, Translation2d cubePosition, Translation2d shootPosition, int aprilTagNumber, Lights lights) {
         
         addCommands(
             Commands.runOnce(() -> { // drop intake and start running it again
@@ -28,7 +29,7 @@ public class AutoGetCube extends SequentialCommandGroup {
                 new Prep(cubeShooter, cubeShooter, drivetrain),
                 new RamseteSwerve(drivetrain, vision, new Pose2d(shootPosition, new Rotation2d(0.0)), new RamseteOptions(aprilTagNumber))
             ),
-            new Shoot(cubeShooter, cubeShooter, drivetrain, 1.25, TargetHeights.FAR) // shoot
+            new Shoot(cubeShooter, cubeShooter, drivetrain, 1.25, TargetHeights.FAR, lights) // shoot
         );
     }
 }

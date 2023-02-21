@@ -162,7 +162,7 @@ public class Constants {
         public static final double constantBalanceSpeed = 0.15;
         public static final PIDController yawBalanceController = new PIDController(0.04, 0.0, 0.0);
         public static final double epsilonBalance = 0.5;
-        public static final double epsilonYawBalance = 0.5;
+        public static final double epsilonYawBalance = 2.0;
 
         public static final double speedMultiplier = 4.0;
         public static final double turnMultiplier = 4.0;
@@ -264,12 +264,15 @@ public class Constants {
         public static final int everyIntakeMotor = 19;
         public static final int everyArm0 = 20;
         public static final int everyArm1 = 21;
+        public static final int suctionMotor = 22;
 
-        public static final int cuberSolenoid = 0;
+        public static final int cuberSolenoidA = 0;
+        public static final int cuberSolenoidB = 3;
         public static final int conerSolenoidA = 1;
         public static final int conerSolenoidB = 2;
         public static final int solenoidC = 1;
 
         public static final int cuberSensor = 1;
+        public static final int candlePort = 1;
     }
 };

@@ -7,6 +7,7 @@ import frc.robot.Constants.LimelightConstants;
 import frc.robot.Constants.SwerveDriveConstants;
 import frc.robot.Constants.TargetHeights;
 import frc.robot.subsystems.GenericShootIntake;
+import frc.robot.subsystems.Lights;
 import frc.robot.subsystems.Swerve;
 import frc.robot.subsystems.Vision;
 public class AutoAlign extends CommandBase {
@@ -16,13 +17,15 @@ public class AutoAlign extends CommandBase {
     private XboxController driver;
     private GenericShootIntake shooter;
     private int height;
-    public AutoAlign(Swerve drivetrain, GenericShootIntake shooter, Vision vision, XboxController driver, double distance, int height) {
+    private Lights lights;
+    public AutoAlign(Swerve drivetrain, GenericShootIntake shooter, Vision vision, XboxController driver, double distance, int height, Lights lights) {
         this.drivetrain = drivetrain;
         this.vision = vision;
         this.distance = distance;
         this.driver = driver;
         this.shooter = shooter;
         this.height = height;
+        this.lights = lights;
         addRequirements(drivetrain, shooter.subsystem());
     }
     public void initialize() {
@@ -47,9 +50,19 @@ public class AutoAlign extends CommandBase {
             shooter.setup(TargetHeights.heights[height]);
         }
         drivetrain.drive(forward , -left , -turn, false, true);
+
+        if(turnDiff == 0.0 && leftDiff == 0.0 && forwardDiff == 0.0) {
+            lights.setColor(0, 255, 0);
+        } else {
+            lights.setColor(255, 0, 0);
+        }
     }
     public boolean isFinished() {
-        return Math.abs(driver.getLeftX()) > SwerveDriveConstants.controllerDeadband || Math.abs(driver.getLeftY()) > SwerveDriveConstants.controllerDeadband || Math.abs(driver.getRightX()) > SwerveDriveConstants.controllerDeadband || Math.abs(driver.getRightY()) > SwerveDriveConstants.controllerDeadband;
+        if(Math.abs(driver.getLeftX()) > SwerveDriveConstants.controllerDeadband || Math.abs(driver.getLeftY()) > SwerveDriveConstants.controllerDeadband || Math.abs(driver.getRightX()) > SwerveDriveConstants.controllerDeadband || Math.abs(driver.getRightY()) > SwerveDriveConstants.controllerDeadband) {
+            lights.off(drivetrain);
+            return true;
+        }
+        return false;
     }
     public void end(boolean interrupted) {
         drivetrain.stop();

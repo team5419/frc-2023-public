@@ -18,16 +18,15 @@ public class ManualMoveArm extends CommandBase {
 
     }
     public void execute() {
-        if(codriver.getAButtonPressed()) {
-            arm.resetEncoders();
-        } else if(codriver.getBButton()) {
-            arm.goOut();
-        } else if(codriver.getXButton()) {
-            arm.goIn();
-        } else {
+        // if(codriver.getAButtonPressed()) {
+        //     arm.resetEncoders();
+        // } else if(codriver.getBButton()) {
+        //     arm.goOut();
+        // } else if(codriver.getXButton()) {
+        //     arm.goIn();
+        // } else {
             arm.move(Util.deadband(codriver.getLeftY(), 0.1) * EverybotArmConstants.moveSpeed);
-        }
-        
+        //}
     }
     public boolean isFinished() {
         return false;

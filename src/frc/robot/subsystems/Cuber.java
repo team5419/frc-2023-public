@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj.AnalogInput;
 
 public class Cuber extends TesterSubsystem implements GenericShootIntake {
     private Solenoid soOne;
+    private Solenoid soTwo;
     private AnalogInput sensor;
     private Double startingPoint;
     public Cuber(PneumaticHub hub, boolean velocityControl) {
@@ -31,8 +32,10 @@ public class Cuber extends TesterSubsystem implements GenericShootIntake {
             ))
         }, velocityControl ? CubeShooterConstants.velocities : CubeShooterConstants.percents);
         startingPoint = null;
-        soOne = hub.makeSolenoid(Ports.cuberSolenoid);
+        soOne = hub.makeSolenoid(Ports.cuberSolenoidA);
         soOne.set(false);
+        soTwo = hub.makeSolenoid(Ports.cuberSolenoidB);
+        soTwo.set(false);
 
         sensor = new AnalogInput(Ports.cuberSensor);
 
@@ -51,6 +54,7 @@ public class Cuber extends TesterSubsystem implements GenericShootIntake {
     public void stop(String height) {
         if(height == TargetHeights.INTAKE) {
             soOne.set(false);
+            soTwo.set(true);
         }
         if(height == TargetHeights.FAR) {
             this.setup(TargetHeights.INTAKE);
@@ -64,6 +68,7 @@ public class Cuber extends TesterSubsystem implements GenericShootIntake {
         System.out.println("prep");
         if(height == TargetHeights.INTAKE) {
             soOne.set(true);
+            soTwo.set(false);
         } else {
             double pos = motors[1].getPosition();
             motors[1].run(CubeShooterConstants.indexerSlowBackwardsSpeed);
@@ -71,7 +76,7 @@ public class Cuber extends TesterSubsystem implements GenericShootIntake {
                 startingPoint = pos;
             } else {
                 runSingle(height, 0);
-                if(pos - startingPoint > 5) {
+                if(pos - startingPoint > 2) {
                     motors[1].run(0.0);
                 }
             }

@@ -1,20 +1,20 @@
 package frc.robot.commands;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.subsystems.Lights;
 import frc.robot.subsystems.Swerve;
 import frc.robot.Util;
 import frc.robot.Constants.SwerveDriveConstants;
-public class Balance extends CommandBase {
+public class AutoBalance extends CommandBase {
     private Swerve drivetrain;
-    private XboxController controller;
+    private Lights lights;
     private double targetYaw;
     private Timer timer;
     private int hasShiftedBack;
-    public Balance(Swerve drivetrain, XboxController controller) {
+    public AutoBalance(Swerve drivetrain, Lights lights) {
         this.drivetrain = drivetrain;
-        this.controller = controller;
         this.targetYaw = 0.0;
+        this.lights = lights;
         hasShiftedBack = 0;
         this.timer = new Timer();
         addRequirements(drivetrain);
@@ -24,6 +24,7 @@ public class Balance extends CommandBase {
         this.targetYaw = Math.round(drivetrain.angle() / 180.0) * 180.0;
         timer.reset();
         timer.start();
+        lights.rainbow();
     }
     public void execute() { 
         
@@ -53,13 +54,14 @@ public class Balance extends CommandBase {
             pitchChange = Math.signum(pitchDiff) * 0.1;
         }
         System.out.println(hasShiftedBack);
-        drivetrain.drive(pitchChange, Util.deadband(controller == null ? 0.0 : controller.getLeftX(), SwerveDriveConstants.controllerDeadband) * SwerveDriveConstants.speedMultiplier, yawChange, false, true);
+        drivetrain.drive(pitchChange, 0.0, yawChange, false, true);
     }
     public boolean isFinished() {
-        return controller != null &&  Math.abs(controller.getRightX()) > SwerveDriveConstants.controllerDeadband;
+        return false;
     }
     public void end(boolean interrupted) {
         drivetrain.stop();
         timer.stop();
+        lights.off(drivetrain);
     }
 }

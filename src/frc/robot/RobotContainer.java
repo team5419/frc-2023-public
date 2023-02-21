@@ -29,6 +29,7 @@ public class RobotContainer {
 	private GenericShootIntake coner;
 	private EverybotArm arm;
 	private PneumaticHub hub;
+	public Lights lights;
 
 	public RobotContainer(ShuffleboardTab tab) {
 		driver = new XboxController(0);
@@ -53,12 +54,13 @@ public class RobotContainer {
 	
 		swerve = new Swerve(vision, true); /* CHOOSE ONE!!! */
 		//drivetrain = new Drivetrain(); /* ^^^ */
+		lights = new Lights();
 	
 		autoSelector = new SendableChooser<SequentialCommandGroup>();
 		tab.add("Auto selector", autoSelector).withSize(2, 1).withPosition(0, 0);
 		autoSelector.setDefaultOption("Baseline", new Baseline());
-		autoSelector.addOption("Two Cube Balance", new TwoCubeBalance(swerve, vision, coner, cuber, false));
-		autoSelector.addOption("Two Cube Balance, Short Side", new TwoCubeBalance(swerve, vision, coner, cuber, true));
+		autoSelector.addOption("Two Cube Balance", new TwoCubeBalance(swerve, vision, coner, cuber, false, lights));
+		autoSelector.addOption("Two Cube Balance, Short Side", new TwoCubeBalance(swerve, vision, coner, cuber, true, lights));
 
 		configureButtonBindings();
 		setDefaults();
@@ -69,6 +71,12 @@ public class RobotContainer {
 			arm = new EverybotArm(true);
 		}
 		return arm;
+	}
+
+	public void setArmState(boolean state) {
+		if(arm != null) {
+			arm.enabled = state;
+		}
 	}
 
 	private PneumaticHub generateHub() {
@@ -89,7 +97,7 @@ public class RobotContainer {
 		Trigger leftTrigger = new Trigger(() -> driver.getLeftTriggerAxis() > SwerveDriveConstants.triggerDeadband);
 		Trigger leftBumper = new Trigger(() -> driver.getLeftBumper());
 		Trigger rightBumper = new Trigger(() -> driver.getRightBumper());
-		Trigger leftBumperCodriver = new Trigger(() -> codriver.getLeftBumper());
+		//Trigger leftBumperCodriver = new Trigger(() -> codriver.getLeftBumper());
 		Trigger rightBumperCodriver = new Trigger(() -> codriver.getRightBumper());
 		Trigger dpad = new Trigger(() -> driver.getPOV() != -1);
 
@@ -98,16 +106,14 @@ public class RobotContainer {
 		dpad.onTrue(new Snap(swerve, vision, driver));
 
 		leftBumper.whileTrue(Commands.runEnd(() -> { swerve.slowMode = true; }, () -> { swerve.slowMode = false; }));
-		rightBumper.onTrue(new SpecialRamseteTurn(swerve, vision, driver, coner, cuber));
+		rightBumper.onTrue(new SpecialRamseteTurn(swerve, vision, driver, coner, cuber, lights));
 		rightBumperCodriver.onTrue(Commands.runOnce(() -> {
 			swerve.usingCones = !swerve.usingCones;
+			lights.off(swerve);
 		}));
-		leftBumperCodriver.onTrue(new Balance(swerve, driver));
 		aButtonDriver.whileTrue(new Prep(coner, cuber, swerve));
-		bButtonDriver.whileTrue(new Shoot(coner, cuber, swerve));
-		if(coner instanceof Coner) {
-			xButtonDriver.whileTrue(new InOut((Coner)coner));
-		}
+		bButtonDriver.whileTrue(new Shoot(coner, cuber, swerve, lights));
+		xButtonDriver.whileTrue(new TeleopBalance(swerve, lights, driver));
 		yButtonDriver.onTrue(new ResetGyro(swerve));
 		leftTrigger.whileTrue(new RunIntake(coner));
 		rightTrigger.whileTrue(new RunIntake(cuber));
