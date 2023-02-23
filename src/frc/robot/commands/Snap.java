@@ -13,10 +13,12 @@ public class Snap extends CommandBase {
     Swerve drivetrain;
     Vision vision;
     XboxController driver;
-    public Snap(Swerve drivetrain, Vision vision, XboxController driver) {
+    int mod;
+    public Snap(Swerve drivetrain, Vision vision, XboxController driver, int mod) {
         this.drivetrain = drivetrain;
         this.vision = vision;
         this.driver = driver;
+        this.mod = mod;
     }
 
     public void initialize() {

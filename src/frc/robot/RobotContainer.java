@@ -103,7 +103,7 @@ public class RobotContainer {
 
 		Trigger rightTriggerCodriver = new Trigger(() -> codriver.getRightTriggerAxis() > SwerveDriveConstants.triggerDeadband);
 
-		dpad.onTrue(new Snap(swerve, vision, driver));
+		dpad.onTrue(new Snap(swerve, vision, driver, 4));
 
 		leftBumper.whileTrue(Commands.runEnd(() -> { swerve.slowMode = true; }, () -> { swerve.slowMode = false; }));
 		rightBumper.onTrue(new SpecialRamseteTurn(swerve, vision, driver, coner, cuber, lights));
