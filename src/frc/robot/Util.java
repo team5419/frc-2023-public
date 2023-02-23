@@ -1,5 +1,8 @@
 package frc.robot;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
+import com.ctre.phoenixpro.configs.TalonFXConfiguration;
+import com.ctre.phoenixpro.signals.InvertedValue;
+import com.ctre.phoenixpro.signals.NeutralModeValue;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.PeriodicFrame;
@@ -76,6 +79,17 @@ public class Util {
 
         motor.configClosedLoopPeakOutput(0, maxOutput, 100);
         return motor;
+    }
+    public static TalonFXConfiguration getSetup(boolean inverted, PID pid, boolean brake, double maxOutput) {
+        TalonFXConfiguration config = new TalonFXConfiguration();
+        config.MotorOutput.Inverted = inverted ? InvertedValue.Clockwise_Positive : InvertedValue.CounterClockwise_Positive;
+        config.MotorOutput.NeutralMode = brake ? NeutralModeValue.Brake : NeutralModeValue.Coast;
+        config.MotorOutput.PeakForwardDutyCycle = maxOutput;
+        config.MotorOutput.PeakReverseDutyCycle = -maxOutput;
+        config.Slot0.kP = pid.p;
+        config.Slot0.kI = pid.i;
+        config.Slot0.kD = pid.d;
+        return config;
     }
     public static CANSparkMax setUpMotor(CANSparkMax motor, boolean inverted, boolean brake) {
         motor.restoreFactoryDefaults();

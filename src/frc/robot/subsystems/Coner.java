@@ -15,28 +15,32 @@ import frc.robot.classes.PID;
 import frc.robot.subsystems.test.TesterFalcon;
 import frc.robot.subsystems.test.TesterMotor;
 import frc.robot.subsystems.test.TesterNeo;
+import frc.robot.subsystems.test.TesterProFalcon;
 import frc.robot.subsystems.test.TesterSubsystem;
 import frc.robot.Util;
 
 public class Coner extends TesterSubsystem implements GenericShootIntake {
     private Solenoid soOne;
-    private Solenoid soTwo;
+    //private Solenoid soTwo;
     private double timestamp;
     public Coner(PneumaticHub hub, boolean falcons, boolean velocityControl) {
         super("Cone Shooter", new TesterMotor[] {
-            generateTesterMotor("Low motor", falcons, Ports.coneBottom),
-            generateTesterMotor("High motor", falcons, Ports.coneTop)
+            generateTesterMotor("Low motor", falcons, Ports.coneBottom, false),
+            generateTesterMotor("High motor", falcons, Ports.coneTop, true)
         }, velocityControl ? (falcons ? ConerConstants.falconVelocities : ConerConstants.neoVelocities) : ConerConstants.percents);
 
         soOne = hub.makeSolenoid(Ports.conerSolenoidA);
-        soTwo = hub.makeSolenoid(Ports.conerSolenoidB);
+        //soTwo = hub.makeSolenoid(Ports.conerSolenoidB);
         soOne.set(false);
-        soTwo.set(false);
+        //soTwo.set(false);
 
         timestamp = -1.0;
     }
-    public static TesterMotor generateTesterMotor(String name, boolean falcons, int id) {
-        return falcons ? new TesterFalcon(name, Util.setUpMotor(new TalonFX(id, "canivore"), new PID(0.1, 0, 0), true, 1.0))
+    public static TesterMotor generateTesterMotor(String name, boolean falcons, int id, boolean pro) {
+        return falcons ? (pro?
+            new TesterProFalcon(name, new com.ctre.phoenixpro.hardware.TalonFX(id, "canivore"), Util.getSetup(false, new PID(0.5, 0, 0), true, 1.0)):
+            new TesterFalcon(name, Util.setUpMotor(new TalonFX(id, "canivore"), new PID(0.1, 0, 0), true, 1.0))
+        )
         : new TesterNeo(name, Util.setUpMotor(new CANSparkMax(id, MotorType.kBrushless), false, true));
     }
     public void shoot(String height) {
@@ -46,14 +50,14 @@ public class Coner extends TesterSubsystem implements GenericShootIntake {
     public void stop(String height) {
         super.stop();
         if(height != TargetHeights.INTAKE) {
-            soOne.set(true);
-            soTwo.set(false);
+            soOne.set(false);
+            //soTwo.set(false);
         }
     }
     public void setup(String height) {
         if(height == TargetHeights.INTAKE) {
-            soOne.set(false);
-            soTwo.set(true);
+            soOne.set(true);
+            //soTwo.set(true);
         } else {
             run(TargetHeights.INTAKE);
             if(timestamp == -1.0) {
@@ -78,7 +82,7 @@ public class Coner extends TesterSubsystem implements GenericShootIntake {
         return 2.1; // a little off so that we can rotate freely
     }
     public final double getLimelightDistance(String height) {
-        return 0.62; // 0.569
+        return 0.3586; // 0.569
     }
     public void periodic() {
 

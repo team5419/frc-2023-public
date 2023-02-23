@@ -17,11 +17,11 @@ public class Constants {
         LOW_CONER, EVERYBOT_MOTORS, EVERYBOT_SUCTION
     }
     public static final class AutoConstants { // all relative to where you start, where positive y and positive x are towards the charge station
-        public static final Translation2d firstCube = new Translation2d(4.2, 0.5);
-        public static final Translation2d firstShot = new Translation2d(3.0, 0.5);
-        public static final Translation2d firstShotShortSide = new Translation2d(3.0, 1.0);
-        public static final Translation2d secondCube = new Translation2d(4.2, 1.5);
-        public static final Translation2d secondShot = new Translation2d(3.25, 2.25);
+        public static final Translation2d firstCube = new Translation2d(4.0, 0.5);
+        public static final Translation2d firstShot = new Translation2d(2.9, 0.5);
+        public static final Translation2d firstShotShortSide = new Translation2d(2.9, 1.05);
+        public static final Translation2d secondCube = new Translation2d(4.0, 1.5);
+        public static final Translation2d secondShot = new Translation2d(2.95, 2.25);
         public static final Translation2d preBalancePosition = new Translation2d(2.0, 2.25);
     }
     public static final class TargetHeights { // these need to be stored as strings for shuffleboard
@@ -38,9 +38,9 @@ public class Constants {
         public static final Map<String, TesterSetting> percents = Map.of(TargetHeights.LOW, new TesterSetting(new double[] { 
             0.53, -0.22
         }), TargetHeights.MID, new TesterSetting(new double[] { 
-            0.14, -0.38//0.14, -0.36
-        }), TargetHeights.HIGH, new TesterSetting(new double[] { 
-            0.22, -1.0
+            0.14, -0.5//0.14, -0.36
+        }), TargetHeights.HIGH, new TesterSetting(true, new double[] { 
+            10000.0, -10000.0//0.22, -1.0
         }), TargetHeights.INTAKE, new TesterSetting(new double[] { 
             -0.2, 0.2
         }));
@@ -69,18 +69,18 @@ public class Constants {
         public static final PIDController outtakePID = new PIDController(0.0001, 0, 0);
         // order: main motor, indexer
         public static final Map<String, TesterSetting> percents = Map.of(TargetHeights.LOW, new TesterSetting(new double[] { 
-            0.25, -1.0
+            0.13, -1.0
         }), TargetHeights.MID, new TesterSetting(new double[] { 
-            0.35, -1.0
+            0.39, -1.0
         }), TargetHeights.HIGH, new TesterSetting(new double[] { 
-            0.45, -1.0
+            0.47, -1.0
         }), TargetHeights.INTAKE, new TesterSetting(new double[] { 
             -0.55, 0.1
         }), TargetHeights.FAR, new TesterSetting(new double[] {
             0.85, -1.0
         }));
 
-        public static final Map<String, Double> measuredVelocities = Map.of(TargetHeights.LOW, 870.0, TargetHeights.MID, 1330.0, TargetHeights.HIGH, 1770.0, TargetHeights.INTAKE, 0.0, TargetHeights.FAR, 1770.0);
+        public static final Map<String, Double> measuredVelocities = Map.of(TargetHeights.LOW, 0.0, TargetHeights.MID, 2050.0, TargetHeights.HIGH, 3070.0, TargetHeights.INTAKE, 0.0, TargetHeights.FAR, 1770.0);
 
         public static final Map<String, TesterSetting> velocities = Map.of(TargetHeights.LOW, new TesterSetting(new double[] { 
             5000.0, -3000.0
@@ -173,10 +173,10 @@ public class Constants {
         public static final double epsilonXY = 0.0254;
         public static final double epsilonTheta = 1.5;
         public static final ModuleInfo[] info = {
-            new ModuleInfo(7, 8, true, true, 12, 0.35895 + 1.6229), // 1.6229
-            new ModuleInfo(5, 6, false, true, 11, 0.91578 + 4.7247), //4.7247            
-            new ModuleInfo(1, 2, true, true, 9, 3.48213 - 1.6521 + 0.06), //numbers are placeholders -1.6521
-            new ModuleInfo(3, 4, false, true, 10, 1.2149 + 1.6230 - 0.02) // 1.6230
+            new ModuleInfo(7, 8, true, true, 12, 1.96042348 - 1.584598 + 1.570795), // 1.6229
+            new ModuleInfo(5, 6, false, true, 11, 5.640435956-4.695505-1.570795), //4.7247            
+            new ModuleInfo(1, 2, true, true, 9, 1.86991880 + 1.5938-1.570795), //numbers are placeholders -1.6521
+            new ModuleInfo(3, 4, false, true, 10, 2.899217829 - 1.5754 + 1.570795) // 1.6230
             
         };
 
@@ -197,15 +197,15 @@ public class Constants {
     }
     public static final class LimelightConstants {
         public static final double lowTargetHeight = 0.6096;
-        public static final double cameraAngle = 9.0;
+        public static final double cameraAngle = 20.0;
         public static final double cameraHeight = 0.3048;
-        public static final PIDController horizontalPID = new PIDController(0.04, 0.0, 0.0);
-        public static final PIDController turnPID = new PIDController(0.2, 0.0, 0.0);
-        public static final PIDController forwardPID = new PIDController(3.5, 0.0, 0.0);
+        public static final PIDController horizontalPID = new PIDController(0.06, 0.0, 0.0);
+        public static final PIDController turnPID = new PIDController(0.02, 0.0, 0.0);
+        public static final PIDController forwardPID = new PIDController(9.0, 0.0, 0.0);
         public static final double desiredAngle = 180.0;
         public static final double desiredDistance = 0.0;
 
-        public static final double epsilonTurn = 0.3;
+        public static final double epsilonTurn = 1.0;
         public static final double epsilonHorizontal = 0.3;
         public static final double epsilonForward = 0.01;
     }
@@ -233,7 +233,7 @@ public class Constants {
             4.9832 // top pole
         };
 
-            public static final double targetYOffset = 2.792 - 2.748;
+            public static final double targetYOffset = 1.0213 - 1.0716;
         public static final double xPosBeforeBarriers = 1.6; // to be measured
         public static final double xEndOfChargingStation = 2.55; // to be measured
         public static final double yOutsideRightChargingStation = -1.0;
@@ -266,13 +266,13 @@ public class Constants {
         public static final int everyArm1 = 21;
         public static final int suctionMotor = 22;
 
-        public static final int cuberSolenoidA = 0;
-        public static final int cuberSolenoidB = 3;
-        public static final int conerSolenoidA = 1;
-        public static final int conerSolenoidB = 2;
+        public static final int cuberSolenoidA = 7;
+        public static final int cuberSolenoidB = 0;
+        public static final int conerSolenoidA = 2;
+        public static final int conerSolenoidB = 1;
         public static final int solenoidC = 1;
 
         public static final int cuberSensor = 1;
-        public static final int candlePort = 1;
+        public static final int candlePort = 23;
     }
 };

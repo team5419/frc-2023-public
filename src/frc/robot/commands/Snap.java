@@ -20,10 +20,10 @@ public class Snap extends CommandBase {
     }
 
     public void initialize() {
-        double deg = (((this.driver.getPOV() + 45) % 360) / 90) * 90;
+        double deg = (((this.driver.getPOV() + (this.drivetrain.usingCones ? 0 : 180) + 45) % 360) / 90) * 90;
         RamseteSwerve ramsete = new RamseteSwerve(this.drivetrain, this.vision, new Pose2d(0.0, 0.0, Rotation2d.fromDegrees(deg)), new RamseteOptions(true, true));
         ramsete.schedule();
-    }
+    }   
 
     public boolean isFinished() {
         return true;

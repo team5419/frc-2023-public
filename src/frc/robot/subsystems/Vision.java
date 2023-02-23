@@ -33,6 +33,8 @@ public class Vision extends SubsystemBase { // this keeps track of our limelight
     private double lastTagRotation;
     private AprilTagFieldLayout tagLayout;
     public boolean seesTag;
+    private double previousLimelightHorizontal;
+    private double previousLimelightVertical;
     public Vision(ShuffleboardTab tab, boolean _limelight, boolean _photon) { // the boolean parameters tell the code if we're using limelight and photon vision
         layout = Shuffleboard.getTab("Vision"); // create a shuffleboard layout to print data
         if(_limelight) { // if we're using a limelight, set it up and add some values to shuffleboard
@@ -47,6 +49,8 @@ public class Vision extends SubsystemBase { // this keeps track of our limelight
         }
         seesTag = false;
         lastTagRotation = 0.0;
+        previousLimelightHorizontal = 0.0;
+        previousLimelightVertical = 0.0;
         lastTagPositionFront = new Pose2d();
         tagLayout = null;
         try {
@@ -72,7 +76,7 @@ public class Vision extends SubsystemBase { // this keeps track of our limelight
             layout.addDouble("last tag theta", () -> lastTagRotation);
             // layout.addDouble("x before transform", () -> rawData.getX());
             // layout.addDouble("y before transform", () -> rawData.getY());
-        cameras = new PhotonCamera[] { new PhotonCamera("bottom port") }; // MAKE SURE BACK IS FIRST
+        cameras = new PhotonCamera[] { new PhotonCamera("top port") }; // MAKE SURE BACK IS FIRST
         } else {
             cameras = null;
         }
@@ -164,11 +168,21 @@ public class Vision extends SubsystemBase { // this keeps track of our limelight
     }
 
     public double getHorizontalOffset() { // in settings, make sure limelight is filtering for lowest target closest to the middle
-        return limelight == null ? 0.0 : limelight.getEntry("tx").getDouble(0.0);
+        double val = limelight == null ? -100.0 : limelight.getEntry("tx").getDouble(-100.0);
+        if(val == -100.0) {
+            return previousLimelightHorizontal;
+        }
+        previousLimelightHorizontal = 0.8 * previousLimelightHorizontal + 0.2 * val;
+        return previousLimelightHorizontal;
     }
 
     public double getVerticalOffset() {
-        return limelight == null ? 0.0 : limelight.getEntry("ty").getDouble(0.0);
+        double val = limelight == null ? -100.0 : limelight.getEntry("ty").getDouble(-100.0);
+        if(val == -100.0) {
+            return previousLimelightVertical;
+        }
+        previousLimelightVertical = 0.8 * previousLimelightVertical + 0.2 * val;
+        return previousLimelightVertical;
     }
 
     public double getHorizontalDistance() { 
@@ -198,7 +212,7 @@ public class Vision extends SubsystemBase { // this keeps track of our limelight
         if(limelight == null) {
             return;
         }
-        limelight.getEntry("ledMode").setNumber(3);
+        limelight.getEntry("ledMode").setNumber(1);
     }
 
     public Alliance team() {

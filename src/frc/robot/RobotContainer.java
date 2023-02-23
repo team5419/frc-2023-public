@@ -61,7 +61,7 @@ public class RobotContainer {
 		autoSelector.setDefaultOption("Baseline", new Baseline());
 		autoSelector.addOption("Two Cube Balance", new TwoCubeBalance(swerve, vision, coner, cuber, false, lights));
 		autoSelector.addOption("Two Cube Balance, Short Side", new TwoCubeBalance(swerve, vision, coner, cuber, true, lights));
-
+		autoSelector.addOption("Systems Check", new SystemsCheck(swerve, cuber, coner, lights));
 		configureButtonBindings();
 		setDefaults();
 	}
