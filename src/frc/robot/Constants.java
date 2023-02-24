@@ -36,11 +36,11 @@ public class Constants {
         public static final double inOutVelocity = 0.05;
         // order: bottom motor, top motor
         public static final Map<String, TesterSetting> percents = Map.of(TargetHeights.LOW, new TesterSetting(new double[] { 
-            0.53, -0.22
+            0.30, -0.87
         }), TargetHeights.MID, new TesterSetting(new double[] { 
-            0.14, -0.5//0.14, -0.36
-        }), TargetHeights.HIGH, new TesterSetting(true, new double[] { 
-            10000.0, -10000.0//0.22, -1.0
+            0.11, -0.46//0.14, -0.36
+        }), TargetHeights.HIGH, new TesterSetting(false, new double[] { 
+            0.22, -1.0
         }), TargetHeights.INTAKE, new TesterSetting(new double[] { 
             -0.2, 0.2
         }));
@@ -73,26 +73,26 @@ public class Constants {
         }), TargetHeights.MID, new TesterSetting(new double[] { 
             0.39, -1.0
         }), TargetHeights.HIGH, new TesterSetting(new double[] { 
-            0.47, -1.0
+            0.46, -1.0
         }), TargetHeights.INTAKE, new TesterSetting(new double[] { 
-            -0.55, 0.1
+            -0.55, 0.2
         }), TargetHeights.FAR, new TesterSetting(new double[] {
             0.85, -1.0
         }));
 
-        public static final Map<String, Double> measuredVelocities = Map.of(TargetHeights.LOW, 0.0, TargetHeights.MID, 2050.0, TargetHeights.HIGH, 3070.0, TargetHeights.INTAKE, 0.0, TargetHeights.FAR, 1770.0);
+        public static final Map<String, Double> measuredVelocities = Map.of(TargetHeights.LOW, 0.0, TargetHeights.MID, 1550.0, TargetHeights.HIGH, 1900.0, TargetHeights.INTAKE, 0.0, TargetHeights.FAR, 1770.0);
 
         public static final Map<String, TesterSetting> velocities = Map.of(TargetHeights.LOW, new TesterSetting(new double[] { 
             5000.0, -3000.0
         }), TargetHeights.MID, new TesterSetting(new double[] { 
-            5000.0, -3000.0
+            1880.0, -3000.0
         }), TargetHeights.HIGH, new TesterSetting(new double[] { 
             5000.0, -3000.0
         }), TargetHeights.INTAKE, new TesterSetting(new double[] { 
             -1250.0, 500.0
         }));
 
-        public static final double indexerSlowBackwardsSpeed = 0.1;
+        public static final double indexerSlowBackwardsSpeed = 0.05;
 
         public static final double sensorThresholdLeft = -1.0;
         public static final double sensorThresholdRight = 100000.0;
@@ -233,7 +233,7 @@ public class Constants {
             4.9832 // top pole
         };
 
-            public static final double targetYOffset = 1.0213 - 1.0716;
+            public static final double targetYOffset = 0.9945 - 1.0716;
         public static final double xPosBeforeBarriers = 1.6; // to be measured
         public static final double xEndOfChargingStation = 2.55; // to be measured
         public static final double yOutsideRightChargingStation = -1.0;
@@ -272,7 +272,7 @@ public class Constants {
         public static final int conerSolenoidB = 1;
         public static final int solenoidC = 1;
 
-        public static final int cuberSensor = 1;
+        public static final int cuberSensor = 3;
         public static final int candlePort = 23;
     }
 };

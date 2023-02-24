@@ -1,10 +1,13 @@
 package frc.robot;
+import frc.robot.Constants.ConerConstants;
 import frc.robot.Constants.ConerTypes;
+import frc.robot.Constants.CubeShooterConstants;
 import frc.robot.Constants.SwerveDriveConstants;
 import frc.robot.Constants.TargetHeights;
 import frc.robot.auto.*;
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
+import frc.robot.subsystems.test.TesterSetting;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.PneumaticHub;
 import edu.wpi.first.wpilibj.XboxController;
@@ -93,6 +96,12 @@ public class RobotContainer {
 		Trigger bButtonDriver = new Trigger(() -> driver.getBButton());
 		Trigger xButtonDriver = new Trigger(() -> driver.getXButton());
 		Trigger yButtonDriver = new Trigger(() -> driver.getYButton());
+
+		Trigger aButtonCodriver = new Trigger(() -> codriver.getAButton());
+		Trigger bButtonCodriver = new Trigger(() -> codriver.getBButton());
+		Trigger xButtonCodriver = new Trigger(() -> codriver.getXButton());
+		Trigger yButtonCodriver = new Trigger(() -> codriver.getYButton());
+
 		Trigger rightTrigger = new Trigger(() -> driver.getRightTriggerAxis() > SwerveDriveConstants.triggerDeadband);
 		Trigger leftTrigger = new Trigger(() -> driver.getLeftTriggerAxis() > SwerveDriveConstants.triggerDeadband);
 		Trigger leftBumper = new Trigger(() -> driver.getLeftBumper());
@@ -102,6 +111,20 @@ public class RobotContainer {
 		Trigger dpad = new Trigger(() -> driver.getPOV() != -1);
 
 		Trigger rightTriggerCodriver = new Trigger(() -> codriver.getRightTriggerAxis() > SwerveDriveConstants.triggerDeadband);
+		Trigger alignControllerOff = new Trigger(() -> (driver.getLeftX() < SwerveDriveConstants.controllerDeadband && 
+				driver.getLeftY() < SwerveDriveConstants.controllerDeadband &&
+				driver.getRightX() < SwerveDriveConstants.controllerDeadband &&
+				driver.getRightY() < SwerveDriveConstants.controllerDeadband) && swerve.isAligning == Swerve.AlignState.CONTROLLERON);
+		Trigger endAlign = new Trigger(() -> (driver.getLeftX() > SwerveDriveConstants.controllerDeadband || 
+									driver.getLeftY() > SwerveDriveConstants.controllerDeadband || 
+									driver.getRightX() > SwerveDriveConstants.controllerDeadband || 
+									driver.getRightY() > SwerveDriveConstants.controllerDeadband) && swerve.isAligning == Swerve.AlignState.CONTROLLEROFF);
+		endAlign.onTrue(Commands.runOnce(() -> {
+			swerve.isAligning = Swerve.AlignState.NOT; // cancel align
+		}, swerve));
+		alignControllerOff.onTrue(Commands.runOnce(() -> {
+			swerve.isAligning = Swerve.AlignState.CONTROLLEROFF;
+		}, swerve));
 
 		dpad.onTrue(new Snap(swerve, vision, driver, 4));
 
@@ -120,6 +143,22 @@ public class RobotContainer {
 		rightTriggerCodriver.whileTrue(Commands.runEnd(() -> cuber.shoot(TargetHeights.INTAKE), () -> cuber.stop(TargetHeights.LOW), cuber.subsystem()));
 		// bButtonDriver.onTrue(new Balance(swerve, driver));
 		// aButtonCodriver.toggleOnTrue(Commands.runOnce(() -> swerve.brake()));
+		aButtonCodriver.onTrue(Commands.runOnce(() -> {
+			TesterSetting setting = (swerve.usingCones ? ConerConstants.percents : CubeShooterConstants.percents).get(TargetHeights.heights[swerve.currentHeight]);
+			setting.setValueManually(0, setting.getValueManually(0) - 0.01);
+		}));
+		yButtonCodriver.onTrue(Commands.runOnce(() -> {
+			TesterSetting setting = (swerve.usingCones ? ConerConstants.percents : CubeShooterConstants.percents).get(TargetHeights.heights[swerve.currentHeight]);
+			setting.setValueManually(0, setting.getValueManually(0) + 0.01);
+		}));
+		xButtonCodriver.onTrue(Commands.runOnce(() -> {
+			TesterSetting setting = (swerve.usingCones ? ConerConstants.percents : CubeShooterConstants.percents).get(TargetHeights.heights[swerve.currentHeight]);
+			setting.setValueManually(1, setting.getValueManually(1) - 0.01);
+		}));
+		bButtonCodriver.onTrue(Commands.runOnce(() -> {
+			TesterSetting setting = (swerve.usingCones ? ConerConstants.percents : CubeShooterConstants.percents).get(TargetHeights.heights[swerve.currentHeight]);
+			setting.setValueManually(1, setting.getValueManually(1) + 0.01);
+		}));
 	}
 
 	public Command getAutonomousCommand() {

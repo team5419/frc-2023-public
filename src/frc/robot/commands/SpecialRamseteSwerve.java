@@ -3,6 +3,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.GenericShootIntake;
 import frc.robot.subsystems.Lights;
 import frc.robot.subsystems.Swerve;
@@ -19,18 +20,12 @@ public class SpecialRamseteSwerve extends RamseteSwerve {
         DIAGONAL,
         POSTDIAGONAL
     };
-    enum ControllerState {
-        NOTOFFYET,
-        OFF,
-        ONAGAIN
-    }
     private State state;
     private double targetX;
     private double targetY;
     private boolean imBasic;
     private XboxController driver;
     private GenericShootIntake shooter;
-    private ControllerState controller;
     private boolean cones;
     private int height;
     private Lights lights;
@@ -43,13 +38,11 @@ public class SpecialRamseteSwerve extends RamseteSwerve {
         this.imBasic = imBasic;
         this.driver = driver;
         this.shooter = shooter;
-        this.controller = ControllerState.NOTOFFYET;
         this.cones = cones;
         this.height = height;
         this.lights = lights;
     }
     public void initialize() {
-        this.controller = ControllerState.NOTOFFYET;
         System.out.println("Special init");
         Pose2d pose = drivetrain.pose();
         Alliance team = vision.team();
@@ -97,20 +90,9 @@ public class SpecialRamseteSwerve extends RamseteSwerve {
             shooter.setup(TargetHeights.heights[height]);
         }
         super.execute();
-        if(Math.abs(driver.getLeftX()) > SwerveDriveConstants.controllerDeadband || Math.abs(driver.getLeftY()) > SwerveDriveConstants.controllerDeadband || Math.abs(driver.getRightX()) > SwerveDriveConstants.controllerDeadband || Math.abs(driver.getRightY()) > SwerveDriveConstants.controllerDeadband) {
-            if(controller == ControllerState.OFF) {
-                controller = ControllerState.ONAGAIN;
-            }
-        } else {
-            controller = ControllerState.OFF;
-        }
     }
 
     public boolean isFinished() {
-        if(controller == ControllerState.ONAGAIN) {
-            lights.off(drivetrain);
-            return true;
-        }
         if(isFinished) {
             lights.setColor(0, 255, 0);
             isFinished = false;
@@ -121,7 +103,7 @@ public class SpecialRamseteSwerve extends RamseteSwerve {
                 state = State.POSTDIAGONAL;
                 this.goal = new Pose2d(targetX, targetY, this.goal.getRotation());
             } else {
-                return cones;
+                return true;//cones;
             }
         } else {
             lights.setColor(255, 0, 0);
@@ -132,9 +114,5 @@ public class SpecialRamseteSwerve extends RamseteSwerve {
     public void end(boolean interrupted) {
         System.out.println("SPECIAL SWERVE ENDED!!");
         super.end(interrupted);
-        // if(!interrupted && num != 1 && controller != ControllerState.ONAGAIN) {
-        //     AutoAlign aligner = new AutoAlign(drivetrain, shooter, vision, driver, shooter.getLimelightDistance(TargetHeights.heights[height]), height);
-        //     aligner.schedule();
-        // }
     }
 }

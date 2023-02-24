@@ -1,12 +1,15 @@
 package frc.robot.commands;
 import frc.robot.Util;
 
+import java.lang.ModuleLayer.Controller;
+
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.GenericShootIntake;
 import frc.robot.subsystems.Lights;
 import frc.robot.subsystems.Swerve;
 import frc.robot.subsystems.Vision;
+import frc.robot.subsystems.Swerve.AlignState;
 import frc.robot.Constants.SwerveDriveConstants;
 import frc.robot.Constants.TargetHeights;
 import frc.robot.classes.RamseteOptions;
@@ -46,6 +49,7 @@ public class SpecialRamseteTurn extends CommandBase {
         GenericShootIntake shooter = cones ? coner : cuber;
         this.targetRotation = shooter.getAngle();
         lights.setColor(255, 0, 0);
+        swerve.isAligning = AlignState.NOT;
     }
 
     public void execute() {
@@ -87,10 +91,11 @@ public class SpecialRamseteTurn extends CommandBase {
             return;
         }
         if(isFinished) {
+            swerve.isAligning = AlignState.CONTROLLERON;
             CommandBase regularer = 
                 cones ? new AutoAlign(swerve, coner, vision, driver, coner.getLimelightDistance(TargetHeights.heights[currentHeight]), currentHeight, lights)
                 : new SpecialRamseteSwerve(swerve, vision, driver, cuber, true, currentHeight, false, new RamseteOptions(), lights);// if we're on cones, up epsilons hella and don't enforce a speed limit so we're fast before limelight
-            regularer.schedule();
+            regularer.andThen(new Shoot(coner, cuber, swerve, lights));
         }
     }
 }

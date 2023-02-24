@@ -1,6 +1,8 @@
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
+import com.ctre.phoenixpro.configs.TalonFXConfiguration;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
@@ -26,7 +28,7 @@ public class Coner extends TesterSubsystem implements GenericShootIntake {
     public Coner(PneumaticHub hub, boolean falcons, boolean velocityControl) {
         super("Cone Shooter", new TesterMotor[] {
             generateTesterMotor("Low motor", falcons, Ports.coneBottom, false),
-            generateTesterMotor("High motor", falcons, Ports.coneTop, true)
+            generateTesterMotor("High motor", falcons, Ports.coneTop, false)
         }, velocityControl ? (falcons ? ConerConstants.falconVelocities : ConerConstants.neoVelocities) : ConerConstants.percents);
 
         soOne = hub.makeSolenoid(Ports.conerSolenoidA);
@@ -37,11 +39,21 @@ public class Coner extends TesterSubsystem implements GenericShootIntake {
         timestamp = -1.0;
     }
     public static TesterMotor generateTesterMotor(String name, boolean falcons, int id, boolean pro) {
-        return falcons ? (pro?
-            new TesterProFalcon(name, new com.ctre.phoenixpro.hardware.TalonFX(id, "canivore"), Util.getSetup(false, new PID(0.5, 0, 0), true, 1.0)):
-            new TesterFalcon(name, Util.setUpMotor(new TalonFX(id, "canivore"), new PID(0.1, 0, 0), true, 1.0))
-        )
-        : new TesterNeo(name, Util.setUpMotor(new CANSparkMax(id, MotorType.kBrushless), false, true));
+        if(falcons) {
+            if(pro) {
+                com.ctre.phoenixpro.hardware.TalonFX fx = new com.ctre.phoenixpro.hardware.TalonFX(id, "canivore");
+                TalonFXConfiguration config = Util.getSetup(false, new PID(0.5, 0, 0), true, 1.0);
+                config.CurrentLimits.SupplyCurrentLimit = 20;
+                return new TesterProFalcon(name, fx, config);
+            }
+            TalonFX motor = new TalonFX(id, "canivore");
+            Util.setUpMotor(motor, new PID(0.1, 0, 0), true, 1.0);
+            SupplyCurrentLimitConfiguration current = new SupplyCurrentLimitConfiguration();
+            current.currentLimit = 20.0;
+            motor.configSupplyCurrentLimit(current);
+            return new TesterFalcon(name, motor);
+        }
+        return new TesterNeo(name, Util.setUpMotor(new CANSparkMax(id, MotorType.kBrushless), false, true));
     }
     public void shoot(String height) {
         run(height);

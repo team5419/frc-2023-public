@@ -6,12 +6,17 @@ import com.ctre.phoenix.led.CANdleFaults;
 import com.ctre.phoenix.led.RainbowAnimation;
 import com.ctre.phoenix.led.CANdle.LEDStripType;
 
+import edu.wpi.first.wpilibj.AddressableLED;
+import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.Ports;
 
 public class Lights extends SubsystemBase {
     //private CANdle candle;
+    AddressableLED leds;
     public Lights() {
+        leds = new AddressableLED(0);
+        leds.setLength(10);
         // candle = new CANdle(Ports.candlePort, "canivore");
         // CANdleConfiguration config = new CANdleConfiguration();
         // config.stripType = LEDStripType.RGB;
@@ -21,6 +26,11 @@ public class Lights extends SubsystemBase {
         // candle.configAllSettings(config, 100);
     }
     public void setColor(int r, int g, int b) {
+        AddressableLEDBuffer buffer = new AddressableLEDBuffer(10);
+        for(int i = 0; i < 10; i++) {
+            buffer.setRGB(i, r, g, b);
+        }
+        leds.setData(buffer);
         // CANdleFaults faults = new CANdleFaults();
         // candle.getFaults(faults);
         // if(faults.APIError) {

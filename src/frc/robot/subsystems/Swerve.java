@@ -22,6 +22,11 @@ import frc.robot.Constants.SwerveDriveConstants;
 import frc.robot.Util; 
 import frc.robot.commands.ResetGyro;
 public class Swerve extends SubsystemBase { // our swerve drive subsystem
+    public enum AlignState {
+        NOT,
+        CONTROLLERON,
+        CONTROLLEROFF
+    }
     private Vision vision; // it has to be able to access the vision system for position tracking
     private SwerveDrivePoseEstimator poseEstimator; // specialized position estimator that uses motor data and vision data
     public SwerveModule[] drivers; // an array of 4 swerve modules for the four modules on the robot
@@ -32,7 +37,9 @@ public class Swerve extends SubsystemBase { // our swerve drive subsystem
     public int currentHeight; // keep track of whether the driver wants to shoot low, mid, or high based on the button board
     private ChassisSpeeds previousMove; // keep track of the previous speeds of the modules for position tracking
     public boolean slowMode; // whether the swerve drive is in slowmode
+    public AlignState isAligning;
     public Swerve(Vision vision, boolean pigeon) { // the pigeon parameter tells the code whether we are using a pigeon
+        isAligning = AlignState.NOT;
         drivers = new SwerveModule[SwerveDriveConstants.info.length]; // instantiate the module array
         usingVision = true;
         for(int i = 0; i < drivers.length; i++)  {

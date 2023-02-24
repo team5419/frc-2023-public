@@ -18,6 +18,7 @@ public class AutoAlign extends CommandBase {
     private GenericShootIntake shooter;
     private int height;
     private Lights lights;
+    private boolean isFinished;
     public AutoAlign(Swerve drivetrain, GenericShootIntake shooter, Vision vision, XboxController driver, double distance, int height, Lights lights) {
         this.drivetrain = drivetrain;
         this.vision = vision;
@@ -26,9 +27,11 @@ public class AutoAlign extends CommandBase {
         this.shooter = shooter;
         this.height = height;
         this.lights = lights;
+        isFinished = false;
         addRequirements(drivetrain, shooter.subsystem());
     }
     public void initialize() {
+        isFinished = false;
         vision.on();
     }
     public void execute() {
@@ -53,16 +56,13 @@ public class AutoAlign extends CommandBase {
 
         if(turnDiff == 0.0 && leftDiff == 0.0 && forwardDiff == 0.0) {
             lights.setColor(0, 255, 0);
+            isFinished = true;
         } else {
             lights.setColor(255, 0, 0);
         }
     }
     public boolean isFinished() {
-        if(Math.abs(driver.getLeftX()) > SwerveDriveConstants.controllerDeadband || Math.abs(driver.getLeftY()) > SwerveDriveConstants.controllerDeadband || Math.abs(driver.getRightX()) > SwerveDriveConstants.controllerDeadband || Math.abs(driver.getRightY()) > SwerveDriveConstants.controllerDeadband) {
-            lights.off(drivetrain);
-            return true;
-        }
-        return false;
+        return isFinished;
     }
     public void end(boolean interrupted) {
         drivetrain.stop();

@@ -48,4 +48,10 @@ public class TesterSetting {
             motor.run(setpoint);
         }
     }
+    public void setValueManually(int motorNum, double value) {
+        entries[motorNum].setDouble(value);
+    }
+    public double getValueManually(int motorNum) {
+        return entries[motorNum].getDouble(motorDefaults == null ? 0.0 : motorDefaults[motorNum]);
+    }
 }
