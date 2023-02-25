@@ -98,24 +98,24 @@ public class RobotContainer {
 	private void configureButtonBindings() {
 		Trigger aButtonDriver = new Trigger(() -> driver.getAButton());
 		Trigger bButtonDriver = new Trigger(() -> driver.getBButton());
-		//Trigger xButtonDriver = new Trigger(() -> driver.getXButton());
 		Trigger yButtonDriver = new Trigger(() -> driver.getYButton());
+		Trigger rightTrigger = new Trigger(() -> driver.getRightTriggerAxis() > SwerveDriveConstants.triggerDeadband);
+		Trigger leftTrigger = new Trigger(() -> driver.getLeftTriggerAxis() > SwerveDriveConstants.triggerDeadband);
+		Trigger leftBumper = new Trigger(() -> driver.getLeftBumper());
+		Trigger rightBumper = new Trigger(() -> driver.getRightBumper() || driver.getXButton());
+		Trigger dpad = new Trigger(() -> driver.getPOV() != -1);
 
 		Trigger aButtonCodriver = new Trigger(() -> codriver.getAButton());
 		Trigger bButtonCodriver = new Trigger(() -> codriver.getBButton());
 		Trigger xButtonCodriver = new Trigger(() -> codriver.getXButton());
 		Trigger yButtonCodriver = new Trigger(() -> codriver.getYButton());
 		Trigger leftBumperCodriver = new Trigger(() -> codriver.getLeftBumper());
-
-		Trigger rightTrigger = new Trigger(() -> driver.getRightTriggerAxis() > SwerveDriveConstants.triggerDeadband);
-		Trigger leftTrigger = new Trigger(() -> driver.getLeftTriggerAxis() > SwerveDriveConstants.triggerDeadband);
-		Trigger leftBumper = new Trigger(() -> driver.getLeftBumper());
-		Trigger rightBumper = new Trigger(() -> driver.getRightBumper() || driver.getXButton());
-		//Trigger leftBumperCodriver = new Trigger(() -> codriver.getLeftBumper());
 		Trigger rightBumperCodriver = new Trigger(() -> codriver.getRightBumper());
-		Trigger dpad = new Trigger(() -> driver.getPOV() != -1);
-
 		Trigger rightTriggerCodriver = new Trigger(() -> codriver.getRightTriggerAxis() > SwerveDriveConstants.triggerDeadband);
+		Trigger leftTriggerCodriver = new Trigger(() -> codriver.getLeftTriggerAxis() > SwerveDriveConstants.triggerDeadband);
+		
+
+		
 		Trigger alignControllerOff = new Trigger(() -> (driver.getLeftX() < SwerveDriveConstants.controllerDeadband && 
 				driver.getLeftY() < SwerveDriveConstants.controllerDeadband &&
 				driver.getRightX() < SwerveDriveConstants.controllerDeadband &&
@@ -139,31 +139,32 @@ public class RobotContainer {
 			swerve.usingCones = !swerve.usingCones;
 			lights.off(swerve);
 		}));
-		aButtonDriver.whileTrue(new Prep(coner, cuber, swerve));
+		aButtonDriver.whileTrue(new Prep(coner, cuber, swerve, null));
 		bButtonDriver.whileTrue(new Shoot(coner, cuber, swerve, lights));
-		//xButtonDriver.whileTrue(new TeleopBalance(swerve, lights, driver));
+		leftTriggerCodriver.whileTrue(new TeleopBalance(swerve, lights, driver));
 		yButtonDriver.onTrue(new ResetGyro(swerve));
 		leftTrigger.whileTrue(new RunIntake(coner));
 		rightTrigger.whileTrue(new RunIntake(cuber));
 		rightTriggerCodriver.whileTrue(Commands.runEnd(() -> cuber.shoot(TargetHeights.INTAKE), () -> cuber.stop(TargetHeights.LOW), cuber.subsystem()));
-		// bButtonDriver.onTrue(new Balance(swerve, driver));
+		//bButtonDriver.onTrue(new Balance(swerve, driver));
 		// aButtonCodriver.toggleOnTrue(Commands.runOnce(() -> swerve.brake()));
-		aButtonCodriver.onTrue(Commands.runOnce(() -> {
-			TesterSetting setting = (swerve.usingCones ? ConerConstants.percents : CubeShooterConstants.percents).get(TargetHeights.heights[swerve.currentHeight]);
-			setting.setValueManually(0, setting.getValueManually(0) - 0.01);
-		}));
+		// aButtonCodriver.onTrue(Commands.runOnce(() -> {
+		// 	TesterSetting setting = (swerve.usingCones ? ConerConstants.percents : CubeShooterConstants.percents).get(TargetHeights.heights[swerve.currentHeight]);
+		// 	setting.setValueManually(1, setting.getValueManually(0) - 0.005);
+		// }));
+		aButtonCodriver.whileTrue(new AutoBalance(swerve, lights));
 		yButtonCodriver.onTrue(Commands.runOnce(() -> {
 			TesterSetting setting = (swerve.usingCones ? ConerConstants.percents : CubeShooterConstants.percents).get(TargetHeights.heights[swerve.currentHeight]);
-			setting.setValueManually(0, setting.getValueManually(0) + 0.01);
+			setting.setValueManually(1, setting.getValueManually(0) + 0.005);
 		}));
 		xButtonCodriver.onTrue(Commands.runOnce(() -> {
 
 			TesterSetting setting = (swerve.usingCones ? ConerConstants.percents : CubeShooterConstants.percents).get(TargetHeights.heights[swerve.currentHeight]);
-			setting.setValueManually(1, setting.getValueManually(1) - 0.01);
+			setting.setValueManually(0, setting.getValueManually(1) - 0.005);
 		}));
 		bButtonCodriver.onTrue(Commands.runOnce(() -> {
 			TesterSetting setting = (swerve.usingCones ? ConerConstants.percents : CubeShooterConstants.percents).get(TargetHeights.heights[swerve.currentHeight]);
-			setting.setValueManually(1, setting.getValueManually(1) + 0.01);
+			setting.setValueManually(0, setting.getValueManually(1) + 0.005);
 		}));
 
 		leftBumperCodriver.onTrue(Commands.runOnce(() -> swerve.autoShoot = !swerve.autoShoot));

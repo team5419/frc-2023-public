@@ -9,14 +9,16 @@ public class Prep extends CommandBase {
     private GenericShootIntake cubeShooter;
     private boolean isCone;
     private int height;
-    public Prep(GenericShootIntake coneShooter, GenericShootIntake cubeShooter, Swerve drivetrain) {
+    private String overrideHeight;
+    public Prep(GenericShootIntake coneShooter, GenericShootIntake cubeShooter, Swerve drivetrain, String overrideHeight) {
         this.drivetrain = drivetrain;
         this.coneShooter = coneShooter;
         this.cubeShooter = cubeShooter;
         addRequirements(coneShooter.subsystem());
         addRequirements(cubeShooter.subsystem());
         isCone = false;
-        height = 0;;
+        height = 0;
+        this.overrideHeight = overrideHeight;
     }
     public void initialize() {
         isCone = drivetrain.usingCones;
@@ -24,9 +26,9 @@ public class Prep extends CommandBase {
     }
     public void execute() {
         if(isCone) {
-            coneShooter.setup(TargetHeights.heights[height]);
+            coneShooter.setup(overrideHeight == null ? TargetHeights.heights[height] : overrideHeight);
         } else {
-            cubeShooter.setup(TargetHeights.heights[height]);
+            cubeShooter.setup(overrideHeight == null ? TargetHeights.heights[height] : overrideHeight);
         }
     }
     public boolean isFinished() {

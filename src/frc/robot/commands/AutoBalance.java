@@ -33,25 +33,29 @@ public class AutoBalance extends CommandBase {
         double yawChange = -SwerveDriveConstants.yawBalanceController.calculate(yawDiff);
         double pitchChange = 0.0;
         if(hasShiftedBack == -2) {
-            if(pitchDiff > -11) {
+            if(pitchDiff > -9) {
                 hasShiftedBack = -1;
             }
             pitchChange = -0.5;
         }
         if(hasShiftedBack == -1) {
-            if(pitchDiff < -13) {
+            if(pitchDiff < -11) {
                 hasShiftedBack = 0;
             }
             pitchChange = -0.5;
         }
         if(hasShiftedBack == 0) {
-            if(pitchDiff > -11) {
+            if(pitchDiff > -9) {
                 hasShiftedBack = 3;
             }
             pitchChange = -0.5;
         } 
         if(hasShiftedBack == 3) {
-            pitchChange = Math.signum(pitchDiff) * 0.1;
+            if(Math.abs(pitchDiff) < 2.0) {
+                pitchChange = Math.signum(pitchDiff) * 0.075;
+            } else {
+                pitchChange = pitchDiff * 0.0035;
+            }
         }
         System.out.println(hasShiftedBack);
         drivetrain.drive(pitchChange, 0.0, yawChange, false, true);

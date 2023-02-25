@@ -19,12 +19,13 @@ public class Constants {
         LOW_CONER, EVERYBOT_MOTORS, EVERYBOT_SUCTION
     }
     public static final class AutoConstants { // all relative to where you start, where positive y and positive x are towards the charge station
-        public static final Translation2d firstCube = new Translation2d(4.0, 0.5);
-        public static final Translation2d firstShot = new Translation2d(2.9, 0.5);
-        public static final Translation2d firstShotShortSide = new Translation2d(2.9, 1.05);
-        public static final Translation2d secondCube = new Translation2d(4.0, 1.5);
-        public static final Translation2d secondShot = new Translation2d(2.95, 2.25);
-        public static final Translation2d preBalancePosition = new Translation2d(2.0, 2.25);
+        public static final Translation2d firstCube = new Translation2d(4.2, 0.35); // 0.5
+        public static final Translation2d firstShot = new Translation2d(2.9, 0.3); // 0.5
+        public static final Translation2d firstShotShortSide = new Translation2d(2.95, 0.75); // 1.05
+        public static final Translation2d preSecondCube = new Translation2d(3.4, 1.45);
+        public static final Translation2d secondCube = new Translation2d(4.3, 1.45); // 1.5
+        public static final Translation2d secondShot = new Translation2d(3.1, 1.95); // 2.25
+        public static final Translation2d preBalancePosition = new Translation2d(2.7, 1.95); // 2.25
     }
     public static final class TargetHeights { // these need to be stored as strings for shuffleboard
         public static final String LOW = "LOW";
@@ -79,7 +80,7 @@ public class Constants {
         }), TargetHeights.INTAKE, new TesterSetting(new double[] { 
             -0.55, 0.2
         }), TargetHeights.FAR, new TesterSetting(new double[] {
-            0.85, -1.0
+            0.97, -1.0
         }));
 
         public static final Map<String, Double> measuredVelocities = Map.of(TargetHeights.LOW, 0.0, TargetHeights.MID, 1550.0, TargetHeights.HIGH, 1900.0, TargetHeights.INTAKE, 0.0, TargetHeights.FAR, 1770.0);
@@ -163,7 +164,7 @@ public class Constants {
         public static final double slowBalanceP = 0.02;
         public static final double constantBalanceSpeed = 0.15;
         public static final PIDController yawBalanceController = new PIDController(0.04, 0.0, 0.0);
-        public static final double epsilonBalance = 0.5;
+        public static final double epsilonBalance = 1.0;
         public static final double epsilonYawBalance = 2.0;
 
         public static final double speedMultiplier = 4.0;
@@ -201,14 +202,14 @@ public class Constants {
         public static final double lowTargetHeight = 0.6096;
         public static final double cameraAngle = 26.0;
         public static final double cameraHeight = 0.3048;
-        public static final PIDController horizontalPID = new PIDController(0.06, 0.0, 0.0);
+        public static final PIDController horizontalPID = new PIDController(0.12, 0.0, 0.0); // .08
         public static final PIDController turnPID = new PIDController(0.03, 0.0, 0.0);
         public static final PIDController forwardPID = new PIDController(9.0, 0.0, 0.0);
         public static final double desiredAngle = 180.0;
         public static final double desiredDistance = 0.0;
-
+        public static final double horizontalOffset = 3.0;
         public static final double epsilonTurn = 1.0;
-        public static final double epsilonHorizontal = 1.0;
+        public static final double epsilonHorizontal = 0.5;
         public static final double epsilonForward = 0.01;
     }
     public static final class AprilTagConstants {

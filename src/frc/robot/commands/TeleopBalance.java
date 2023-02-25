@@ -28,8 +28,11 @@ public class TeleopBalance extends CommandBase {
         double yawChange = -SwerveDriveConstants.yawBalanceController.calculate(yawDiff);
         double pitchChange = 0.0;
         if(Math.abs(yawDiff) < 10.0) {
-            pitchChange = pitchDiff * 0.5;
-            
+            if(Math.abs(pitchDiff) < 2.0) {
+                pitchChange = Math.signum(pitchDiff) * 0.075;
+            } else {
+                pitchChange = pitchDiff * 0.025;
+            }
         }
         double leftRight = Util.deadband(-controller.getLeftX(), SwerveDriveConstants.controllerDeadband) * SwerveDriveConstants.speedMultiplier;
         if(targetYaw == 180.0) {

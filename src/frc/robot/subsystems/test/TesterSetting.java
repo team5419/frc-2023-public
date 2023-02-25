@@ -49,6 +49,7 @@ public class TesterSetting {
         }
     }
     public void setValueManually(int motorNum, double value) {
+        System.out.println("setting setting to " + value);
         entries[motorNum].setDouble(value);
     }
     public double getValueManually(int motorNum) {

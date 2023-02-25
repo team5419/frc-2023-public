@@ -64,12 +64,14 @@ public class Coner extends TesterSubsystem implements GenericShootIntake {
         
     }
     public void setup(String height) {
-        soOne.set(true);
-        if(height != TargetHeights.INTAKE) {
+        if(height != TargetHeights.INTAKE && soOne.get()) {
             run(TargetHeights.INTAKE);
             if(timestamp == -1.0) {
                 timestamp = Timer.getFPGATimestamp();
             }
+        }
+        if(!soOne.get()) {
+            soOne.set(true);
         }
     }
     public boolean donePrepping(String height) {
@@ -89,7 +91,7 @@ public class Coner extends TesterSubsystem implements GenericShootIntake {
         return 2.1; // a little off so that we can rotate freely
     }
     public final double getLimelightDistance(String height) {
-        return 0.3205; // 0.569
+        return 0.3374; // 0.325
     }
     public void periodic() {
 

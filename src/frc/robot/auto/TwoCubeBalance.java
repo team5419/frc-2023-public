@@ -32,17 +32,18 @@ public class TwoCubeBalance extends SequentialCommandGroup { // basic routine fo
                 coneShooter.setup(TargetHeights.INTAKE);
                 drivetrain.currentHeight = 1;
             }),
-            new Shoot(coneShooter, coneShooter, drivetrain, 1.75, lights), // shoot pre-load cone and retract cone intake
+            new Shoot(coneShooter, coneShooter, drivetrain, 1.0, lights), // shoot pre-load cone and retract cone intake
             Commands.runOnce(() -> { // drop cube intake and start spinning intake
                 drivetrain.resetOdometry(new Pose2d(0.0, 0.0, Rotation2d.fromDegrees(180.0)));
             }),
             new AutoGetCube(drivetrain, cubeShooter, vision, createTranslation(AutoConstants.firstCube, multiplier), createTranslation(_short ? AutoConstants.firstShotShortSide : AutoConstants.firstShot, multiplier), _short ? 3 : 1, lights, !_short),
+            new RamseteSwerve(drivetrain, vision, new Pose2d(createTranslation(AutoConstants.preSecondCube, multiplier), Rotation2d.fromDegrees(180.0)), new RamseteOptions(false, 4.0)),
             new AutoGetCube(drivetrain, cubeShooter, vision, createTranslation(AutoConstants.secondCube, multiplier), createTranslation(AutoConstants.secondShot, multiplier), 2, lights, false),
             Commands.runOnce(() -> {
                 cubeShooter.stop(TargetHeights.INTAKE);
             }),
-            new RamseteSwerve(drivetrain, vision, new Pose2d(createTranslation(AutoConstants.preBalancePosition, multiplier), new Rotation2d(0.0)), new RamseteOptions(false, 4.0)), 
-            new AutoBalance(drivetrain, lights)
+            new RamseteSwerve(drivetrain, vision, new Pose2d(createTranslation(AutoConstants.preBalancePosition, multiplier), new Rotation2d(0.0)), new RamseteOptions(false, 4.0))//, 
+            //new AutoBalance(drivetrain, lights)
         );
     }
 }
