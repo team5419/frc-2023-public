@@ -10,8 +10,9 @@ import frc.robot.subsystems.*;
 import frc.robot.subsystems.test.TesterSetting;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.PneumaticHub;
+import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.XboxController;
-
+import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -84,6 +85,9 @@ public class RobotContainer {
 
 	private PneumaticHub generateHub() {
 		if(hub == null) {
+			PowerDistribution dist = new PowerDistribution(1, ModuleType.kRev);
+			dist.setSwitchableChannel(true);
+			dist.close();
 			hub = new PneumaticHub();
 			Compressor compressor = hub.makeCompressor();
 			compressor.enableDigital();
@@ -94,18 +98,19 @@ public class RobotContainer {
 	private void configureButtonBindings() {
 		Trigger aButtonDriver = new Trigger(() -> driver.getAButton());
 		Trigger bButtonDriver = new Trigger(() -> driver.getBButton());
-		Trigger xButtonDriver = new Trigger(() -> driver.getXButton());
+		//Trigger xButtonDriver = new Trigger(() -> driver.getXButton());
 		Trigger yButtonDriver = new Trigger(() -> driver.getYButton());
 
 		Trigger aButtonCodriver = new Trigger(() -> codriver.getAButton());
 		Trigger bButtonCodriver = new Trigger(() -> codriver.getBButton());
 		Trigger xButtonCodriver = new Trigger(() -> codriver.getXButton());
 		Trigger yButtonCodriver = new Trigger(() -> codriver.getYButton());
+		Trigger leftBumperCodriver = new Trigger(() -> codriver.getLeftBumper());
 
 		Trigger rightTrigger = new Trigger(() -> driver.getRightTriggerAxis() > SwerveDriveConstants.triggerDeadband);
 		Trigger leftTrigger = new Trigger(() -> driver.getLeftTriggerAxis() > SwerveDriveConstants.triggerDeadband);
 		Trigger leftBumper = new Trigger(() -> driver.getLeftBumper());
-		Trigger rightBumper = new Trigger(() -> driver.getRightBumper());
+		Trigger rightBumper = new Trigger(() -> driver.getRightBumper() || driver.getXButton());
 		//Trigger leftBumperCodriver = new Trigger(() -> codriver.getLeftBumper());
 		Trigger rightBumperCodriver = new Trigger(() -> codriver.getRightBumper());
 		Trigger dpad = new Trigger(() -> driver.getPOV() != -1);
@@ -124,7 +129,7 @@ public class RobotContainer {
 		}, swerve));
 		alignControllerOff.onTrue(Commands.runOnce(() -> {
 			swerve.isAligning = Swerve.AlignState.CONTROLLEROFF;
-		}, swerve));
+		}));
 
 		dpad.onTrue(new Snap(swerve, vision, driver, 4));
 
@@ -136,7 +141,7 @@ public class RobotContainer {
 		}));
 		aButtonDriver.whileTrue(new Prep(coner, cuber, swerve));
 		bButtonDriver.whileTrue(new Shoot(coner, cuber, swerve, lights));
-		xButtonDriver.whileTrue(new TeleopBalance(swerve, lights, driver));
+		//xButtonDriver.whileTrue(new TeleopBalance(swerve, lights, driver));
 		yButtonDriver.onTrue(new ResetGyro(swerve));
 		leftTrigger.whileTrue(new RunIntake(coner));
 		rightTrigger.whileTrue(new RunIntake(cuber));
@@ -152,6 +157,7 @@ public class RobotContainer {
 			setting.setValueManually(0, setting.getValueManually(0) + 0.01);
 		}));
 		xButtonCodriver.onTrue(Commands.runOnce(() -> {
+
 			TesterSetting setting = (swerve.usingCones ? ConerConstants.percents : CubeShooterConstants.percents).get(TargetHeights.heights[swerve.currentHeight]);
 			setting.setValueManually(1, setting.getValueManually(1) - 0.01);
 		}));
@@ -159,6 +165,8 @@ public class RobotContainer {
 			TesterSetting setting = (swerve.usingCones ? ConerConstants.percents : CubeShooterConstants.percents).get(TargetHeights.heights[swerve.currentHeight]);
 			setting.setValueManually(1, setting.getValueManually(1) + 0.01);
 		}));
+
+		leftBumperCodriver.onTrue(Commands.runOnce(() -> swerve.autoShoot = !swerve.autoShoot));
 	}
 
 	public Command getAutonomousCommand() {

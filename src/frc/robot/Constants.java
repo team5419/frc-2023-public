@@ -9,6 +9,8 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.wpilibj.PowerDistribution;
+
 import java.lang.Math;
 import java.util.Map;
 
@@ -38,7 +40,7 @@ public class Constants {
         public static final Map<String, TesterSetting> percents = Map.of(TargetHeights.LOW, new TesterSetting(new double[] { 
             0.30, -0.87
         }), TargetHeights.MID, new TesterSetting(new double[] { 
-            0.11, -0.46//0.14, -0.36
+            0.11, -0.45//0.14, -0.36
         }), TargetHeights.HIGH, new TesterSetting(false, new double[] { 
             0.22, -1.0
         }), TargetHeights.INTAKE, new TesterSetting(new double[] { 
@@ -197,16 +199,16 @@ public class Constants {
     }
     public static final class LimelightConstants {
         public static final double lowTargetHeight = 0.6096;
-        public static final double cameraAngle = 20.0;
+        public static final double cameraAngle = 26.0;
         public static final double cameraHeight = 0.3048;
         public static final PIDController horizontalPID = new PIDController(0.06, 0.0, 0.0);
-        public static final PIDController turnPID = new PIDController(0.02, 0.0, 0.0);
+        public static final PIDController turnPID = new PIDController(0.03, 0.0, 0.0);
         public static final PIDController forwardPID = new PIDController(9.0, 0.0, 0.0);
         public static final double desiredAngle = 180.0;
         public static final double desiredDistance = 0.0;
 
         public static final double epsilonTurn = 1.0;
-        public static final double epsilonHorizontal = 0.3;
+        public static final double epsilonHorizontal = 1.0;
         public static final double epsilonForward = 0.01;
     }
     public static final class AprilTagConstants {
@@ -265,10 +267,9 @@ public class Constants {
         public static final int everyArm0 = 20;
         public static final int everyArm1 = 21;
         public static final int suctionMotor = 22;
-
         public static final int cuberSolenoidA = 7;
         public static final int cuberSolenoidB = 0;
-        public static final int conerSolenoidA = 2;
+        public static final int conerSolenoidA = 0;
         public static final int conerSolenoidB = 1;
         public static final int solenoidC = 1;
 

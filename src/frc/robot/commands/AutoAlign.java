@@ -56,7 +56,9 @@ public class AutoAlign extends CommandBase {
 
         if(turnDiff == 0.0 && leftDiff == 0.0 && forwardDiff == 0.0) {
             lights.setColor(0, 255, 0);
-            isFinished = true;
+            if(drivetrain.getAverageSpeed() <= 0.15) {
+                isFinished = true;
+            }
         } else {
             lights.setColor(255, 0, 0);
         }
@@ -65,6 +67,7 @@ public class AutoAlign extends CommandBase {
         return isFinished;
     }
     public void end(boolean interrupted) {
+        System.out.println("done aligning");
         drivetrain.stop();
         vision.off();
     }

@@ -91,11 +91,16 @@ public class SpecialRamseteTurn extends CommandBase {
             return;
         }
         if(isFinished) {
+            System.out.println("finished!!!!");
             swerve.isAligning = AlignState.CONTROLLERON;
             CommandBase regularer = 
                 cones ? new AutoAlign(swerve, coner, vision, driver, coner.getLimelightDistance(TargetHeights.heights[currentHeight]), currentHeight, lights)
                 : new SpecialRamseteSwerve(swerve, vision, driver, cuber, true, currentHeight, false, new RamseteOptions(), lights);// if we're on cones, up epsilons hella and don't enforce a speed limit so we're fast before limelight
-            regularer.andThen(new Shoot(coner, cuber, swerve, lights));
+            
+            if(swerve.autoShoot) {
+                regularer = regularer.andThen(new Shoot(coner, cuber, swerve, lights));
+            }
+            regularer.schedule();
         }
     }
 }

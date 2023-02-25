@@ -38,7 +38,9 @@ public class Swerve extends SubsystemBase { // our swerve drive subsystem
     private ChassisSpeeds previousMove; // keep track of the previous speeds of the modules for position tracking
     public boolean slowMode; // whether the swerve drive is in slowmode
     public AlignState isAligning;
+    public boolean autoShoot;
     public Swerve(Vision vision, boolean pigeon) { // the pigeon parameter tells the code whether we are using a pigeon
+        autoShoot = true;
         isAligning = AlignState.NOT;
         drivers = new SwerveModule[SwerveDriveConstants.info.length]; // instantiate the module array
         usingVision = true;
@@ -92,7 +94,9 @@ public class Swerve extends SubsystemBase { // our swerve drive subsystem
                     .withPosition(0, i);
         }
         selectionTab.addBoolean("SHOOTING CONES", () -> usingCones)
-        .withSize(1, 1).withPosition(6, 0);
+        .withSize(2, 1).withPosition(6, 0);
+
+        selectionTab.addBoolean("Auto Shoot", () -> autoShoot).withSize(2, 1).withPosition(6, 1);
     }
     private SwerveModulePosition[] getPositions() { // get the total lengths driven by each module as an array
         SwerveModulePosition[] arr = new SwerveModulePosition[drivers.length];

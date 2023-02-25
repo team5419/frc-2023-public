@@ -35,7 +35,6 @@ public class Coner extends TesterSubsystem implements GenericShootIntake {
         //soTwo = hub.makeSolenoid(Ports.conerSolenoidB);
         soOne.set(false);
         //soTwo.set(false);
-
         timestamp = -1.0;
     }
     public static TesterMotor generateTesterMotor(String name, boolean falcons, int id, boolean pro) {
@@ -61,16 +60,12 @@ public class Coner extends TesterSubsystem implements GenericShootIntake {
     }
     public void stop(String height) {
         super.stop();
-        if(height != TargetHeights.INTAKE) {
             soOne.set(false);
-            //soTwo.set(false);
-        }
+        
     }
     public void setup(String height) {
-        if(height == TargetHeights.INTAKE) {
-            soOne.set(true);
-            //soTwo.set(true);
-        } else {
+        soOne.set(true);
+        if(height != TargetHeights.INTAKE) {
             run(TargetHeights.INTAKE);
             if(timestamp == -1.0) {
                 timestamp = Timer.getFPGATimestamp();
@@ -78,7 +73,7 @@ public class Coner extends TesterSubsystem implements GenericShootIntake {
         }
     }
     public boolean donePrepping(String height) {
-        return timestamp >= 0.0 && Timer.getFPGATimestamp() - timestamp >= 0.625;
+        return timestamp >= 0.0 && Timer.getFPGATimestamp() - timestamp >= 0.625 && soOne.get();
     }
     public SubsystemBase subsystem() {return this;}
     public final double getAngle() {
@@ -94,7 +89,7 @@ public class Coner extends TesterSubsystem implements GenericShootIntake {
         return 2.1; // a little off so that we can rotate freely
     }
     public final double getLimelightDistance(String height) {
-        return 0.3586; // 0.569
+        return 0.3205; // 0.569
     }
     public void periodic() {
 
