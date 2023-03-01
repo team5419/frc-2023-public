@@ -1,13 +1,10 @@
 package frc.robot;
-import frc.robot.Constants.ConerConstants;
 import frc.robot.Constants.ConerTypes;
-import frc.robot.Constants.CubeShooterConstants;
 import frc.robot.Constants.SwerveDriveConstants;
 import frc.robot.Constants.TargetHeights;
 import frc.robot.auto.*;
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
-import frc.robot.subsystems.test.TesterSetting;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.PneumaticHub;
 import edu.wpi.first.wpilibj.PowerDistribution;
@@ -42,7 +39,7 @@ public class RobotContainer {
 		arm = null; 
 		hub = null;
 		coner = null;
-		cuber = new Cuber(generateHub(), false);
+		cuber = new Cuber(generateHub(), true);
 		switch(CONER_TYPE) {
 			case LOW_CONER:
 				coner = new Coner(generateHub(), true, false);
@@ -152,19 +149,22 @@ public class RobotContainer {
 		// 	TesterSetting setting = (swerve.usingCones ? ConerConstants.percents : CubeShooterConstants.percents).get(TargetHeights.heights[swerve.currentHeight]);
 		// 	setting.setValueManually(1, setting.getValueManually(0) - 0.005);
 		// }));
-		aButtonCodriver.whileTrue(new AutoBalance(swerve, lights));
+		//aButtonCodriver.whileTrue(new AutoBalance(swerve, lights));
+		aButtonCodriver.onTrue(Commands.runOnce(() -> {
+			if(coner instanceof Coner) {
+				((Coner)coner).changeMotorOffset(TargetHeights.heights[swerve.currentHeight], 1, -0.005);
+			}
+		}));
 		yButtonCodriver.onTrue(Commands.runOnce(() -> {
-			TesterSetting setting = (swerve.usingCones ? ConerConstants.percents : CubeShooterConstants.percents).get(TargetHeights.heights[swerve.currentHeight]);
-			setting.setValueManually(1, setting.getValueManually(0) + 0.005);
+			if(coner instanceof Coner) {
+				((Coner)coner).changeMotorOffset(TargetHeights.heights[swerve.currentHeight], 1, 0.005);
+			}
 		}));
 		xButtonCodriver.onTrue(Commands.runOnce(() -> {
-
-			TesterSetting setting = (swerve.usingCones ? ConerConstants.percents : CubeShooterConstants.percents).get(TargetHeights.heights[swerve.currentHeight]);
-			setting.setValueManually(0, setting.getValueManually(1) - 0.005);
+			cuber.changeMotorOffset(TargetHeights.heights[swerve.currentHeight], 0, 0.005);
 		}));
 		bButtonCodriver.onTrue(Commands.runOnce(() -> {
-			TesterSetting setting = (swerve.usingCones ? ConerConstants.percents : CubeShooterConstants.percents).get(TargetHeights.heights[swerve.currentHeight]);
-			setting.setValueManually(0, setting.getValueManually(1) + 0.005);
+			cuber.changeMotorOffset(TargetHeights.heights[swerve.currentHeight], 0, -0.005);
 		}));
 
 		leftBumperCodriver.onTrue(Commands.runOnce(() -> swerve.autoShoot = !swerve.autoShoot));

@@ -1,12 +1,15 @@
 package frc.robot.subsystems;
 
+import java.util.Map;
+
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.EverybotConeConstants;
 import frc.robot.Constants.Ports;
+import frc.robot.Constants.TargetHeights;
 import frc.robot.subsystems.test.TesterFalcon;
 import frc.robot.subsystems.test.TesterMotor;
+import frc.robot.subsystems.test.TesterSetting;
 import frc.robot.subsystems.test.TesterSubsystem;
 import frc.robot.Util;
 
@@ -17,7 +20,7 @@ public class EverybotConer extends TesterSubsystem implements GenericShootIntake
             new TesterFalcon("Main", Util.setUpMotor(
                 new TalonFX(Ports.everyIntakeMotor, "canivore"), false, false
             ))
-        }, velocityControl ? EverybotConeConstants.velocities : EverybotConeConstants.percents);
+        }, velocityControl ? velocities : percents);
         this.arm = arm;
     }
     public void shoot(String height) {
@@ -55,4 +58,25 @@ public class EverybotConer extends TesterSubsystem implements GenericShootIntake
     public final boolean prepsByDefault() {
         return true;
     }
+    private static final Map<String, TesterSetting[]> percents = Map.of(
+    TargetHeights.LOW, new TesterSetting[] {
+        new TesterSetting(-1.0)
+    }, TargetHeights.MID, new TesterSetting[] {
+        new TesterSetting(-1.0)
+    }, TargetHeights.HIGH, new TesterSetting[] {
+        new TesterSetting(-1.0)
+    }, TargetHeights.INTAKE, new TesterSetting[] {
+        new TesterSetting(0.25)
+    });
+
+    private static final Map<String, TesterSetting[]> velocities = Map.of(
+    TargetHeights.LOW, new TesterSetting[] {
+        new TesterSetting(true, -5000.0)
+    }, TargetHeights.MID, new TesterSetting[] {
+        new TesterSetting(true, -5000.0)
+    }, TargetHeights.HIGH, new TesterSetting[] {
+        new TesterSetting(true, -5000.0)
+    }, TargetHeights.INTAKE, new TesterSetting[] {
+        new TesterSetting(true, 1250.0)
+    });
 }

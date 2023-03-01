@@ -1,8 +1,6 @@
 package frc.robot.commands;
 import frc.robot.Util;
 
-import java.lang.ModuleLayer.Controller;
-
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.GenericShootIntake;
@@ -96,7 +94,7 @@ public class SpecialRamseteTurn extends CommandBase {
             swerve.isAligning = AlignState.CONTROLLERON;
             CommandBase regularer = 
                 cones ? new AutoAlign(swerve, coner, vision, coner.getLimelightDistance(TargetHeights.heights[currentHeight]), currentHeight, lights, 0.0)
-                : new SpecialRamseteSwerve(swerve, vision, driver, cuber, true, currentHeight, false, new RamseteOptions(), lights);// if we're on cones, up epsilons hella and don't enforce a speed limit so we're fast before limelight
+                : new SpecialRamseteSwerve(swerve, vision, cuber, true, currentHeight, false, new RamseteOptions(), lights);// if we're on cones, up epsilons hella and don't enforce a speed limit so we're fast before limelight
             
             if(swerve.autoShoot) {
                 regularer = regularer.andThen(new Shoot(coner, cuber, swerve, lights));

@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+import java.util.Map;
+
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
@@ -13,6 +15,7 @@ import frc.robot.Constants.Ports;
 import frc.robot.Constants.TargetHeights;
 import frc.robot.subsystems.test.TesterMotor;
 import frc.robot.subsystems.test.TesterNeo;
+import frc.robot.subsystems.test.TesterSetting;
 import frc.robot.subsystems.test.TesterSubsystem;
 import frc.robot.Util;
 import edu.wpi.first.wpilibj.AnalogInput;
@@ -22,16 +25,18 @@ public class Cuber extends TesterSubsystem implements GenericShootIntake {
     //private Solenoid soTwo;
     private AnalogInput sensor;
     private Double startingPoint;
+    private boolean velocity;
     public Cuber(PneumaticHub hub, boolean velocityControl) {
         super("Cube Shooter", new TesterMotor[] {
+            new TesterNeo("Indexer", Util.setUpMotor(
+                new CANSparkMax(Ports.indexer, MotorType.kBrushless), false, true
+            )).configurePID(CubeShooterConstants.upPID),
             new TesterNeo("Main", Util.setUpMotor(
                 new CANSparkMax(Ports.intake, MotorType.kBrushless), true, false
-            )),
-            new TesterNeo("Indexer", Util.setUpMotor(
-                new CANSparkMax(Ports.indexer, MotorType.kBrushless), true, true
-            ))
-        }, velocityControl ? CubeShooterConstants.velocities : CubeShooterConstants.percents);
+            )).configurePID(CubeShooterConstants.upPID)
+        }, velocityControl ? velocities : percents);
         startingPoint = null;
+        velocity = velocityControl;
         soOne = hub.makeSolenoid(Ports.cuberSolenoidA);
         soOne.set(false);
         //soTwo = hub.makeSolenoid(Ports.cuberSolenoidB);
@@ -42,7 +47,7 @@ public class Cuber extends TesterSubsystem implements GenericShootIntake {
         ShuffleboardTab main = Shuffleboard.getTab("Master");
         main.addNumber("Cuber sensor", () -> getSensorValue()).withSize(1, 1).withPosition(2, 1);
         //main.addNumber("Backwards setpoint", () -> startingPoint == null ? 0.0 : startingPoint);
-        main.addNumber("Cuber velocity", () -> motors[0].getVelocity());
+        main.addNumber("Cuber velocity", () -> motors[1].getVelocity());
     }
     public double getSensorValue() {
         return sensor.getValue();
@@ -70,20 +75,21 @@ public class Cuber extends TesterSubsystem implements GenericShootIntake {
             soOne.set(true);
             //soTwo.set(false);
         } else {
-            double pos = motors[1].getPosition();
-            motors[1].run(CubeShooterConstants.indexerSlowBackwardsSpeed);
+            //double pos = motors[0].getPosition();
+            motors[0].run(CubeShooterConstants.indexerSlowBackwardsSpeed);
             // if(startingPoint == null) {
             //     startingPoint = pos;
             // } else {
-                runSingle(height, 0);
+                runSingle(height, 1);
             //     if(pos - startingPoint > 2) {
-            //         motors[1].run(0.0);
+            //         motors[0].run(0.0);
             //     }
             // }
         }
     }
     public boolean donePrepping(String height) {
-        return (motors[0].getVelocity() >= CubeShooterConstants.measuredVelocities.get(height));
+        return velocity ? (Math.abs(motors[1].getVelocity() - velocities.get(height)[1].getSetpoint()) <= 50.0)
+        : (motors[1].getVelocity() >= CubeShooterConstants.measuredVelocities.get(height));
     }
     public void periodic() {
         //System.out.println(motors[1].getPosition());
@@ -117,4 +123,30 @@ public class Cuber extends TesterSubsystem implements GenericShootIntake {
         }
         return 0.0;
     }
+
+    private static final Map<String, TesterSetting[]> percents = Map.of(
+    TargetHeights.LOW, new TesterSetting[] {
+        new TesterSetting(1.0), new TesterSetting(0.13)
+    }, TargetHeights.MID, new TesterSetting[] {
+        new TesterSetting(1.0), new TesterSetting(0.39)//0.14, -0.36
+    }, TargetHeights.HIGH, new TesterSetting[] {
+        new TesterSetting(1.0), new TesterSetting(0.46)
+    }, TargetHeights.INTAKE, new TesterSetting[] {
+        new TesterSetting(-0.2), new TesterSetting(-0.55)
+    }, TargetHeights.FAR, new TesterSetting[] {
+        new TesterSetting(1.0), new TesterSetting(0.97)
+    });
+
+    private static final Map<String, TesterSetting[]> velocities = Map.of(
+    TargetHeights.LOW, new TesterSetting[] {
+        new TesterSetting(1.0), new TesterSetting(true, 740.0)
+    }, TargetHeights.MID, new TesterSetting[] {
+        new TesterSetting(1.0), new TesterSetting(true, 2223.0)//0.14, -0.36
+    }, TargetHeights.HIGH, new TesterSetting[] {
+        new TesterSetting(1.0), new TesterSetting(true, 2622.0)
+    }, TargetHeights.INTAKE, new TesterSetting[] {
+        new TesterSetting(-0.2), new TesterSetting(-0.55)
+    }, TargetHeights.FAR, new TesterSetting[] {
+        new TesterSetting(1.0), new TesterSetting(true, 5650.0)
+    });
 }

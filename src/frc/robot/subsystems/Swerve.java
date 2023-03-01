@@ -87,8 +87,8 @@ public class Swerve extends SubsystemBase { // our swerve drive subsystem
         layout.addNumber("sideways m", () -> previousMove.vyMetersPerSecond);
         layout.addNumber("turning (rad)", () -> previousMove.omegaRadiansPerSecond);
         ShuffleboardTab selectionTab = Shuffleboard.getTab("Shot Selection");
-        for(int i = 0; i < 3; i++) {
-                int savedI = 2 - i;
+        for(int i = 0; i < 4; i++) {
+                int savedI = 3 - i;
                 selectionTab.addBoolean("row " + i, () -> (currentHeight == savedI))
                     .withSize(1, 1)
                     .withPosition(0, i);

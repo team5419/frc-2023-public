@@ -13,10 +13,10 @@ import frc.robot.Constants.Ports;
 
 public class Lights extends SubsystemBase {
     //private CANdle candle;
-    AddressableLED leds;
+    //AddressableLED leds;
     public Lights() {
-        leds = new AddressableLED(0);
-        leds.setLength(10);
+        // leds = new AddressableLED(0);
+        // leds.setLength(10);
         // candle = new CANdle(Ports.candlePort, "canivore");
         // CANdleConfiguration config = new CANdleConfiguration();
         // config.stripType = LEDStripType.RGB;
@@ -26,11 +26,11 @@ public class Lights extends SubsystemBase {
         // candle.configAllSettings(config, 100);
     }
     public void setColor(int r, int g, int b) {
-        AddressableLEDBuffer buffer = new AddressableLEDBuffer(10);
-        for(int i = 0; i < 10; i++) {
-            buffer.setRGB(i, r, g, b);
-        }
-        leds.setData(buffer);
+        // AddressableLEDBuffer buffer = new AddressableLEDBuffer(10);
+        // for(int i = 0; i < 10; i++) {
+        //     buffer.setRGB(i, r, g, b);
+        // }
+        // leds.setData(buffer);
         // CANdleFaults faults = new CANdleFaults();
         // candle.getFaults(faults);
         // if(faults.APIError) {
@@ -65,15 +65,15 @@ public class Lights extends SubsystemBase {
         //candle.animate(new RainbowAnimation(1.0, 1.0, 50), 0); // assuming we have 50 lights
     }
     public void off(Swerve swerve) {
-        if(swerve.usingCones) {
-            System.out.println("lights yellow");
-            setColor(255, 95, 0);
-        } else {
-            System.out.println("lights purple");
-            setColor(255, 0, 255);
-        }
+        // if(swerve.usingCones) {
+        //     System.out.println("lights yellow");
+        //     setColor(255, 95, 0);
+        // } else {
+        //     System.out.println("lights purple");
+        //     setColor(255, 0, 255);
+        // }
     }
     public void off() {
-        setColor(0, 0, 0);
+        //setColor(0, 0, 0);
     }
 }

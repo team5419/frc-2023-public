@@ -15,10 +15,11 @@ public class TesterFalcon implements TesterMotor {
     public final double getMaxVelocity() {
         return 22000.0;
     }
-    public void configurePID(PID pid) {
+    public TesterFalcon configurePID(PID pid) {
         talon.config_kP(0, pid.p);
         talon.config_kI(0, pid.i);
         talon.config_kD(0, pid.d);
+        return this;
     }
     public String getName() {
         return this.name;
@@ -26,6 +27,9 @@ public class TesterFalcon implements TesterMotor {
     public void run(double velocity) {
         //System.out.println("directly setting motor to " + velocity);
         talon.set(ControlMode.PercentOutput, velocity);
+    }
+    public void stop() {
+        run(0.0);
     }
     public double getVelocity() {
         return talon.getSelectedSensorVelocity(0);

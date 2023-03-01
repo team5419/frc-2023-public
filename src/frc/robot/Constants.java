@@ -1,7 +1,6 @@
 package frc.robot;
 
 import frc.robot.modules.ModuleInfo;
-import frc.robot.subsystems.test.TesterSetting;
 import frc.robot.classes.PID;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -9,7 +8,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
-import edu.wpi.first.wpilibj.PowerDistribution;
 
 import java.lang.Math;
 import java.util.Map;
@@ -33,96 +31,26 @@ public class Constants {
         public static final String HIGH = "HIGH";
         public static final String INTAKE = "INTAKE";
         public static final String FAR = "FAR";
-        public static final String[] heights = { LOW, MID, HIGH };
+        public static final String[] heights = { LOW, MID, HIGH, FAR };
     }
     public static final class ConerConstants {
         public static final double inOutVelocity = 0.05;
         // order: bottom motor, top motor
-        public static final Map<String, TesterSetting> percents = Map.of(TargetHeights.LOW, new TesterSetting(new double[] { 
-            0.30, -0.87
-        }), TargetHeights.MID, new TesterSetting(new double[] { 
-            0.11, -0.45//0.14, -0.36
-        }), TargetHeights.HIGH, new TesterSetting(false, new double[] { 
-            0.22, -1.0
-        }), TargetHeights.INTAKE, new TesterSetting(new double[] { 
-            -0.2, 0.2
-        }));
-
-        public static final Map<String, TesterSetting> neoVelocities = Map.of(TargetHeights.LOW, new TesterSetting(new double[] { 
-            2500.0, -2500.0
-        }), TargetHeights.MID, new TesterSetting(new double[] { 
-            2500.0, -2500.0
-        }), TargetHeights.HIGH, new TesterSetting(new double[] { 
-            5000.0, -5000.0
-        }), TargetHeights.INTAKE, new TesterSetting(new double[] { 
-            -2500.0, 2500.0
-        }));
-
-        public static final Map<String, TesterSetting> falconVelocities = Map.of(TargetHeights.LOW, new TesterSetting(true, new double[] { 
-            10000.0, -10000.0
-        }), TargetHeights.MID, new TesterSetting(true, new double[] { 
-            10000.0, -10000.0
-        }), TargetHeights.HIGH, new TesterSetting(true, new double[] { 
-            20000.0, -20000.0
-        }), TargetHeights.INTAKE, new TesterSetting(true, new double[] { 
-            -10000.0, 10000.0
-        }));
+        
     }
     public static final class CubeShooterConstants {
-        public static final PIDController outtakePID = new PIDController(0.0001, 0, 0);
-        // order: main motor, indexer
-        public static final Map<String, TesterSetting> percents = Map.of(TargetHeights.LOW, new TesterSetting(new double[] { 
-            0.13, -1.0
-        }), TargetHeights.MID, new TesterSetting(new double[] { 
-            0.39, -1.0
-        }), TargetHeights.HIGH, new TesterSetting(new double[] { 
-            0.46, -1.0
-        }), TargetHeights.INTAKE, new TesterSetting(new double[] { 
-            -0.55, 0.2
-        }), TargetHeights.FAR, new TesterSetting(new double[] {
-            0.97, -1.0
-        }));
+
+        public static final PID upPID = new PID(0.000007, 0.0, 0.0);
+        // order: indexer, main motor
 
         public static final Map<String, Double> measuredVelocities = Map.of(TargetHeights.LOW, 0.0, TargetHeights.MID, 1550.0, TargetHeights.HIGH, 1900.0, TargetHeights.INTAKE, 0.0, TargetHeights.FAR, 1770.0);
 
-        public static final Map<String, TesterSetting> velocities = Map.of(TargetHeights.LOW, new TesterSetting(new double[] { 
-            5000.0, -3000.0
-        }), TargetHeights.MID, new TesterSetting(new double[] { 
-            1880.0, -3000.0
-        }), TargetHeights.HIGH, new TesterSetting(new double[] { 
-            5000.0, -3000.0
-        }), TargetHeights.INTAKE, new TesterSetting(new double[] { 
-            -1250.0, 500.0
-        }));
+        public static final double indexerSlowBackwardsSpeed = -0.05;
+        public static final double sensorThresholdLeft = 760.0;
+        public static final double sensorThresholdRight = 1640.0;
 
-        public static final double indexerSlowBackwardsSpeed = 0.05;
-
-        public static final double sensorThresholdLeft = -1.0;
-        public static final double sensorThresholdRight = 100000.0;
-
-        public static final double adjustmentLeft = -0.1;
-        public static final double adjustmentRight = 0.1;
-    }
-    public static final class EverybotConeConstants {
-        // order: main motor
-        public static final Map<String, TesterSetting> percents = Map.of(TargetHeights.LOW, new TesterSetting(new double[] { 
-            -1.0
-        }), TargetHeights.MID, new TesterSetting(new double[] { 
-            -1.0
-        }), TargetHeights.HIGH, new TesterSetting(new double[] { 
-            -1.0
-        }), TargetHeights.INTAKE, new TesterSetting(new double[] { 
-            0.25
-        }));
-        public static final Map<String, TesterSetting> velocities = Map.of(TargetHeights.LOW, new TesterSetting(new double[] { 
-            -5000.0
-        }), TargetHeights.MID, new TesterSetting(new double[] { 
-            -5000.0
-        }), TargetHeights.HIGH, new TesterSetting(new double[] { 
-            -5000.0
-        }), TargetHeights.INTAKE, new TesterSetting(new double[] { 
-             1250.0
-        }));
+        public static final double adjustmentLeft = 0.15;
+        public static final double adjustmentRight = -0.15;
     }
     public static final class DifferentialDriveConstants {
         public static final double trackWidth = 1.781;

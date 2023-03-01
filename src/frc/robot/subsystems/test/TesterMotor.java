@@ -6,8 +6,9 @@ public interface TesterMotor {
     public String getName();
     public void run(double percent); 
     public double getVelocity();
-    public void configurePID(PID pid);
+    public TesterMotor configurePID(PID pid);
     public void setVelocity(double velocity);
     public double getMaxVelocity();
     public double getPosition();
+    public void stop();
 }

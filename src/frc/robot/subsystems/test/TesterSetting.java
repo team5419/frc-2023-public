@@ -7,52 +7,55 @@ import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 
 public class TesterSetting {
-    private double[] motorDefaults;
-    private GenericEntry[] entries;
+    private double motorDefault;
+    private GenericEntry entry;
     private boolean velocityControl;
-    public TesterSetting(boolean velocityControl, double[] motorDefaults) {
+    private double offset;
+    public TesterSetting(boolean velocityControl, double motorDefaults) {
         this.velocityControl = velocityControl;
-        this.motorDefaults = motorDefaults;
+        this.motorDefault = motorDefaults;
+        this.offset = 0.0;
     }
-    public TesterSetting(double[] motorDefaults) {
+    public TesterSetting(double motorDefaults) {
         this.velocityControl = false;
-        this.motorDefaults = motorDefaults;
+        this.motorDefault = motorDefaults;
+        this.offset =0.0;
     }
     public TesterSetting(boolean velocityControl) {
         this.velocityControl = velocityControl;
-        this.motorDefaults = null;
+        this.motorDefault = 0.0;
+        this.offset =0.0;
     }
     public TesterSetting() {
         this.velocityControl = false;
-        this.motorDefaults = null;
+        this.motorDefault = 0.0;
+        this.offset = 0.0;
     }
-    public void initialize(ShuffleboardTab tab, TesterMotor[] motors, String name, int y) {
-        entries = new GenericEntry[motors.length];
-            for(int j = 0; j < motors.length; j++) {
-                System.out.println("adding " + name + ": " + motors[j].getName());
-                double max = velocityControl ? motors[j].getMaxVelocity() : 1.0;
-                entries[j] = tab.add(name + ": " + motors[j].getName(), motorDefaults == null ? 0.0 : motorDefaults[j])
-                    .withPosition(j * 2, y)
-                    .withSize(2, 1) 
-                    .withWidget(BuiltInWidgets.kNumberSlider)
-                    .withProperties(Map.of("min", -max, "max", max))
-                    .getEntry();
-            }
+    public void initialize(ShuffleboardTab tab, TesterMotor motor, String name, int x, int y) {
+        double max = velocityControl ? motor.getMaxVelocity() : 1.0;
+        entry = tab.add(name + ": " + motor.getName(), motorDefault)
+            .withPosition(x * 2, y)
+            .withSize(2, 1) 
+            .withWidget(BuiltInWidgets.kNumberSlider)
+            .withProperties(Map.of("min", -max, "max", max))
+            .getEntry();
     }
-    public void setMotor(int motorNum, TesterMotor motor) {
-        double setpoint = entries[motorNum].getDouble(motorDefaults == null ? 0.0 : motorDefaults[motorNum]);
+    public void setMotor(TesterMotor motor) {
+        double setpoint = getSetpoint();
         if(velocityControl) {
             motor.setVelocity(setpoint);
         } else {
-            //System.out.println("Calling tester motor");
             motor.run(setpoint);
         }
     }
-    public void setValueManually(int motorNum, double value) {
-        System.out.println("setting setting to " + value);
-        entries[motorNum].setDouble(value);
+    public void changeOffset(double value, double maxVelocity) {
+        if(velocityControl) {
+            offset += value * maxVelocity;
+        } else {
+            offset += value;
+        }
     }
-    public double getValueManually(int motorNum) {
-        return entries[motorNum].getDouble(motorDefaults == null ? 0.0 : motorDefaults[motorNum]);
+    public double getSetpoint() {
+        return entry.getDouble(motorDefault) + offset;
     }
 }

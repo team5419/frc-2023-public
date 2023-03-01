@@ -28,7 +28,7 @@ public class SwerveDrive extends CommandBase {
             letGo = true;
         } else if(letGo) {
             letGo = false;
-            if((pov <= SwerveDriveConstants.dPadInputRange || pov >= 360 - SwerveDriveConstants.dPadInputRange) && drivetrain.currentHeight < 2) {
+            if((pov <= SwerveDriveConstants.dPadInputRange || pov >= 360 - SwerveDriveConstants.dPadInputRange) && drivetrain.currentHeight < 3) {
                 drivetrain.currentHeight++;
             }
             if(pov >= 180 - SwerveDriveConstants.dPadInputRange && pov <= 180 + SwerveDriveConstants.dPadInputRange && drivetrain.currentHeight > 0) {

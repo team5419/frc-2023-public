@@ -1,16 +1,13 @@
 package frc.robot.commands;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.GenericShootIntake;
 import frc.robot.subsystems.Lights;
 import frc.robot.subsystems.Swerve;
 import frc.robot.subsystems.Vision;
 import frc.robot.Util;
 import frc.robot.Constants.AprilTagConstants;
-import frc.robot.Constants.SwerveDriveConstants;
 import frc.robot.Constants.TargetHeights;
 import frc.robot.classes.RamseteOptions;
 
@@ -24,19 +21,17 @@ public class SpecialRamseteSwerve extends RamseteSwerve {
     private double targetX;
     private double targetY;
     private boolean imBasic;
-    private XboxController driver;
     private GenericShootIntake shooter;
     private boolean cones;
     private int height;
     private Lights lights;
-    public SpecialRamseteSwerve(Swerve drivetrain, Vision vision, XboxController driver, GenericShootIntake shooter, boolean imBasic, int height, boolean cones, RamseteOptions options, Lights lights) {
+    public SpecialRamseteSwerve(Swerve drivetrain, Vision vision, GenericShootIntake shooter, boolean imBasic, int height, boolean cones, RamseteOptions options, Lights lights) {
         super(drivetrain, vision, new Pose2d(), options);
         addRequirements(shooter.subsystem());
         this.state = State.PREDIAGONAL;
         this.targetX = 0.0;
         this.targetY = 0.0;
         this.imBasic = imBasic;
-        this.driver = driver;
         this.shooter = shooter;
         this.cones = cones;
         this.height = height;

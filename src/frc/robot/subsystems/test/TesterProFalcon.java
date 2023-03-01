@@ -1,12 +1,8 @@
 package frc.robot.subsystems.test;
 
 import com.ctre.phoenixpro.configs.TalonFXConfiguration;
-import com.ctre.phoenixpro.configs.TalonFXConfigurator;
-import com.ctre.phoenixpro.controls.ControlRequest;
 import com.ctre.phoenixpro.controls.VelocityTorqueCurrentFOC;
-import com.ctre.phoenixpro.controls.VelocityVoltage;
 import com.ctre.phoenixpro.hardware.TalonFX;
-import com.ctre.phoenixpro.signals.NeutralModeValue;
 
 import frc.robot.classes.PID;
 
@@ -24,11 +20,15 @@ public class TesterProFalcon implements TesterMotor {
     public final double getMaxVelocity() {
         return 22000.0;
     }
-    public void configurePID(PID pid) {
+    public TesterProFalcon configurePID(PID pid) {
         config.Slot0.kP = pid.p;
         config.Slot0.kI = pid.i;
         config.Slot0.kD = pid.d;
         talon.getConfigurator().refresh(config);
+        return this;
+    }
+    public void stop() {
+        run(0.0);
     }
     public String getName() {
         return this.name;

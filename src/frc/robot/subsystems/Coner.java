@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+import java.util.Map;
+
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenixpro.configs.TalonFXConfiguration;
@@ -18,53 +20,60 @@ import frc.robot.subsystems.test.TesterFalcon;
 import frc.robot.subsystems.test.TesterMotor;
 import frc.robot.subsystems.test.TesterNeo;
 import frc.robot.subsystems.test.TesterProFalcon;
+import frc.robot.subsystems.test.TesterSetting;
 import frc.robot.subsystems.test.TesterSubsystem;
 import frc.robot.Util;
 
 public class Coner extends TesterSubsystem implements GenericShootIntake {
     private Solenoid soOne;
-    //private Solenoid soTwo;
+    private Solenoid soTwo;
     private double timestamp;
     public Coner(PneumaticHub hub, boolean falcons, boolean velocityControl) {
         super("Cone Shooter", new TesterMotor[] {
-            generateTesterMotor("Low motor", falcons, Ports.coneBottom, false),
-            generateTesterMotor("High motor", falcons, Ports.coneTop, false)
-        }, velocityControl ? (falcons ? ConerConstants.falconVelocities : ConerConstants.neoVelocities) : ConerConstants.percents);
+            generateTesterMotor("Low motor", falcons, Ports.coneBottom, false, false),
+            generateTesterMotor("High motor", falcons, Ports.coneTop, false, true)
+        }, velocityControl ? (falcons ? falconVelocities : neoVelocities) : percents);
 
         soOne = hub.makeSolenoid(Ports.conerSolenoidA);
-        //soTwo = hub.makeSolenoid(Ports.conerSolenoidB);
+        soTwo = hub.makeSolenoid(Ports.conerSolenoidB);
         soOne.set(false);
-        //soTwo.set(false);
+        soTwo.set(false);
         timestamp = -1.0;
     }
-    public static TesterMotor generateTesterMotor(String name, boolean falcons, int id, boolean pro) {
+    public static TesterMotor generateTesterMotor(String name, boolean falcons, int id, boolean pro, boolean inverted) {
         if(falcons) {
             if(pro) {
                 com.ctre.phoenixpro.hardware.TalonFX fx = new com.ctre.phoenixpro.hardware.TalonFX(id, "canivore");
-                TalonFXConfiguration config = Util.getSetup(false, new PID(0.5, 0, 0), true, 1.0);
+                TalonFXConfiguration config = Util.getSetup(inverted, new PID(0.5, 0, 0), true, 1.0);
                 config.CurrentLimits.SupplyCurrentLimit = 20;
                 return new TesterProFalcon(name, fx, config);
             }
             TalonFX motor = new TalonFX(id, "canivore");
-            Util.setUpMotor(motor, new PID(0.1, 0, 0), true, 1.0);
+            Util.setUpMotor(motor, false, inverted, new PID(0.1, 0, 0), true, 1.0);
+            
             SupplyCurrentLimitConfiguration current = new SupplyCurrentLimitConfiguration();
             current.currentLimit = 20.0;
             motor.configSupplyCurrentLimit(current);
             return new TesterFalcon(name, motor);
         }
-        return new TesterNeo(name, Util.setUpMotor(new CANSparkMax(id, MotorType.kBrushless), false, true));
+        return new TesterNeo(name, Util.setUpMotor(new CANSparkMax(id, MotorType.kBrushless), inverted, true));
     }
     public void shoot(String height) {
-        run(height);
+        if(height == TargetHeights.FAR) {
+            run(TargetHeights.HIGH);
+        } else {
+            run(height);
+        }
         timestamp = -1.0;
     }
     public void stop(String height) {
         super.stop();
             soOne.set(false);
+            soTwo.set(true);
         
     }
     public void setup(String height) {
-        if(height != TargetHeights.INTAKE && soOne.get()) {
+        if(height != TargetHeights.INTAKE && soOne.get() && !soTwo.get()) {
             run(TargetHeights.INTAKE);
             if(timestamp == -1.0) {
                 timestamp = Timer.getFPGATimestamp();
@@ -73,9 +82,12 @@ public class Coner extends TesterSubsystem implements GenericShootIntake {
         if(!soOne.get()) {
             soOne.set(true);
         }
+        if(soTwo.get()) {
+            soTwo.set(false);
+        }
     }
     public boolean donePrepping(String height) {
-        return timestamp >= 0.0 && Timer.getFPGATimestamp() - timestamp >= 0.625 && soOne.get();
+        return timestamp >= 0.0 && Timer.getFPGATimestamp() - timestamp >= 0.625 && soOne.get() && !soTwo.get();
     }
     public SubsystemBase subsystem() {return this;}
     public final double getAngle() {
@@ -103,4 +115,38 @@ public class Coner extends TesterSubsystem implements GenericShootIntake {
         motors[0].run(ConerConstants.inOutVelocity * (in ? -1 : 1));
         motors[1].run(ConerConstants.inOutVelocity * (in ? 1 : -1));
     }
+
+    // CONSTANTS
+    private static final Map<String, TesterSetting[]> percents = Map.of(
+    TargetHeights.LOW, new TesterSetting[] {
+        new TesterSetting(0.30), new TesterSetting(0.87)
+    }, TargetHeights.MID, new TesterSetting[] {
+        new TesterSetting(0.11), new TesterSetting(0.45)//0.14, -0.36
+    }, TargetHeights.HIGH, new TesterSetting[] {
+        new TesterSetting(0.22), new TesterSetting(1.0)
+    }, TargetHeights.INTAKE, new TesterSetting[] {
+        new TesterSetting(-0.2), new TesterSetting(-0.2)
+    });
+
+    private static final Map<String, TesterSetting[]> neoVelocities = Map.of(
+    TargetHeights.LOW, new TesterSetting[] {
+        new TesterSetting(true, 2500.0), new TesterSetting(true, 2500.0)
+    }, TargetHeights.MID, new TesterSetting[] {
+        new TesterSetting(true, 2500.0), new TesterSetting(true, 2500.0)//0.14, -0.36
+    }, TargetHeights.HIGH, new TesterSetting[] {
+        new TesterSetting(true, 5000.0), new TesterSetting(true, 5000.0)
+    }, TargetHeights.INTAKE, new TesterSetting[] {
+        new TesterSetting(true, -2500.0), new TesterSetting(true, -2500.0)
+    });
+
+    private static final Map<String, TesterSetting[]> falconVelocities = Map.of(
+    TargetHeights.LOW, new TesterSetting[] {
+        new TesterSetting(true, 10000.0), new TesterSetting(true, 10000.0)
+    }, TargetHeights.MID, new TesterSetting[] {
+        new TesterSetting(true, 10000.0), new TesterSetting(true, 10000.0)//0.14, -0.36
+    }, TargetHeights.HIGH, new TesterSetting[] {
+        new TesterSetting(true, 20000.0), new TesterSetting(true, 20000.0)
+    }, TargetHeights.INTAKE, new TesterSetting[] {
+        new TesterSetting(true, -10000.0), new TesterSetting(true, -10000.0)
+    });
 }
