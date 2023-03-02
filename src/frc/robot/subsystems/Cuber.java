@@ -26,6 +26,7 @@ public class Cuber extends TesterSubsystem implements GenericShootIntake {
     private AnalogInput sensor;
     private Double startingPoint;
     private boolean velocity;
+    public double offset;
     public Cuber(PneumaticHub hub, boolean velocityControl) {
         super("Cube Shooter", new TesterMotor[] {
             new TesterNeo("Indexer", Util.setUpMotor(
@@ -36,6 +37,7 @@ public class Cuber extends TesterSubsystem implements GenericShootIntake {
             )).configurePID(CubeShooterConstants.upPID)
         }, velocityControl ? velocities : percents);
         startingPoint = null;
+        offset = 1;
         velocity = velocityControl;
         soOne = hub.makeSolenoid(Ports.cuberSolenoidA);
         soOne.set(false);
@@ -48,6 +50,14 @@ public class Cuber extends TesterSubsystem implements GenericShootIntake {
         main.addNumber("Cuber sensor", () -> getSensorValue()).withSize(1, 1).withPosition(2, 1);
         //main.addNumber("Backwards setpoint", () -> startingPoint == null ? 0.0 : startingPoint);
         main.addNumber("Cuber velocity", () -> motors[1].getVelocity());
+        ShuffleboardTab tab = Shuffleboard.getTab("Shot Selection");
+        tab.addBoolean("CUBE SENSOR MANUAL", () -> getSensorValue() < 400.0).withPosition(7, 3).withSize(1, 1);
+        for(int i = 0; i < 3; i++) {
+            int savedI = i;
+            tab.addBoolean("col " + i, () -> (offset == savedI))
+                .withSize(1, 1)
+                .withPosition(3 + i, 3);
+        }
     }
     public double getSensorValue() {
         return sensor.getValue();
@@ -61,12 +71,8 @@ public class Cuber extends TesterSubsystem implements GenericShootIntake {
             soOne.set(false);
            //soTwo.set(true);
         }
-        if(height == TargetHeights.FAR) {
-            this.setup(TargetHeights.INTAKE);
-            this.shoot(TargetHeights.INTAKE); // special setting
-        } else {
             super.stop();
-        }
+        
     }
     public SubsystemBase subsystem() {return this;}
     public void setup(String height) {
@@ -115,10 +121,10 @@ public class Cuber extends TesterSubsystem implements GenericShootIntake {
     }
     public double getOffset() {
         double val = getSensorValue();
-        if(val < CubeShooterConstants.sensorThresholdLeft) {
+        if((val < 400 && offset == 0) || val < CubeShooterConstants.sensorThresholdLeft) {
             return CubeShooterConstants.adjustmentLeft;
         }
-        if(val > CubeShooterConstants.sensorThresholdRight) {
+        if((val < 400 && offset == 2) || val > CubeShooterConstants.sensorThresholdRight) {
             return CubeShooterConstants.adjustmentRight;
         }
         return 0.0;
@@ -139,14 +145,14 @@ public class Cuber extends TesterSubsystem implements GenericShootIntake {
 
     private static final Map<String, TesterSetting[]> velocities = Map.of(
     TargetHeights.LOW, new TesterSetting[] {
-        new TesterSetting(1.0), new TesterSetting(true, 740.0)
+        new TesterSetting(1.0), new TesterSetting(true, 585.0)
     }, TargetHeights.MID, new TesterSetting[] {
-        new TesterSetting(1.0), new TesterSetting(true, 2223.0)//0.14, -0.36
+        new TesterSetting(1.0), new TesterSetting(true, 1755.0)//0.14, -0.36
     }, TargetHeights.HIGH, new TesterSetting[] {
-        new TesterSetting(1.0), new TesterSetting(true, 2622.0)
+        new TesterSetting(1.0), new TesterSetting(true, 2225.0)
     }, TargetHeights.INTAKE, new TesterSetting[] {
         new TesterSetting(-0.2), new TesterSetting(-0.55)
     }, TargetHeights.FAR, new TesterSetting[] {
-        new TesterSetting(1.0), new TesterSetting(true, 5650.0)
+        new TesterSetting(1.0), new TesterSetting(true, 4300.0)
     });
 }

@@ -1,6 +1,7 @@
 package frc.robot.commands;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.subsystems.Cuber;
 import frc.robot.subsystems.Swerve;
 import frc.robot.Util;
 import frc.robot.Constants.SwerveDriveConstants;
@@ -10,13 +11,14 @@ public class SwerveDrive extends CommandBase {
     private XboxController codriver;
     private Swerve drivetrain;
     private boolean letGo;
-
-    public SwerveDrive(Swerve drivetrain, XboxController _driver, XboxController _codriver){
+    private Cuber cuber;
+    public SwerveDrive(Swerve drivetrain, XboxController _driver, XboxController _codriver, Cuber cuber){
         driver = _driver;
         codriver = _codriver;
         this.drivetrain = drivetrain;
         addRequirements(drivetrain);
         letGo = true;
+        this.cuber = cuber;
     }
 
     public void initialize() {
@@ -30,6 +32,12 @@ public class SwerveDrive extends CommandBase {
             letGo = false;
             if((pov <= SwerveDriveConstants.dPadInputRange || pov >= 360 - SwerveDriveConstants.dPadInputRange) && drivetrain.currentHeight < 3) {
                 drivetrain.currentHeight++;
+            }
+            if(pov >= 90 - SwerveDriveConstants.dPadInputRange && pov <= 90 + SwerveDriveConstants.dPadInputRange && cuber.offset < 2) {
+                cuber.offset++;
+            }
+            if(pov >= 270 - SwerveDriveConstants.dPadInputRange && pov <= 270 + SwerveDriveConstants.dPadInputRange && cuber.offset > 0) {
+                cuber.offset--;
             }
             if(pov >= 180 - SwerveDriveConstants.dPadInputRange && pov <= 180 + SwerveDriveConstants.dPadInputRange && drivetrain.currentHeight > 0) {
                 drivetrain.currentHeight--;

@@ -6,6 +6,7 @@ import frc.robot.Util;
 import frc.robot.Constants.SwerveDriveConstants;
 import frc.robot.classes.RamseteOptions;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 
 public class RamseteSwerve extends CommandBase {
@@ -15,6 +16,7 @@ public class RamseteSwerve extends CommandBase {
     protected RamseteOptions options;
     protected Vision vision;
     private Alliance alliance;
+    private Timer timer;
     public RamseteSwerve(Swerve drivetrain, Vision vision, Pose2d goal, RamseteOptions options) {
         this.drivetrain = drivetrain;
         this.options = options;
@@ -22,12 +24,19 @@ public class RamseteSwerve extends CommandBase {
         this.vision = vision;
         isFinished = false;
         addRequirements(drivetrain);
+        if(options.time != 0.0) {
+            timer = new Timer();
+        }
     }
     public void initialize() {
         alliance = vision.team();
         System.out.println("initializing");
         if(options.teamRelative && vision.team() == Alliance.Red) {
-            this.goal = new Pose2d(-goal.getX(), -goal.getY(), goal.getRotation());
+            this.goal = new Pose2d(goal.getX(), -goal.getY(), goal.getRotation());
+        }
+        if(options.time != 0.0) {
+            timer.reset();
+            timer.start();
         }
     }
     public void execute() { 
@@ -66,7 +75,7 @@ public class RamseteSwerve extends CommandBase {
         //System.out.println("theta: ${DriveConstants.pTheta * (Math.PI / 180) * (target - theta)}");
         drivetrain.drive(dx , dy , dtheta, true, true);
 
-        isFinished = (options.preventDrive || (dx == 0 && dy == 0)) && dtheta == 0 && (!options.speedLimit || drivetrain.getAverageSpeed() < 0.1) && (options.turnToTag == -1 || vision.seesTag);
+        isFinished = (options.preventDrive || (dx == 0 && dy == 0)) && (dtheta == 0 || (options.time != 0.0 && timer.get() >= options.time)) && (!options.speedLimit || drivetrain.getAverageSpeed() < 0.1) && (options.turnToTag == -1 || vision.seesTag);
     }
     public boolean isFinished() {
         System.out.println("finished");
@@ -74,5 +83,8 @@ public class RamseteSwerve extends CommandBase {
     }
     public void end(boolean interrupted) {
         drivetrain.stop();
+        if(options.time != 0.0) {
+            timer.stop();
+        }
     }
 }

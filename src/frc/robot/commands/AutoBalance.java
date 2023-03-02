@@ -20,7 +20,7 @@ public class AutoBalance extends CommandBase {
         addRequirements(drivetrain);
     }
     public void initialize() {
-        hasShiftedBack = -2;
+        hasShiftedBack = -1;
         this.targetYaw = Math.round(drivetrain.angle() / 180.0) * 180.0;
         timer.reset();
         timer.start();
@@ -32,23 +32,23 @@ public class AutoBalance extends CommandBase {
         double pitchDiff = -Util.deadband(drivetrain.anglePitch(), SwerveDriveConstants.epsilonBalance);  //how far to get balanced
         double yawChange = -SwerveDriveConstants.yawBalanceController.calculate(yawDiff);
         double pitchChange = 0.0;
-        if(hasShiftedBack == -2) {
-            if(pitchDiff > -9) {
-                hasShiftedBack = -1;
-            }
-            pitchChange = -0.5;
-        }
-        if(hasShiftedBack == -1) {
-            if(pitchDiff < -11) {
+        // if(hasShiftedBack == -2) {
+        //     if(pitchDiff > -9) {
+        //         hasShiftedBack = -1;
+        //     }
+        //     pitchChange = -0.5;
+        // }
+        if(hasShiftedBack == -1) { // 9 and 14 degrees
+            if(Math.abs(pitchDiff) > 12.5) {
                 hasShiftedBack = 0;
             }
-            pitchChange = -0.5;
+            pitchChange = 0.5 * Math.signum(pitchDiff);
         }
         if(hasShiftedBack == 0) {
-            if(pitchDiff > -9) {
+            if(Math.abs(pitchDiff) < 11.5) {
                 hasShiftedBack = 3;
             }
-            pitchChange = -0.5;
+            pitchChange = 0.5 * Math.signum(pitchDiff);
         } 
         if(hasShiftedBack == 3) {
             if(Math.abs(pitchDiff) < 2.0) {

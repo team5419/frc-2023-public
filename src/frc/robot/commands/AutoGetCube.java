@@ -21,14 +21,14 @@ public class AutoGetCube extends SequentialCommandGroup {
                 cubeShooter.setup(TargetHeights.INTAKE);
                 cubeShooter.shoot(TargetHeights.INTAKE);
             }), 
-            new RamseteSwerve(drivetrain, vision, new Pose2d(cubePosition, Rotation2d.fromDegrees(180.0)), new RamseteOptions(maxSpeedOnFirst ? 2.0 : -1.0)), // drive back to second cube
+            new RamseteSwerve(drivetrain, vision, new Pose2d(cubePosition, Rotation2d.fromDegrees(180.0)), new RamseteOptions(true, false, false, 3.0, -1, maxSpeedOnFirst ? 2.0 : -1.0, 0.0)), // drive back to second cube
             Commands.runOnce(() -> { // pull up intake
                 cubeShooter.stop(TargetHeights.INTAKE);
                 //cubeShooter.shoot(TargetHeights.INTAKE);
             }),
             new ParallelRaceGroup( // spin up cube shooter and drive to shooting position
                 new Prep(cubeShooter, cubeShooter, drivetrain, TargetHeights.FAR),
-                new RamseteSwerve(drivetrain, vision, new Pose2d(shootPosition, new Rotation2d(0.0)), new RamseteOptions(/*aprilTagNumber*/))
+                new RamseteSwerve(drivetrain, vision, new Pose2d(shootPosition, new Rotation2d(0.0)), new RamseteOptions(true, false, false, 3.0, aprilTagNumber, -1.0, 4.0))
             ),
             new Shoot(cubeShooter, cubeShooter, drivetrain, 1.25, TargetHeights.FAR, lights) // shoot
         );

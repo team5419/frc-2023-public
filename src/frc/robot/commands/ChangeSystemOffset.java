@@ -1,0 +1,35 @@
+package frc.robot.commands;
+
+import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.Constants.TargetHeights;
+import frc.robot.subsystems.Coner;
+import frc.robot.subsystems.Cuber;
+import frc.robot.subsystems.GenericShootIntake;
+import frc.robot.subsystems.Swerve;
+import frc.robot.subsystems.test.TesterSubsystem;
+
+public class ChangeSystemOffset extends CommandBase {
+    private int num;
+    private double change;
+    private Cuber cuber;
+    private GenericShootIntake coner;
+    private Swerve swerve;
+    public ChangeSystemOffset(int num, double change, Cuber cuber, GenericShootIntake coner, Swerve swerve) {
+        this.num = num;
+        this.change = change;
+        this.cuber = cuber;
+        this.coner= coner;
+        this.swerve = swerve;
+    }
+    public void initialize() {
+        TesterSubsystem system = cuber;
+		if(coner instanceof Coner && swerve.usingCones) {
+			system = (Coner)coner;
+		}
+		system.changeMotorOffset(TargetHeights.heights[swerve.currentHeight], num, change);
+    }
+    public boolean isFinished() {
+        return true;
+    }
+}

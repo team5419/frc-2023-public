@@ -49,10 +49,11 @@ public class Swerve extends SubsystemBase { // our swerve drive subsystem
         }
         slowMode = false; // slow mode starts off
         previousMove = new ChassisSpeeds(); // the last chassisspeeds were zero
+        
         if(pigeon) { // if the gyro is used, set it up and set it to zero
             gyro = new Pigeon2(Ports.gyro);
             gyro.configFactoryDefault(100);
-            gyro.configMountPose(90.0, 0.0, -1.7); // this configures our gyro pose so that we can read the pitch value
+            gyro.configMountPose(90.0, 0.0, -2.4); // this configures our gyro pose so that we can read the pitch value
             gyro.setYaw(0.0);
         } else {
             gyro = null;
@@ -97,6 +98,7 @@ public class Swerve extends SubsystemBase { // our swerve drive subsystem
         .withSize(2, 1).withPosition(6, 0);
 
         selectionTab.addBoolean("Auto Shoot", () -> autoShoot).withSize(2, 1).withPosition(6, 1);
+        selectionTab.addBoolean("Thinks is aligning", () -> isAligning != AlignState.NOT).withPosition(9, 3).withSize(1, 1);
     }
     private SwerveModulePosition[] getPositions() { // get the total lengths driven by each module as an array
         SwerveModulePosition[] arr = new SwerveModulePosition[drivers.length];

@@ -17,13 +17,13 @@ public class Constants {
         LOW_CONER, EVERYBOT_MOTORS, EVERYBOT_SUCTION
     }
     public static final class AutoConstants { // all relative to where you start, where positive y and positive x are towards the charge station
-        public static final Translation2d firstCube = new Translation2d(4.2, 0.35); // 0.5
+        public static final Translation2d firstCube = new Translation2d(4.4, 0.35); // 0.5
         public static final Translation2d firstShot = new Translation2d(2.9, 0.3); // 0.5
-        public static final Translation2d firstShotShortSide = new Translation2d(2.95, 0.75); // 1.05
+        public static final Translation2d firstShotShortSide = new Translation2d(2.95, 0.6); // 1.05
         public static final Translation2d preSecondCube = new Translation2d(3.4, 1.45);
         public static final Translation2d secondCube = new Translation2d(4.3, 1.45); // 1.5
         public static final Translation2d secondShot = new Translation2d(3.1, 1.95); // 2.25
-        public static final Translation2d preBalancePosition = new Translation2d(2.7, 1.95); // 2.25
+        public static final Translation2d preBalancePosition = new Translation2d(2.4, 1.95); // 2.25
     }
     public static final class TargetHeights { // these need to be stored as strings for shuffleboard
         public static final String LOW = "LOW";
@@ -46,8 +46,8 @@ public class Constants {
         public static final Map<String, Double> measuredVelocities = Map.of(TargetHeights.LOW, 0.0, TargetHeights.MID, 1550.0, TargetHeights.HIGH, 1900.0, TargetHeights.INTAKE, 0.0, TargetHeights.FAR, 1770.0);
 
         public static final double indexerSlowBackwardsSpeed = -0.05;
-        public static final double sensorThresholdLeft = 760.0;
-        public static final double sensorThresholdRight = 1640.0;
+        public static final double sensorThresholdLeft = 880.0;
+        public static final double sensorThresholdRight = 2170.0;
 
         public static final double adjustmentLeft = 0.15;
         public static final double adjustmentRight = -0.15;
@@ -130,7 +130,7 @@ public class Constants {
         public static final double lowTargetHeight = 0.6096;
         public static final double cameraAngle = 26.0;
         public static final double cameraHeight = 0.3048;
-        public static final PIDController horizontalPID = new PIDController(0.12, 0.0, 0.0); // .08
+        public static final PIDController horizontalPID = new PIDController(0.095, 0.0, 0.0); // .08
         public static final PIDController turnPID = new PIDController(0.03, 0.0, 0.0);
         public static final PIDController forwardPID = new PIDController(9.0, 0.0, 0.0);
         public static final double desiredAngle = 180.0;
@@ -198,7 +198,7 @@ public class Constants {
         public static final int suctionMotor = 22;
         public static final int cuberSolenoidA = 7;
         public static final int cuberSolenoidB = 0;
-        public static final int conerSolenoidA = 0;
+        public static final int conerSolenoidA = 2;
         public static final int conerSolenoidB = 1;
         public static final int solenoidC = 1;
 

@@ -37,7 +37,7 @@ public class Coner extends TesterSubsystem implements GenericShootIntake {
         soOne = hub.makeSolenoid(Ports.conerSolenoidA);
         soTwo = hub.makeSolenoid(Ports.conerSolenoidB);
         soOne.set(false);
-        soTwo.set(false);
+        soTwo.set(true);
         timestamp = -1.0;
     }
     public static TesterMotor generateTesterMotor(String name, boolean falcons, int id, boolean pro, boolean inverted) {
@@ -121,7 +121,7 @@ public class Coner extends TesterSubsystem implements GenericShootIntake {
     TargetHeights.LOW, new TesterSetting[] {
         new TesterSetting(0.30), new TesterSetting(0.87)
     }, TargetHeights.MID, new TesterSetting[] {
-        new TesterSetting(0.11), new TesterSetting(0.45)//0.14, -0.36
+        new TesterSetting(0.11), new TesterSetting(0.445)//0.14, -0.36
     }, TargetHeights.HIGH, new TesterSetting[] {
         new TesterSetting(0.22), new TesterSetting(1.0)
     }, TargetHeights.INTAKE, new TesterSetting[] {

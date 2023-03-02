@@ -48,7 +48,8 @@ public class AutoAlign extends CommandBase {
         double forwardDiff = Util.deadband( distance - LimelightConstants.desiredDistance - vision.getHorizontalDistance(), LimelightConstants.epsilonForward); //how far forward to go
         //System.out.println("turn diff, " + turnDiff + " left diff, " + leftDiff + " forward diff, " + forwardDiff);
         double forward = LimelightConstants.forwardPID.calculate(forwardDiff);
-        if(!vision.isTargetFound()) {
+        boolean found = vision.isTargetFound();
+        if(!found) {
             leftDiff = 0.0;
             forwardDiff = 0.0;
             left = 0.0;
@@ -58,9 +59,9 @@ public class AutoAlign extends CommandBase {
         }
         drivetrain.drive(forward , -left , -turn, false, true);
 
-        if(turnDiff == 0.0 && leftDiff == 0.0 && forwardDiff == 0.0) {
+        if(turnDiff == 0.0 && leftDiff == 0.0 && forwardDiff == 0.0 && found) {
             lights.setColor(0, 255, 0);
-            if(drivetrain.getAverageSpeed() <= 0.15) {
+            if(drivetrain.getAverageSpeed() <= 0.08) {
                 isFinished = true;
             }
         } else {

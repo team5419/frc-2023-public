@@ -5,6 +5,9 @@ import frc.robot.Constants.TargetHeights;
 import frc.robot.auto.*;
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
+import frc.robot.subsystems.test.TesterSubsystem;
+import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.PneumaticHub;
 import edu.wpi.first.wpilibj.PowerDistribution;
@@ -12,9 +15,12 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.shuffleboard.SuppliedValueWidget;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 
 public class RobotContainer {
@@ -31,8 +37,10 @@ public class RobotContainer {
 	private EverybotArm arm;
 	private PneumaticHub hub;
 	public Lights lights;
+	private GenericEntry autoEntry;
 
 	public RobotContainer(ShuffleboardTab tab) {
+		
 		driver = new XboxController(0);
 		codriver = new XboxController(1);
 		vision = new Vision(tab, true, true);
@@ -60,11 +68,24 @@ public class RobotContainer {
 		autoSelector = new SendableChooser<SequentialCommandGroup>();
 		tab.add("Auto selector", autoSelector).withSize(2, 1).withPosition(0, 0);
 		autoSelector.setDefaultOption("Baseline", new Baseline());
+		autoSelector.addOption("Use String Input", null);
 		autoSelector.addOption("Two Cube Balance", new TwoCubeBalance(swerve, vision, coner, cuber, false, lights));
 		autoSelector.addOption("Two Cube Balance, Short Side", new TwoCubeBalance(swerve, vision, coner, cuber, true, lights));
 		autoSelector.addOption("Systems Check", new SystemsCheck(swerve, cuber, coner, lights));
+
+		autoSelector.addOption("Preload only", new PreloadOnly(swerve, vision, coner, cuber, false, lights));
+
+		autoSelector.addOption("First Cube Only", new FirstCubeOnly(swerve, vision, coner, cuber, false, lights));
+		autoSelector.addOption("First Cube Only, Short Side", new FirstCubeOnly(swerve, vision, coner, cuber, true, lights));
+		autoSelector.addOption("Charge Station Back", new ChargeStationBack(swerve, vision, coner, cuber, false, lights));
+		autoSelector.addOption("Charge Station Only", new ChargeOnly(swerve, vision, coner, cuber, false, lights));
 		configureButtonBindings();
 		setDefaults();
+
+		autoEntry = tab.add("Auto input", "")
+            .withPosition(0, 1)
+            .withSize(2, 1)
+            .getEntry();
 	}
 
 	private EverybotArm generateArm() {
@@ -143,35 +164,19 @@ public class RobotContainer {
 		leftTrigger.whileTrue(new RunIntake(coner));
 		rightTrigger.whileTrue(new RunIntake(cuber));
 		rightTriggerCodriver.whileTrue(Commands.runEnd(() -> cuber.shoot(TargetHeights.INTAKE), () -> cuber.stop(TargetHeights.LOW), cuber.subsystem()));
-		//bButtonDriver.onTrue(new Balance(swerve, driver));
-		// aButtonCodriver.toggleOnTrue(Commands.runOnce(() -> swerve.brake()));
-		// aButtonCodriver.onTrue(Commands.runOnce(() -> {
-		// 	TesterSetting setting = (swerve.usingCones ? ConerConstants.percents : CubeShooterConstants.percents).get(TargetHeights.heights[swerve.currentHeight]);
-		// 	setting.setValueManually(1, setting.getValueManually(0) - 0.005);
-		// }));
-		//aButtonCodriver.whileTrue(new AutoBalance(swerve, lights));
-		aButtonCodriver.onTrue(Commands.runOnce(() -> {
-			if(coner instanceof Coner) {
-				((Coner)coner).changeMotorOffset(TargetHeights.heights[swerve.currentHeight], 1, -0.005);
-			}
-		}));
-		yButtonCodriver.onTrue(Commands.runOnce(() -> {
-			if(coner instanceof Coner) {
-				((Coner)coner).changeMotorOffset(TargetHeights.heights[swerve.currentHeight], 1, 0.005);
-			}
-		}));
-		xButtonCodriver.onTrue(Commands.runOnce(() -> {
-			cuber.changeMotorOffset(TargetHeights.heights[swerve.currentHeight], 0, 0.005);
-		}));
-		bButtonCodriver.onTrue(Commands.runOnce(() -> {
-			cuber.changeMotorOffset(TargetHeights.heights[swerve.currentHeight], 0, -0.005);
-		}));
-
+		aButtonCodriver.onTrue(new ChangeSystemOffset(1, -0.005, cuber, coner, swerve));
+		yButtonCodriver.onTrue(new ChangeSystemOffset(1, 0.005, cuber, coner, swerve));
+		xButtonCodriver.onTrue(new ChangeSystemOffset(0, 0.005, cuber, coner, swerve));
+		bButtonCodriver.onTrue(new ChangeSystemOffset(0, -0.005, cuber, coner, swerve));
 		leftBumperCodriver.onTrue(Commands.runOnce(() -> swerve.autoShoot = !swerve.autoShoot));
 	}
 
 	public Command getAutonomousCommand() {
-		return autoSelector.getSelected();
+		SequentialCommandGroup res = autoSelector.getSelected();
+		if(res == null) {
+			return new AutoBuilder(autoEntry.getString("P"), swerve, vision, coner, cuber, lights);
+		}
+		return res;
 	}
 
 	public void useVision(boolean use) {
@@ -182,7 +187,7 @@ public class RobotContainer {
 	}
 
 	private void setDefaults() {
-		swerve.setDefaultCommand(new SwerveDrive(swerve, driver, codriver));
+		swerve.setDefaultCommand(new SwerveDrive(swerve, driver, codriver, cuber));
 		if(arm != null) {
 			arm.setDefaultCommand(new ManualMoveArm(arm, codriver));
 		}
