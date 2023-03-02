@@ -134,14 +134,14 @@ public class RobotContainer {
 		
 
 		
-		Trigger alignControllerOff = new Trigger(() -> (driver.getLeftX() < SwerveDriveConstants.controllerDeadband && 
+		Trigger alignControllerOff = new Trigger(() -> swerve.isAligning == Swerve.AlignState.CONTROLLERON && (driver.getLeftX() < SwerveDriveConstants.controllerDeadband && 
 				driver.getLeftY() < SwerveDriveConstants.controllerDeadband &&
 				driver.getRightX() < SwerveDriveConstants.controllerDeadband &&
-				driver.getRightY() < SwerveDriveConstants.controllerDeadband) && swerve.isAligning == Swerve.AlignState.CONTROLLERON);
-		Trigger endAlign = new Trigger(() -> (driver.getLeftX() > SwerveDriveConstants.controllerDeadband || 
+				driver.getRightY() < SwerveDriveConstants.controllerDeadband));
+		Trigger endAlign = new Trigger(() -> swerve.isAligning == Swerve.AlignState.CONTROLLEROFF && (driver.getLeftX() > SwerveDriveConstants.controllerDeadband || 
 									driver.getLeftY() > SwerveDriveConstants.controllerDeadband || 
 									driver.getRightX() > SwerveDriveConstants.controllerDeadband || 
-									driver.getRightY() > SwerveDriveConstants.controllerDeadband) && swerve.isAligning == Swerve.AlignState.CONTROLLEROFF);
+									driver.getRightY() > SwerveDriveConstants.controllerDeadband));
 		endAlign.onTrue(Commands.runOnce(() -> {
 			swerve.isAligning = Swerve.AlignState.NOT; // cancel align
 		}, swerve));

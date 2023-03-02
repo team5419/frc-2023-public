@@ -39,7 +39,7 @@ public class TwoCubeBalance extends SequentialCommandGroup { // basic routine fo
             new RamseteSwerve(drivetrain, vision, new Pose2d(createTranslation(new Translation2d(3.8, 0.35), multiplier), Rotation2d.fromDegrees(180.0)), new RamseteOptions(true, false, false, 4.0, -1, _short ? -1.0 : 2.0, 0.0)),
             new AutoGetCube(drivetrain, cubeShooter, vision, createTranslation(AutoConstants.firstCube, multiplier), createTranslation(_short ? AutoConstants.firstShotShortSide : AutoConstants.firstShot, multiplier), _short ? 3 : 1, lights, !_short),
             new RamseteSwerve(drivetrain, vision, new Pose2d(createTranslation(new Translation2d(3.4, 1.95), multiplier), Rotation2d.fromDegrees(180.0)), new RamseteOptions(false, 6.0)),
-            //new AutoGetCube(drivetrain, cubeShooter, vision, createTranslation(AutoConstants.secondCube, multiplier), createTranslation(AutoConstants.secondShot, multiplier), 2, lights, false),
+            new AutoGetCube(drivetrain, cubeShooter, vision, createTranslation(AutoConstants.secondCube, multiplier), createTranslation(AutoConstants.secondShot, multiplier), 2, lights, false),
             Commands.runOnce(() -> {
                 cubeShooter.stop(TargetHeights.INTAKE);
             }),
