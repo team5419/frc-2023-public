@@ -31,6 +31,7 @@ public class PreloadOnly extends SequentialCommandGroup { // basic routine for d
                 drivetrain.usingCones = false; // just to set lights to purple :)))
                 coneShooter.setup(TargetHeights.INTAKE);
                 drivetrain.currentHeight = 1;
+                cubeShooter.setup(TargetHeights.INTAKE);
             }),
             new Shoot(coneShooter, coneShooter, drivetrain, 1.0, lights), // shoot pre-load cone and retract cone intake
             Commands.runOnce(() -> { // drop cube intake and start spinning intake

@@ -168,20 +168,20 @@ public class Vision extends SubsystemBase { // this keeps track of our limelight
     }
 
     public double getHorizontalOffset() { // in settings, make sure limelight is filtering for lowest target closest to the middle
-        double val = limelight == null ? -100.0 : limelight.getEntry("tx").getDouble(-100.0);
-        if(val == -100.0) {
+        double val = limelight == null ? 0.0 : limelight.getEntry("tx").getDouble(0.0);
+        if(!isTargetFound()) {
             return previousLimelightHorizontal;
         }
-        previousLimelightHorizontal = 0.8 * previousLimelightHorizontal + 0.2 * val;
+        previousLimelightHorizontal = 0.65 * previousLimelightHorizontal + 0.35 * val;
         return previousLimelightHorizontal;
     }
 
     public double getVerticalOffset() {
-        double val = limelight == null ? -100.0 : limelight.getEntry("ty").getDouble(-100.0);
-        if(val == -100.0) {
+        double val = limelight == null ? 0.0 : limelight.getEntry("ty").getDouble(0.0);
+        if(!isTargetFound()) {
             return previousLimelightVertical;
         }
-        previousLimelightVertical = 0.8 * previousLimelightVertical + 0.2 * val;
+        previousLimelightVertical = 0.65 * previousLimelightVertical + 0.35 * val;
         return previousLimelightVertical;
     }
 
@@ -198,7 +198,7 @@ public class Vision extends SubsystemBase { // this keeps track of our limelight
 
     // check if the limelight is picking up on the target
     public boolean isTargetFound() {
-        return limelight != null && limelight.getEntry("tv").getDouble(0.0) > 0.0 && getVerticalOffset() != 0.0;
+        return limelight != null && limelight.getEntry("tv").getDouble(0.0) > 0.0;
     }
 
     public void on() {
@@ -212,7 +212,7 @@ public class Vision extends SubsystemBase { // this keeps track of our limelight
         if(limelight == null) {
             return;
         }
-        limelight.getEntry("ledMode").setNumber(1);
+        limelight.getEntry("ledMode").setNumber(3);
     }
 
     public Alliance team() {

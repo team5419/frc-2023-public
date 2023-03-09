@@ -135,6 +135,7 @@ public class Swerve extends SubsystemBase { // our swerve drive subsystem
         }
     }
     public void drive(double forward, double left, double rotation, boolean fieldCentric, boolean pid) {
+        System.out.println("driving: " + forward + ", " + left + ", " + rotation);
         // drive the robot at a certain speed forward, a certain speed to the left, and rotating at a certain speed
         // if fieldCentric is false, this will drive forward/left from the perspective of the robot. otherwise, it uses the perspective of the field
         // if pid is true, it will use more accurate and brake-y control for the drive motors. this is true for auto but false for regular driving

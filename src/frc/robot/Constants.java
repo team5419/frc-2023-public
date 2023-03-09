@@ -17,7 +17,7 @@ public class Constants {
         LOW_CONER, EVERYBOT_MOTORS, EVERYBOT_SUCTION
     }
     public static final class AutoConstants { // all relative to where you start, where positive y and positive x are towards the charge station
-        public static final Translation2d firstCube = new Translation2d(4.4, 0.35); // 0.5
+        public static final Translation2d firstCube = new Translation2d(4.3, 0.35); // 0.5
         public static final Translation2d firstShot = new Translation2d(2.9, 0.3); // 0.5
         public static final Translation2d firstShotShortSide = new Translation2d(2.95, 0.6); // 1.05
         public static final Translation2d preSecondCube = new Translation2d(3.4, 1.45);
@@ -128,17 +128,17 @@ public class Constants {
     }
     public static final class LimelightConstants {
         public static final double lowTargetHeight = 0.6096;
-        public static final double cameraAngle = 26.0;
+        public static final double cameraAngle = 18.0;
         public static final double cameraHeight = 0.3048;
-        public static final PIDController horizontalPID = new PIDController(0.095, 0.0, 0.0); // .08
+        public static final PIDController horizontalPID = new PIDController(0.085, 0.0, 0.0); // .08
         public static final PIDController turnPID = new PIDController(0.03, 0.0, 0.0);
-        public static final PIDController forwardPID = new PIDController(9.0, 0.0, 0.0);
+        public static final PIDController forwardPID = new PIDController(15.0, 0.0, 0.0); // 10.0
         public static final double desiredAngle = 180.0;
         public static final double desiredDistance = 0.0;
-        public static final double horizontalOffset = 3.0;
+        public static final double horizontalOffset = 1.5;
         public static final double epsilonTurn = 1.0;
         public static final double epsilonHorizontal = 0.5;
-        public static final double epsilonForward = 0.01;
+        public static final double epsilonForward = 0.008; // .005
     }
     public static final class AprilTagConstants {
 
@@ -198,8 +198,8 @@ public class Constants {
         public static final int suctionMotor = 22;
         public static final int cuberSolenoidA = 7;
         public static final int cuberSolenoidB = 0;
-        public static final int conerSolenoidA = 2;
-        public static final int conerSolenoidB = 1;
+        public static final int conerSolenoidA = 4;
+        public static final int conerSolenoidB = 5;
         public static final int solenoidC = 1;
 
         public static final int cuberSensor = 3;

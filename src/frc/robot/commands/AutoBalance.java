@@ -54,10 +54,14 @@ public class AutoBalance extends CommandBase {
             if(Math.abs(pitchDiff) < 2.0) {
                 pitchChange = Math.signum(pitchDiff) * 0.075;
             } else {
-                pitchChange = pitchDiff * 0.0035;
+                pitchChange = pitchDiff * 0.012;
             }
         }
+        if(targetYaw % 360.0 == 0.0) {
+            pitchChange *= -1.0;
+        }
         System.out.println(hasShiftedBack);
+        System.out.println(targetYaw);
         drivetrain.drive(pitchChange, 0.0, yawChange, false, true);
     }
     public boolean isFinished() {

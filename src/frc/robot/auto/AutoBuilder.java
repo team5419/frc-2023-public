@@ -34,12 +34,16 @@ public class AutoBuilder extends SequentialCommandGroup {
             start = 1;
         }
         double multiplier = shor ? -1.0 : 1.0;
+        boolean gettingCube = input.contains("1");
         addCommands(new UseVision(drivetrain, false), // disable vision
         Commands.runOnce(() -> { // reset position and drop cone intake
             drivetrain.resetGyro(180.0);
             drivetrain.usingCones = false; // just to set lights to purple :)))
             coneShooter.setup(TargetHeights.INTAKE);
             drivetrain.currentHeight = 1;
+            if(gettingCube) {
+                cubeShooter.setup(TargetHeights.INTAKE);
+            }
         }));
         boolean hasGoneToTwo = false;
         for(int i = start; i < input.length(); i++) {

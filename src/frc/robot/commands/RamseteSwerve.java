@@ -69,6 +69,8 @@ public class RamseteSwerve extends CommandBase {
             dx *= (max / magnitude); // straight line ? idk
             dy *= (max / magnitude);
         }
+        // System.out.println(max);
+        // System.out.println(options.maxSpeed);
 
         double dtheta = 1 * SwerveDriveConstants.pTheta * (Math.PI / 180.0) * Util.deadband(thetaDiff, SwerveDriveConstants.epsilonTheta * options.epsilonMultiplier);
         //System.out.println(dtheta);

@@ -6,6 +6,7 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.PneumaticHub;
+import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -27,7 +28,7 @@ public class Cuber extends TesterSubsystem implements GenericShootIntake {
     private Double startingPoint;
     private boolean velocity;
     public double offset;
-    public Cuber(PneumaticHub hub, boolean velocityControl) {
+    public Cuber(boolean velocityControl) {
         super("Cube Shooter", new TesterMotor[] {
             new TesterNeo("Indexer", Util.setUpMotor(
                 new CANSparkMax(Ports.indexer, MotorType.kBrushless), false, true
@@ -39,7 +40,8 @@ public class Cuber extends TesterSubsystem implements GenericShootIntake {
         startingPoint = null;
         offset = 1;
         velocity = velocityControl;
-        soOne = hub.makeSolenoid(Ports.cuberSolenoidA);
+        soOne = new Solenoid(PneumaticsModuleType.CTREPCM, Ports.cuberSolenoidA);
+        //soOne = hub.makeSolenoid(Ports.cuberSolenoidA);
         soOne.set(false);
         //soTwo = hub.makeSolenoid(Ports.cuberSolenoidB);
         //soTwo.set(false);
@@ -68,7 +70,7 @@ public class Cuber extends TesterSubsystem implements GenericShootIntake {
     }
     public void stop(String height) {
         if(height == TargetHeights.INTAKE) {
-            soOne.set(false);
+            //soOne.set(false);
            //soTwo.set(true);
         }
             super.stop();
@@ -78,7 +80,7 @@ public class Cuber extends TesterSubsystem implements GenericShootIntake {
     public void setup(String height) {
         System.out.println("prep");
         if(height == TargetHeights.INTAKE) {
-            soOne.set(true);
+            //soOne.set(true);
             //soTwo.set(false);
         } else {
             //double pos = motors[0].getPosition();
@@ -94,7 +96,7 @@ public class Cuber extends TesterSubsystem implements GenericShootIntake {
         }
     }
     public boolean donePrepping(String height) {
-        return velocity ? (Math.abs(motors[1].getVelocity() - velocities.get(height)[1].getSetpoint()) <= 50.0)
+        return velocity ? (Math.abs(motors[1].getVelocity() - velocities.get(height)[1].getSetpoint()) <= 125.0)
         : (motors[1].getVelocity() >= CubeShooterConstants.measuredVelocities.get(height));
     }
     public void periodic() {
@@ -120,11 +122,11 @@ public class Cuber extends TesterSubsystem implements GenericShootIntake {
         return -1.0;
     }
     public double getOffset() {
-        double val = getSensorValue();
-        if((val < 400 && offset == 0) || val < CubeShooterConstants.sensorThresholdLeft) {
+        //double val = getSensorValue();
+        if(/*(val < 400 && offset == 0) || val < CubeShooterConstants.sensorThresholdLeft*/offset == 0) {
             return CubeShooterConstants.adjustmentLeft;
         }
-        if((val < 400 && offset == 2) || val > CubeShooterConstants.sensorThresholdRight) {
+        if(/*(val < 400 && offset == 2) || val > CubeShooterConstants.sensorThresholdRight*/offset == 2) {
             return CubeShooterConstants.adjustmentRight;
         }
         return 0.0;
@@ -153,6 +155,6 @@ public class Cuber extends TesterSubsystem implements GenericShootIntake {
     }, TargetHeights.INTAKE, new TesterSetting[] {
         new TesterSetting(-0.2), new TesterSetting(-0.55)
     }, TargetHeights.FAR, new TesterSetting[] {
-        new TesterSetting(1.0), new TesterSetting(true, 4300.0)
+        new TesterSetting(1.0), new TesterSetting(true, 4000.0)
     });
 }

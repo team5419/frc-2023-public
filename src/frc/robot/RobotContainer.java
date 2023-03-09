@@ -10,6 +10,8 @@ import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.PneumaticHub;
+import edu.wpi.first.wpilibj.PneumaticsBase;
+import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
@@ -35,7 +37,7 @@ public class RobotContainer {
 	private XboxController codriver;
 	private GenericShootIntake coner;
 	private EverybotArm arm;
-	private PneumaticHub hub;
+	private boolean madeHub;
 	public Lights lights;
 	private GenericEntry autoEntry;
 
@@ -44,13 +46,16 @@ public class RobotContainer {
 		driver = new XboxController(0);
 		codriver = new XboxController(1);
 		vision = new Vision(tab, true, true);
+		swerve = new Swerve(vision, true); /* CHOOSE ONE!!! */
 		arm = null; 
-		hub = null;
+		madeHub = false;
 		coner = null;
-		cuber = new Cuber(generateHub(), true);
+		generateHub();
+		cuber = new Cuber(true);
 		switch(CONER_TYPE) {
 			case LOW_CONER:
-				coner = new Coner(generateHub(), true, false);
+			generateHub();
+				coner = new Coner(true, false, swerve, vision);
 				break;
 			case EVERYBOT_MOTORS:
 				coner = new EverybotConer(generateArm(), false);
@@ -61,7 +66,7 @@ public class RobotContainer {
 		}
 		
 	
-		swerve = new Swerve(vision, true); /* CHOOSE ONE!!! */
+		
 		//drivetrain = new Drivetrain(); /* ^^^ */
 		lights = new Lights();
 	
@@ -101,16 +106,23 @@ public class RobotContainer {
 		}
 	}
 
-	private PneumaticHub generateHub() {
-		if(hub == null) {
-			PowerDistribution dist = new PowerDistribution(1, ModuleType.kRev);
-			dist.setSwitchableChannel(true);
-			dist.close();
-			hub = new PneumaticHub();
-			Compressor compressor = hub.makeCompressor();
+	private void generateHub() {
+		if(!madeHub) {
+			Compressor compressor = new Compressor(PneumaticsModuleType.CTREPCM);
 			compressor.enableDigital();
+			madeHub = true;
 		}
-		return hub;
+		
+		// if(hub == null) {
+		// 	PowerDistribution dist = new PowerDistribution(1, ModuleType.kRev);
+		// 	dist.setSwitchableChannel(true);
+		// 	dist.close();
+		// 	hub = new PneumaticHub();
+			
+		// 	Compressor compressor = hub.makeCompressor();
+		// 	compressor.enableDigital();
+		// }
+		// return hub;
 	}
   
 	private void configureButtonBindings() {
@@ -132,7 +144,9 @@ public class RobotContainer {
 		Trigger rightTriggerCodriver = new Trigger(() -> codriver.getRightTriggerAxis() > SwerveDriveConstants.triggerDeadband);
 		Trigger leftTriggerCodriver = new Trigger(() -> codriver.getLeftTriggerAxis() > SwerveDriveConstants.triggerDeadband);
 		
-
+// 		 Trigger leftStickPressCodriver = new Trigger(() -> codriver.getLeftStickButton());
+// leftStickPressCodriver.onTrue(new AutoAlign(swerve, coner, vision, 1.0, lights, 1.0 ));
+		// leftStickPressCodriver.onTrue(new ResetGyro(swerve, 180.0));
 		
 		Trigger alignControllerOff = new Trigger(() -> swerve.isAligning == Swerve.AlignState.CONTROLLERON && (driver.getLeftX() < SwerveDriveConstants.controllerDeadband && 
 				driver.getLeftY() < SwerveDriveConstants.controllerDeadband &&
@@ -164,10 +178,10 @@ public class RobotContainer {
 		leftTrigger.whileTrue(new RunIntake(coner));
 		rightTrigger.whileTrue(new RunIntake(cuber));
 		rightTriggerCodriver.whileTrue(Commands.runEnd(() -> cuber.shoot(TargetHeights.INTAKE), () -> cuber.stop(TargetHeights.LOW), cuber.subsystem()));
-		aButtonCodriver.onTrue(new ChangeSystemOffset(1, -0.005, cuber, coner, swerve));
-		yButtonCodriver.onTrue(new ChangeSystemOffset(1, 0.005, cuber, coner, swerve));
-		xButtonCodriver.onTrue(new ChangeSystemOffset(0, 0.005, cuber, coner, swerve));
-		bButtonCodriver.onTrue(new ChangeSystemOffset(0, -0.005, cuber, coner, swerve));
+		aButtonCodriver.onTrue(new ChangeSystemOffset(1, -0.0025, cuber, coner, swerve));
+		yButtonCodriver.onTrue(new ChangeSystemOffset(1, 0.0025, cuber, coner, swerve));
+		xButtonCodriver.onTrue(new ChangeSystemOffset(0, 0.0025, cuber, coner, swerve));
+		bButtonCodriver.onTrue(new ChangeSystemOffset(0, -0.0025, cuber, coner, swerve));
 		leftBumperCodriver.onTrue(Commands.runOnce(() -> swerve.autoShoot = !swerve.autoShoot));
 	}
 

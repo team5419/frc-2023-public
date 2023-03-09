@@ -18,6 +18,7 @@ public class AutoAlign extends CommandBase {
     private boolean isFinished;
     private Timer timer;
     private double time;
+    private boolean secondPhase;
     public AutoAlign(Swerve drivetrain, GenericShootIntake shooter, Vision vision, double distance, int height, Lights lights, double timeLimit) {
         this.drivetrain = drivetrain;
         this.vision = vision;
@@ -26,11 +27,13 @@ public class AutoAlign extends CommandBase {
         this.shooter = shooter;
         this.height = height;
         this.lights = lights;
+        this.secondPhase = false;
         isFinished = false;
         addRequirements(drivetrain, shooter.subsystem());
         this.timer = new Timer();
     }
     public void initialize() {
+        secondPhase = false;
         isFinished = false;
         vision.on();
         if(time != 0.0) {
@@ -39,6 +42,9 @@ public class AutoAlign extends CommandBase {
         }
     }
     public void execute() {
+        if(secondPhase) {
+            return;
+        }
         double theta = drivetrain.angle();
         double target = Math.round((theta - LimelightConstants.desiredAngle) / 360.0) * 360.0 + LimelightConstants.desiredAngle;
         double turnDiff = Util.deadband(target - drivetrain.angle(), LimelightConstants.epsilonTurn); //calculates how many degrees to turn
@@ -49,19 +55,15 @@ public class AutoAlign extends CommandBase {
         //System.out.println("turn diff, " + turnDiff + " left diff, " + leftDiff + " forward diff, " + forwardDiff);
         double forward = LimelightConstants.forwardPID.calculate(forwardDiff);
         boolean found = vision.isTargetFound();
-        if(!found) {
-            leftDiff = 0.0;
-            forwardDiff = 0.0;
-            left = 0.0;
-            forward = 0.0;
-        } else if(Math.abs(forwardDiff) < 0.2) {
+        if(found && Math.abs(forwardDiff) < 0.2) {
             shooter.setup(TargetHeights.heights[height]);
         }
-        drivetrain.drive(forward , -left , -turn, false, true);
-
+        if(found) {
+            drivetrain.drive(forward , -left , -turn, false, true);
+        }
         if(turnDiff == 0.0 && leftDiff == 0.0 && forwardDiff == 0.0 && found) {
             lights.setColor(0, 255, 0);
-            if(drivetrain.getAverageSpeed() <= 0.08) {
+            if(drivetrain.getAverageSpeed() <= 0.10) {
                 isFinished = true;
             }
         } else {
@@ -69,11 +71,22 @@ public class AutoAlign extends CommandBase {
         }
     }
     public boolean isFinished() {
-        return isFinished || (time != 0.0 && timer.get() >= time);
+        if(secondPhase) {
+            return timer.get() >= 0.25;
+        }
+        boolean fin= isFinished || (time != 0.0 && timer.get() >= time);
+        if(fin) {
+            secondPhase = true;
+            timer.reset();
+            timer.start();
+            drivetrain.stop();
+        }
+        return false;
     }
     public void end(boolean interrupted) {
         System.out.println("done aligning");
         drivetrain.stop();
         vision.off();
+        timer.stop();
     }
 }

@@ -32,12 +32,12 @@ public class ChargeOnly extends SequentialCommandGroup { // basic routine for di
                 coneShooter.setup(TargetHeights.INTAKE);
                 drivetrain.currentHeight = 1;
             }),
-            new AutoAlign(drivetrain, coneShooter, vision, coneShooter.getLimelightDistance(TargetHeights.MID), 1, lights, 1.5),
+            //new AutoAlign(drivetrain, coneShooter, vision, coneShooter.getLimelightDistance(TargetHeights.MID), 1, lights, 1.5),
             new Shoot(coneShooter, coneShooter, drivetrain, 1.0, lights), // shoot pre-load cone and retract cone intake
             Commands.runOnce(() -> { // drop cube intake and start spinning intake
                 drivetrain.resetOdometry(new Pose2d(0.0, 0.0, Rotation2d.fromDegrees(180.0)));
             }),
-            new RamseteSwerve(drivetrain, vision, new Pose2d(createTranslation(new Translation2d(1.8, 0.0), multiplier), Rotation2d.fromDegrees(180.0)), new RamseteOptions(true,  false, false, 4.0, -1, 2.0, 0.0)),
+            new RamseteSwerve(drivetrain, vision, new Pose2d(createTranslation(new Translation2d(1.8, 0.0), multiplier), Rotation2d.fromDegrees(180.0)), new RamseteOptions(true,  false, false, 4.0, -1, -1.0, 0.0)),
             new AutoBalance(drivetrain, lights)
         );
     }

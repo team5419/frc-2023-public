@@ -36,9 +36,14 @@ public class ChargeStationBack extends SequentialCommandGroup { // basic routine
             new Shoot(coneShooter, coneShooter, drivetrain, 1.0, lights), // shoot pre-load cone and retract cone intake
             Commands.runOnce(() -> { // drop cube intake and start spinning intake
                 drivetrain.resetOdometry(new Pose2d(0.0, 0.0, Rotation2d.fromDegrees(180.0)));
+                cubeShooter.shoot(TargetHeights.INTAKE);
             }),
-            new AutoGetCube(drivetrain, cubeShooter, vision, createTranslation(new Translation2d(4.0, 0.0), multiplier), createTranslation(new Translation2d(1.8, 0.0), multiplier), -1, lights, true),
-            //new RamseteSwerve(drivetrain, vision, new Pose2d(createTranslation(new Translation2d(1.8, 0.0), multiplier), Rotation2d.fromDegrees(180.0)), new RamseteOptions(true,  false, false, 4.0, -1, 2.0)),
+            new RamseteSwerve(drivetrain, vision, new Pose2d(new Translation2d(5.0, 0.0), Rotation2d.fromDegrees(180.0)), new RamseteOptions(true, false, false, 3.0, -1, 0.5, 0.0)), // drive back to second cube
+            Commands.runOnce(() -> { // pull up intake
+                cubeShooter.stop(TargetHeights.INTAKE);
+                //cubeShooter.shoot(TargetHeights.INTAKE);
+            }),
+            new RamseteSwerve(drivetrain, vision, new Pose2d(createTranslation(new Translation2d(1.8, 0.0), multiplier), Rotation2d.fromDegrees(180.0)), new RamseteOptions(true,  false, false, 4.0, -1, 3.5, 0.0)),
             new AutoBalance(drivetrain, lights)
         );
     }

@@ -50,7 +50,7 @@ public class RamseteOptions {
         this.speedLimit = speedLimit;
         this.epsilonMultiplier = epsilonMultiplier;
         this.turnToTag = turnToTag;
-        this.maxSpeed = -1.0;
+        this.maxSpeed = maxSpeed;
         this.time = time;
     }
     public RamseteOptions(int turnToTag, double time) {

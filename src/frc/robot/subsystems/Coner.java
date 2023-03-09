@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import java.lang.annotation.Target;
 import java.util.Map;
 
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
@@ -8,9 +9,14 @@ import com.ctre.phoenixpro.configs.TalonFXConfiguration;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.PneumaticHub;
+import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ConerConstants;
 import frc.robot.Constants.Ports;
@@ -28,17 +34,24 @@ public class Coner extends TesterSubsystem implements GenericShootIntake {
     private Solenoid soOne;
     private Solenoid soTwo;
     private double timestamp;
-    public Coner(PneumaticHub hub, boolean falcons, boolean velocityControl) {
+    private GenericEntry dist;
+    private final double defaultDist = 0.3092;
+    public Coner(boolean falcons, boolean velocityControl) {
         super("Cone Shooter", new TesterMotor[] {
             generateTesterMotor("Low motor", falcons, Ports.coneBottom, false, false),
             generateTesterMotor("High motor", falcons, Ports.coneTop, false, true)
         }, velocityControl ? (falcons ? falconVelocities : neoVelocities) : percents);
 
-        soOne = hub.makeSolenoid(Ports.conerSolenoidA);
-        soTwo = hub.makeSolenoid(Ports.conerSolenoidB);
+        soOne = new Solenoid(PneumaticsModuleType.CTREPCM, Ports.conerSolenoidA); //hub.makeSolenoid(Ports.conerSolenoidA);
+        soTwo = new Solenoid(PneumaticsModuleType.CTREPCM, Ports.conerSolenoidB);//hub.makeSolenoid(Ports.conerSolenoidB);
         soOne.set(false);
         soTwo.set(true);
         timestamp = -1.0;
+        ShuffleboardTab tab = Shuffleboard.getTab("Master");
+        dist = tab.add("Limelight dist", defaultDist)
+            .withPosition(0, 3)
+            .withSize(1, 1)
+            .getEntry();
     }
     public static TesterMotor generateTesterMotor(String name, boolean falcons, int id, boolean pro, boolean inverted) {
         if(falcons) {
@@ -59,6 +72,14 @@ public class Coner extends TesterSubsystem implements GenericShootIntake {
         return new TesterNeo(name, Util.setUpMotor(new CANSparkMax(id, MotorType.kBrushless), inverted, true));
     }
     public void shoot(String height) {
+        if(height == TargetHeights.LOW) {
+            if(!soOne.get()) {
+                soOne.set(true);
+            }
+            if(soTwo.get()) {
+                soTwo.set(false);
+            }
+        }
         if(height == TargetHeights.FAR) {
             run(TargetHeights.HIGH);
         } else {
@@ -67,27 +88,30 @@ public class Coner extends TesterSubsystem implements GenericShootIntake {
         timestamp = -1.0;
     }
     public void stop(String height) {
+        timestamp = -1.0;
         super.stop();
             soOne.set(false);
             soTwo.set(true);
         
     }
     public void setup(String height) {
-        if(height != TargetHeights.INTAKE && soOne.get() && !soTwo.get()) {
+        if(height != TargetHeights.INTAKE && height != TargetHeights.LOW && soOne.get() && !soTwo.get()) {
             run(TargetHeights.INTAKE);
             if(timestamp == -1.0) {
                 timestamp = Timer.getFPGATimestamp();
             }
         }
-        if(!soOne.get()) {
-            soOne.set(true);
-        }
-        if(soTwo.get()) {
-            soTwo.set(false);
+        if(height != TargetHeights.LOW) {
+            if(!soOne.get()) {
+                soOne.set(true);
+            }
+            if(soTwo.get()) {
+                soTwo.set(false);
+            }
         }
     }
     public boolean donePrepping(String height) {
-        return timestamp >= 0.0 && Timer.getFPGATimestamp() - timestamp >= 0.625 && soOne.get() && !soTwo.get();
+        return (height == TargetHeights.LOW) || (timestamp >= 0.0 && Timer.getFPGATimestamp() - timestamp >= 0.625 && soOne.get() && !soTwo.get());
     }
     public SubsystemBase subsystem() {return this;}
     public final double getAngle() {
@@ -103,10 +127,8 @@ public class Coner extends TesterSubsystem implements GenericShootIntake {
         return 2.1; // a little off so that we can rotate freely
     }
     public final double getLimelightDistance(String height) {
-        return 0.3374; // 0.325
-    }
-    public void periodic() {
-
+        //return 0.2678; // 0.325
+        return dist.getDouble(defaultDist);
     }
     public void simulationPeriodic() {
 
@@ -119,9 +141,9 @@ public class Coner extends TesterSubsystem implements GenericShootIntake {
     // CONSTANTS
     private static final Map<String, TesterSetting[]> percents = Map.of(
     TargetHeights.LOW, new TesterSetting[] {
-        new TesterSetting(0.30), new TesterSetting(0.87)
+        new TesterSetting(0.11), new TesterSetting(0.11)
     }, TargetHeights.MID, new TesterSetting[] {
-        new TesterSetting(0.11), new TesterSetting(0.445)//0.14, -0.36
+        new TesterSetting(0.12), new TesterSetting(0.45)//0.445
     }, TargetHeights.HIGH, new TesterSetting[] {
         new TesterSetting(0.22), new TesterSetting(1.0)
     }, TargetHeights.INTAKE, new TesterSetting[] {
@@ -149,4 +171,7 @@ public class Coner extends TesterSubsystem implements GenericShootIntake {
     }, TargetHeights.INTAKE, new TesterSetting[] {
         new TesterSetting(true, -10000.0), new TesterSetting(true, -10000.0)
     });
+    public void periodic() {
+        //System.out.println("cone distance: " + getLimelightDistance(TargetHeights.MID));
+    }
 }

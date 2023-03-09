@@ -60,7 +60,7 @@ public class SpecialRamseteTurn extends CommandBase {
         double theta = swerve.angle();
         double target = Math.round((theta - targetRotation) / 360.0) * 360.0 + targetRotation;
 
-        double dtheta = 1 * SwerveDriveConstants.pTheta * (Math.PI / 180.0) * Util.deadband(target - theta, 10.0);
+        double dtheta = 1 * SwerveDriveConstants.pTheta * (Math.PI / 180.0) * (target - theta);
         //System.out.println(dtheta);
         //System.out.println("theta: ${DriveConstants.pTheta * (Math.PI / 180) * (target - theta)}");
         swerve.drive(
@@ -70,11 +70,9 @@ public class SpecialRamseteTurn extends CommandBase {
         if(vision.seesTag) {
             hasSeenTag = true;
         }
-        //if(swerve.getAverageSpeed() < 0.2) { may not need speed requirement for this?
-            if(dtheta == 0 && (cones || hasSeenTag)) {
+            if(Math.abs(target - theta) <= 10.0 && ((cones && vision.isTargetFound()) || (!cones && hasSeenTag))) {
                 isFinished = true;
             }
-        //}
     }
 
     public boolean isFinished() {
