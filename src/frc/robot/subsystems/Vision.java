@@ -42,6 +42,7 @@ public class Vision extends SubsystemBase { // this keeps track of our limelight
             layout.addNumber("Hor Offset", () -> getHorizontalOffset());
             layout.addNumber("Ver Offset", () -> getVerticalOffset());
             layout.addNumber("Distance", () -> getHorizontalDistance());
+            layout.addNumber("Lin Hor Offset", () -> getLinearHorizontalOffset(getHorizontalDistance()));
             layout.addBoolean("Sees target", () -> isTargetFound());
             this.off();
         } else {
@@ -172,7 +173,7 @@ public class Vision extends SubsystemBase { // this keeps track of our limelight
         if(!isTargetFound()) {
             return previousLimelightHorizontal;
         }
-        previousLimelightHorizontal = 0.65 * previousLimelightHorizontal + 0.35 * val;
+        previousLimelightHorizontal = 0.8 * previousLimelightHorizontal + 0.2 * val;
         return previousLimelightHorizontal;
     }
 
@@ -181,8 +182,17 @@ public class Vision extends SubsystemBase { // this keeps track of our limelight
         if(!isTargetFound()) {
             return previousLimelightVertical;
         }
-        previousLimelightVertical = 0.65 * previousLimelightVertical + 0.35 * val;
+        previousLimelightVertical = 0.8 * previousLimelightVertical + 0.2 * val;
         return previousLimelightVertical;
+    }
+
+    public double getLinearHorizontalOffset(double dist) {
+        if(limelight == null) {
+            return 0.0;
+        }
+        double horOffset = getHorizontalOffset();
+        //double dist = getHorizontalDistance();
+        return Math.tan(Math.toRadians(horOffset)) * dist;
     }
 
     public double getHorizontalDistance() { 

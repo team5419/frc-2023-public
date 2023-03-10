@@ -55,7 +55,7 @@ public class RobotContainer {
 		switch(CONER_TYPE) {
 			case LOW_CONER:
 			generateHub();
-				coner = new Coner(true, false, swerve, vision);
+				coner = new Coner(true, false);
 				break;
 			case EVERYBOT_MOTORS:
 				coner = new EverybotConer(generateArm(), false);
@@ -144,9 +144,9 @@ public class RobotContainer {
 		Trigger rightTriggerCodriver = new Trigger(() -> codriver.getRightTriggerAxis() > SwerveDriveConstants.triggerDeadband);
 		Trigger leftTriggerCodriver = new Trigger(() -> codriver.getLeftTriggerAxis() > SwerveDriveConstants.triggerDeadband);
 		
-// 		 Trigger leftStickPressCodriver = new Trigger(() -> codriver.getLeftStickButton());
+		 Trigger leftStickPressCodriver = new Trigger(() -> codriver.getLeftStickButton());
 // leftStickPressCodriver.onTrue(new AutoAlign(swerve, coner, vision, 1.0, lights, 1.0 ));
-		// leftStickPressCodriver.onTrue(new ResetGyro(swerve, 180.0));
+		leftStickPressCodriver.onTrue(new ResetGyro(swerve, 180.0));
 		
 		Trigger alignControllerOff = new Trigger(() -> swerve.isAligning == Swerve.AlignState.CONTROLLERON && (driver.getLeftX() < SwerveDriveConstants.controllerDeadband && 
 				driver.getLeftY() < SwerveDriveConstants.controllerDeadband &&
