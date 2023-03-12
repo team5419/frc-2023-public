@@ -35,7 +35,7 @@ public class Coner extends TesterSubsystem implements GenericShootIntake {
     private Solenoid soTwo;
     private double timestamp;
     private GenericEntry dist;
-    private final double defaultDist = 0.3027;
+    private final double defaultDist = 0.4962;
     public Coner(boolean falcons, boolean velocityControl) {
         super("Cone Shooter", new TesterMotor[] {
             generateTesterMotor("Low motor", falcons, Ports.coneBottom, false, false),

@@ -129,20 +129,20 @@ public class Constants {
     public static final class LimelightConstants {
         public static final double lowTargetHeight = 0.6096;
         public static final double cameraAngle = 18.0;
-        public static final double cameraHeight = 0.3048;
+        public static final double cameraHeight = 0.1778;
         public static final PIDController horizontalPID = new PIDController(0.08, 0.0, 0.0); // .08
-        public static final PIDController linHorizontalPID = new PIDController(9.0, 0.0, 0.0);
+        public static final PIDController linHorizontalPID = new PIDController(5.5, 0.0, 0.0);
         public static final double closeConstant = 0.1;
-        public static final PIDController turnPID = new PIDController(0.055, 0.0, 0.0);
-        public static final PIDController forwardPID = new PIDController(10.0, 0.0, 0.0); // 10.0
+        public static final PIDController turnPID = new PIDController(0.035, 0.0, 0.0);
+        public static final PIDController forwardPID = new PIDController(9.0, 0.0, 0.0); // 10.0
         public static final double desiredAngle = 180.0;
         public static final double desiredDistance = 0.0;
         public static final double horizontalOffset = -1.65; // 1.65
-        public static final double linHorizontalOffset = -0.005;
+        public static final double linHorizontalOffset = -0.023;
         public static final double epsilonTurn = 1.0;
         public static final double epsilonHorizontal = 0.5;
         public static final double epsilonLinHorizontal = 0.01;
-        public static final double epsilonForward = 0.01; // .005
+        public static final double epsilonForward = 0.005; // .005
     }
     public static final class AprilTagConstants {
 
