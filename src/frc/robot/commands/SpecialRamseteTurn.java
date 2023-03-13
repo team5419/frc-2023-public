@@ -70,7 +70,8 @@ public class SpecialRamseteTurn extends CommandBase {
         if(vision.seesTag) {
             hasSeenTag = true;
         }
-            if(Math.abs(target - theta) <= 10.0 && ((cones && vision.isTargetFound()) || (!cones && hasSeenTag))) {
+        double diff = Math.abs(target - theta);
+            if(diff <= 10.0 && ((cones && vision.isTargetFound()) || (!cones && hasSeenTag))) {
                 isFinished = true;
             }
     }
@@ -95,7 +96,7 @@ public class SpecialRamseteTurn extends CommandBase {
                 : new SpecialRamseteSwerve(swerve, vision, cuber, true, currentHeight, false, new RamseteOptions(), lights);// if we're on cones, up epsilons hella and don't enforce a speed limit so we're fast before limelight
             
             if(swerve.autoShoot) {
-                regularer = regularer.andThen(new Shoot(coner, cuber, swerve, lights));
+                regularer = regularer.andThen(new Shoot(coner, cuber, swerve, cones ? 1.0 : 0.0, lights));
             }
             regularer.schedule();
         }

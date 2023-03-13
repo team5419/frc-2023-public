@@ -104,10 +104,10 @@ public class Constants {
         public static final double epsilonXY = 0.0254;
         public static final double epsilonTheta = 1.5;
         public static final ModuleInfo[] info = {
-            new ModuleInfo(7, 8, true, true, 12, 1.96042348 - 1.584598 + 1.570795), // 1.6229
-            new ModuleInfo(5, 6, false, true, 11, 5.640435956-4.695505-1.570795), //4.7247            
-            new ModuleInfo(1, 2, true, true, 9, 1.86991880 + 1.5938-1.570795), //numbers are placeholders -1.6521
-            new ModuleInfo(3, 4, false, true, 10, 2.899217829 - 1.5754 + 1.570795) // 1.6230
+            new ModuleInfo(7, 8, true, true, 12, 1.97116132825), // 1.6229
+            new ModuleInfo(5, 6, false, true, 11, 5.640435956418514), //4.7247            
+            new ModuleInfo(1, 2, true, true, 9, -4.393312096595764), //numbers are placeholders -1.6521
+            new ModuleInfo(3, 4, false, true, 10, 2.906887717545033) // 1.6230
             
         };
 
@@ -133,16 +133,16 @@ public class Constants {
         public static final PIDController horizontalPID = new PIDController(0.08, 0.0, 0.0); // .08
         public static final PIDController linHorizontalPID = new PIDController(5.5, 0.0, 0.0);
         public static final double closeConstant = 0.1;
-        public static final PIDController turnPID = new PIDController(0.035, 0.0, 0.0);
-        public static final PIDController forwardPID = new PIDController(9.0, 0.0, 0.0); // 10.0
+        public static final PIDController turnPID = new PIDController(0.095, 0.0, 0.0);
+        public static final PIDController forwardPID = new PIDController(6.0, 0.0, 0.0); // 10.0
         public static final double desiredAngle = 180.0;
         public static final double desiredDistance = 0.0;
         public static final double horizontalOffset = -1.65; // 1.65
-        public static final double linHorizontalOffset = -0.023;
+        public static final double linHorizontalOffset = -0.02; // -0.023
         public static final double epsilonTurn = 1.0;
         public static final double epsilonHorizontal = 0.5;
-        public static final double epsilonLinHorizontal = 0.01;
-        public static final double epsilonForward = 0.005; // .005
+        public static final double epsilonLinHorizontal = 0.011;
+        public static final double epsilonForward = 0.01; // .005
     }
     public static final class AprilTagConstants {
 

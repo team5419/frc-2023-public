@@ -111,7 +111,7 @@ public class Coner extends TesterSubsystem implements GenericShootIntake {
         }
     }
     public boolean donePrepping(String height) {
-        return (height == TargetHeights.LOW) || (timestamp >= 0.0 && Timer.getFPGATimestamp() - timestamp >= 0.625 && soOne.get() && !soTwo.get());
+        return (height == TargetHeights.LOW) || (timestamp >= 0.0 && Timer.getFPGATimestamp() - timestamp >= 0.25 && soOne.get() && !soTwo.get());
     }
     public SubsystemBase subsystem() {return this;}
     public final double getAngle() {
@@ -143,7 +143,7 @@ public class Coner extends TesterSubsystem implements GenericShootIntake {
     TargetHeights.LOW, new TesterSetting[] {
         new TesterSetting(0.11), new TesterSetting(0.11)
     }, TargetHeights.MID, new TesterSetting[] {
-        new TesterSetting(0.12), new TesterSetting(0.45)//0.445
+        new TesterSetting(0.12), new TesterSetting(0.435)//0.445
     }, TargetHeights.HIGH, new TesterSetting[] {
         new TesterSetting(0.22), new TesterSetting(1.0)
     }, TargetHeights.INTAKE, new TesterSetting[] {

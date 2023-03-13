@@ -44,33 +44,26 @@ public class AutoAlign extends CommandBase {
     public void execute() {
         double theta = drivetrain.angle();
         double target = Math.round((theta - LimelightConstants.desiredAngle) / 360.0) * 360.0 + LimelightConstants.desiredAngle;
-        double turnDiff = Util.deadband(target - drivetrain.angle(), LimelightConstants.epsilonTurn); //calculates how many degrees to turn
+        double turnDiff = target - drivetrain.angle(); //calculates how many degrees to turn
         double turn = LimelightConstants.turnPID.calculate(turnDiff); //calculates amt to turn
         double rawDist = vision.getHorizontalDistance();
-        double forwardDiff = Util.deadband( distance - LimelightConstants.desiredDistance - rawDist, LimelightConstants.epsilonForward); //how far forward to go
+        double forwardDiff = distance - LimelightConstants.desiredDistance - rawDist; //how far forward to go
         //System.out.println("turn diff, " + turnDiff + " left diff, " + leftDiff + " forward diff, " + forwardDiff);
         double forward = LimelightConstants.forwardPID.calculate(forwardDiff);
         //double leftDiff = Util.deadband(LimelightConstants.horizontalOffset - vision.getHorizontalOffset(), LimelightConstants.epsilonHorizontal); //how far sidewyas to move across fied
-        double leftDiff = Util.deadband(LimelightConstants.linHorizontalOffset - vision.getLinearHorizontalOffset(rawDist), LimelightConstants.epsilonLinHorizontal);
-        double left =  0.0;
-        //if(Math.abs(leftDiff) >= 2.5) {
-            left = LimelightConstants.linHorizontalPID.calculate(leftDiff);// ''
-        /*{  else {
-            left = LimelightConstants.closeConstant * -Math.signum(leftDiff);
-        }*/
+        double leftDiff = LimelightConstants.linHorizontalOffset - vision.getLinearHorizontalOffset(rawDist);
+        double left = LimelightConstants.linHorizontalPID.calculate(leftDiff);// ''
         
         
         boolean found = vision.isTargetFound();
-        if(found && Math.abs(forwardDiff) < 0.2 && !secondPhase) {
-            shooter.setup(TargetHeights.heights[height]);
-        }
         if(found && !secondPhase) {
             drivetrain.drive(forward , -left , -turn, false, true);
         }
         if(secondPhase) {
+            shooter.setup(TargetHeights.heights[height]);
             drivetrain.stop();
         }
-        if(turnDiff == 0.0 && leftDiff == 0.0 && forwardDiff == 0.0 && found) {
+        if(Math.abs(turnDiff) <= LimelightConstants.epsilonTurn && Math.abs(leftDiff) <= LimelightConstants.epsilonLinHorizontal && Math.abs(forwardDiff) <= LimelightConstants.epsilonForward && found) {
             lights.setColor(0, 255, 0);
             if(drivetrain.getAverageSpeed() <= 0.1) {
                 isFinished = true;
