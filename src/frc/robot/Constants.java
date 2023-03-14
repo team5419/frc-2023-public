@@ -8,6 +8,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.wpilibj.SerialPort.Port
 
 import java.lang.Math;
 import java.util.Map;
@@ -185,6 +186,13 @@ public class Constants {
         public static final double realOutPosition = 57000.0;
         public static final double moveSpeed = 0.3;
     }
+
+    public static final class SensorArrayConstants {
+        public static final int numSensors = 5;
+        public static final double[] sensorOffsets = {-50.0, -25.0, -15.0, -10.0, 0, 10.0, 15.0, 25.0, 50.0} //mm
+        public static final int baud = 115200;
+    }
+
     public static final class Ports {
         public static final int intake = 14;
         public static final int indexer = 18;
