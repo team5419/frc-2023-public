@@ -40,19 +40,26 @@ public class Sensors extends SubsystemBase{
 
     public boolean read(){
         //serial.enableTermination('-');
-        //String str = serial.readString();
-        //System.out.println("input: " + str);
-        System.out.println("bytes: " + serial.getBytesReceived());
-        //String[] dataString = str.split(",", SensorArrayConstants.numSensors);
+        if(serial.getBytesReceived() > 0){
+            String str = serial.readString();
+            System.out.println("input: " + str);
+            //System.out.println("bytes: " + serial.getBytesReceived());
+            String[] dataString = str.split(",", SensorArrayConstants.numSensors);
 
-        /*for(int i = 0; i < SensorArrayConstants.numSensors && i < dataString.length; i++){
-            try {
-                sensors.get(i).setDistFromPole(Integer.parseInt(dataString[i]));
-            } catch(NumberFormatException nfe){
-                //System.out.println("es broken");
+
+            if (dataString.length == SensorArrayConstants.numSensors;){
+                for(int i = 0; i < SensorArrayConstants.numSensors && i < dataString.length; i++){
+                    try {
+                        sensors.get(i).setDistFromPole(Integer.parseInt(dataString[i]));
+                    } catch(NumberFormatException nfe){
+                        return false;
+                    }
+                }
+                return true;
             }
-        }*/
-        return true;//dataString.length == SensorArrayConstants.numSensors;
+            return false;
+        }
+        return false;
     }
 
     public double getHorizontalOffset(){
