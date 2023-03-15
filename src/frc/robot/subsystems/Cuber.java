@@ -1,7 +1,18 @@
 package frc.robot.subsystems;
 
+import java.lang.annotation.Target;
 import java.util.Map;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.RemoteSensorSource;
+import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
+import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
+import com.ctre.phoenix.motorcontrol.can.TalonFX;
+import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
+import com.ctre.phoenix.sensors.CANCoder;
+import com.ctre.phoenix.sensors.CANCoderConfiguration;
+import com.ctre.phoenix.sensors.SensorTimeBase;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
@@ -14,20 +25,28 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.CubeShooterConstants;
 import frc.robot.Constants.Ports;
 import frc.robot.Constants.TargetHeights;
+import frc.robot.classes.PID;
 import frc.robot.subsystems.test.TesterMotor;
 import frc.robot.subsystems.test.TesterNeo;
 import frc.robot.subsystems.test.TesterSetting;
 import frc.robot.subsystems.test.TesterSubsystem;
 import frc.robot.Util;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.AnalogInput;
 
 public class Cuber extends TesterSubsystem implements GenericShootIntake {
-    private Solenoid soOne;
-    //private Solenoid soTwo;
+    private final double down = -1250.0;
+    private final double up = -3262.0;
+    private enum State {
+        DOWN, UP, HOLDUP
+    };
+    private final PID lifterPID = new PID(0.5, 0.0, 0.0);
     private AnalogInput sensor;
-    private Double startingPoint;
     private boolean velocity;
     public double offset;
+    private TalonFX lifter;
+    private CANCoder cancoder;
+    private State state;
     public Cuber(boolean velocityControl) {
         super("Cube Shooter", new TesterMotor[] {
             new TesterNeo("Indexer", Util.setUpMotor(
@@ -37,18 +56,46 @@ public class Cuber extends TesterSubsystem implements GenericShootIntake {
                 new CANSparkMax(Ports.intake, MotorType.kBrushless), true, false
             )).configurePID(CubeShooterConstants.upPID)
         }, velocityControl ? velocities : percents);
-        startingPoint = null;
+        lifter = new TalonFX(Ports.lifter, "canivore");
+        TalonFXConfiguration tconfig = new TalonFXConfiguration();
+        tconfig.remoteFilter0.remoteSensorDeviceID = Ports.lifterCancoder;
+        tconfig.remoteFilter0.remoteSensorSource = RemoteSensorSource.CANCoder;
+        lifter.configAllSettings(tconfig);
+        //Util.setUpMotor(lifter, false, false);
+        lifter.setSensorPhase(true);
+        lifter.configSelectedFeedbackSensor(TalonFXFeedbackDevice.RemoteSensor0, 0, 0);
+        lifter.configMotionCruiseVelocity(3200.0);
+        lifter.configMotionAcceleration(9600.0 * 4);
+        lifter.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 40.0, 0.0, 0.0));
+        lifter.config_kP(0, lifterPID.p);
+        lifter.config_kI(0, lifterPID.i);
+        lifter.config_kD(0, lifterPID.d);
+        state = State.UP;
+        cancoder = new CANCoder(Ports.lifterCancoder, "canivore"); 
+        CANCoderConfiguration config = new CANCoderConfiguration();
+        
+        config.sensorTimeBase = SensorTimeBase.PerSecond;
+        cancoder.configAllSettings(config, 100);
+        cancoder.setPositionToAbsolute(100);
+        
+        
+    
         offset = 1;
         velocity = velocityControl;
-        soOne = new Solenoid(PneumaticsModuleType.CTREPCM, Ports.cuberSolenoidA);
-        //soOne = hub.makeSolenoid(Ports.cuberSolenoidA);
-        soOne.set(false);
-        //soTwo = hub.makeSolenoid(Ports.cuberSolenoidB);
-        //soTwo.set(false);
 
         sensor = new AnalogInput(Ports.cuberSensor);
 
         ShuffleboardTab main = Shuffleboard.getTab("Master");
+        main.addString("Cube state", () -> {
+            switch(state) {
+                case UP:
+                    return "UP";
+                case DOWN: return "DOWN";
+                case HOLDUP: return "HOLD UP";
+            }
+            return "";
+        });
+        main.addNumber("Deploy position", () -> lifter.getSelectedSensorPosition()).withSize(1, 1);
         main.addNumber("Cuber sensor", () -> getSensorValue()).withSize(1, 1).withPosition(2, 1);
         //main.addNumber("Backwards setpoint", () -> startingPoint == null ? 0.0 : startingPoint);
         main.addNumber("Cuber velocity", () -> motors[1].getVelocity());
@@ -66,33 +113,21 @@ public class Cuber extends TesterSubsystem implements GenericShootIntake {
     }
     public void shoot(String height) {
         run(height);
-        startingPoint = null;
+        if(height == TargetHeights.INTAKE) {
+            state = State.DOWN;
+        }
     }
     public void stop(String height) {
-        if(height == TargetHeights.INTAKE) {
-            //soOne.set(false);
-           //soTwo.set(true);
-        }
             super.stop();
-        
+                state = State.UP;
+            
     }
     public SubsystemBase subsystem() {return this;}
     public void setup(String height) {
-        System.out.println("prep");
-        if(height == TargetHeights.INTAKE) {
-            //soOne.set(true);
-            //soTwo.set(false);
-        } else {
-            //double pos = motors[0].getPosition();
+        if(height != TargetHeights.INTAKE) {
             motors[0].run(CubeShooterConstants.indexerSlowBackwardsSpeed);
-            // if(startingPoint == null) {
-            //     startingPoint = pos;
-            // } else {
                 runSingle(height, 1);
-            //     if(pos - startingPoint > 2) {
-            //         motors[0].run(0.0);
-            //     }
-            // }
+                state = State.HOLDUP;
         }
     }
     public boolean donePrepping(String height) {
@@ -100,7 +135,19 @@ public class Cuber extends TesterSubsystem implements GenericShootIntake {
         : (motors[1].getVelocity() >= CubeShooterConstants.measuredVelocities.get(height));
     }
     public void periodic() {
-        //System.out.println(motors[1].getPosition());
+        double setpoint = (state == State.DOWN) ? down : up;
+        double diff = lifter.getSelectedSensorPosition();
+        if(diff - 100.0 <= setpoint && state == State.UP) {
+            lifter.set(ControlMode.PercentOutput, 0.0);
+            
+        } else {
+            // double val = -lifterPID.calculate(diff, setpoint);
+            // if(Math.abs(val) > 0.1) {
+            //     val = 0.1 * Math.signum(val);
+            // }
+            lifter.set(ControlMode.MotionMagic, setpoint);
+            //lifter.set(ControlMode.PercentOutput, val);
+        }
     }
     public void simulationPeriodic() {
 
@@ -153,7 +200,7 @@ public class Cuber extends TesterSubsystem implements GenericShootIntake {
     }, TargetHeights.HIGH, new TesterSetting[] {
         new TesterSetting(1.0), new TesterSetting(true, 2225.0)
     }, TargetHeights.INTAKE, new TesterSetting[] {
-        new TesterSetting(-0.2), new TesterSetting(-0.55)
+        new TesterSetting(-1.0), new TesterSetting(-0.35)
     }, TargetHeights.FAR, new TesterSetting[] {
         new TesterSetting(1.0), new TesterSetting(true, 4000.0)
     });

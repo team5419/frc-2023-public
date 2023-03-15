@@ -186,8 +186,8 @@ public class Constants {
         public static final double moveSpeed = 0.3;
     }
     public static final class Ports {
-        public static final int intake = 14;
-        public static final int indexer = 18;
+        public static final int intake = 18;
+        public static final int indexer = 14;
         public static final int leftLeader = 1;
         public static final int leftFollower = 2;
         public static final int rightLeader = 3;
@@ -205,7 +205,8 @@ public class Constants {
         public static final int conerSolenoidA = 4;
         public static final int conerSolenoidB = 5;
         public static final int solenoidC = 1;
-
+        public static final int lifter = 24;
+        public static final int lifterCancoder = 25;
         public static final int cuberSensor = 3;
         public static final int candlePort = 23;
     }
