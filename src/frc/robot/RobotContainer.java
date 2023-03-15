@@ -30,6 +30,7 @@ public class RobotContainer {
 
 	private Cuber cuber;
 	public Vision vision;
+	public Sensors sensors;
 	private SendableChooser<SequentialCommandGroup> autoSelector;
 	//private Drivetrain drivetrain;
 	public Swerve swerve;
@@ -46,6 +47,7 @@ public class RobotContainer {
 		driver = new XboxController(0);
 		codriver = new XboxController(1);
 		vision = new Vision(tab, true, true);
+		sensors = new Sensors(tab);
 		swerve = new Swerve(vision, true); /* CHOOSE ONE!!! */
 		arm = null; 
 		madeHub = false;
