@@ -49,6 +49,9 @@ public class SpecialRamseteTurn extends CommandBase {
         lights.setColor(255, 0, 0);
         swerve.isAligning = AlignState.NOT;
         shooter.setup(TargetHeights.heights[currentHeight]); // setup once just for pneumatics
+        if(cones) {
+            vision.on();
+        }
     }
 
     public void execute() {
@@ -86,6 +89,7 @@ public class SpecialRamseteTurn extends CommandBase {
             GenericShootIntake shooter = cones ? coner : cuber;
             shooter.stop(TargetHeights.heights[currentHeight]);
             lights.off(swerve);
+            vision.off();
             return;
         }
         if(isFinished) {

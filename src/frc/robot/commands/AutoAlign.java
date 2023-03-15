@@ -78,7 +78,7 @@ public class AutoAlign extends CommandBase {
     }
     public boolean isFinished() {
         if(secondPhase) {
-            return timer.get() >= 0.25;
+            return timer.get() >= 0.5;
         }
         boolean fin= isFinished || (time != 0.0 && timer.get() >= time);
         //return fin;
