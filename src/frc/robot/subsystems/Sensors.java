@@ -47,7 +47,7 @@ public class Sensors extends SubsystemBase{
             String[] dataString = str.split(",", SensorArrayConstants.numSensors);
 
 
-            if (dataString.length == SensorArrayConstants.numSensors;){
+            if (dataString.length == SensorArrayConstants.numSensors){
                 for(int i = 0; i < SensorArrayConstants.numSensors && i < dataString.length; i++){
                     try {
                         sensors.get(i).setDistFromPole(Integer.parseInt(dataString[i]));
