@@ -139,7 +139,7 @@ public class Sensors extends SubsystemBase{
 
                 horizontalOffset = sensors.get(leftIndex).getOffset() + base1;
             } else {
-                horizontalOffset = -1;
+                horizontalOffset = sensors.get(closestIndex).getOffset();
             }
         }
 
