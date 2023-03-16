@@ -121,7 +121,7 @@ public class Sensors extends SubsystemBase{
 
     public double getVerticleOffset(){
         if(horizontalOffset != -1){
-            verticleOffset = Math.pow(leftHyp, 2) - Math.pow(base1, 2);
+            verticleOffset = Math.pow((Math.pow(leftHyp, 2) - Math.pow(base1, 2)), 0.5);
         }
         else{
             verticleOffset = -1;
