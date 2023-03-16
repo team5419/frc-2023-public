@@ -20,6 +20,11 @@ public class Sensors extends SubsystemBase{
     private ShuffleboardTab layout;
     private ArrayList<Sensor> sensors;
     private SerialPort serial;
+    private double horizontalOffset;
+    private double verticleOffset;
+
+    private double base1;
+    private double leftHyp;
 
     public Sensors(ShuffleboardTab _tab){
 
@@ -36,6 +41,11 @@ public class Sensors extends SubsystemBase{
         }
 
         serial = new SerialPort(SensorArrayConstants.baud, Port.kMXP);
+
+        horizontalOffset = -1;
+        verticleOffset = -1;
+        base1 = -1;
+        leftHyp = -1;
         //serial.enableTermination('-');
     }
 
@@ -78,7 +88,7 @@ public class Sensors extends SubsystemBase{
 
         if (closestIndex != 0 && closestIndex != SensorArrayConstants.numSensors - 1) { //make sure its not the end sensors
             int leftIndex = closestIndex - 1;
-            double leftHyp = sensors.get(leftIndex).getDist();
+            leftHyp = sensors.get(leftIndex).getDist();
             int rightIndex = closestIndex + 1;
             double rightHyp = sensors.get(rightIndex).getDist();
 
@@ -97,14 +107,26 @@ public class Sensors extends SubsystemBase{
              * base1 = (leftHyp^2 - rightHyp^2 + base^2) / (2 * base)
             */
 
-            double base1 = (Math.pow(leftHyp, 2) + Math.pow(base, 2) - Math.pow(rightHyp, 2))/(2*base);
+            base1 = (Math.pow(leftHyp, 2) + Math.pow(base, 2) - Math.pow(rightHyp, 2))/(2*base);
 
-        
+
+            horizontalOffset = sensors.get(leftIndex).getOffset() + base1;
+           
             
 
         }
 
-        return sensors.get(closestIndex).getOffset();
+        return horizontalOffset;
+    }
+
+    public double getVerticleOffset(){
+        if(horizontalOffset != -1){
+            verticleOffset = Math.pow(leftHyp, 2) - Math.pow(base1, 2);
+        }
+        else{
+            verticleOffset = -1;
+        }
+        return verticleOffset;
     }
 
 }
