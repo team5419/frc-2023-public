@@ -187,7 +187,7 @@ public class Constants {
     }
 
     public static final class SensorArrayConstants {
-        public static final int numSensors = 5;
+        public static final int numSensors = 4;
         public static final double[] sensorOffsets = {-50.0, -25.0, -15.0, -10.0, 0, 10.0, 15.0, 25.0, 50.0}; //mm
         public static final int baud = 115200;
     }

@@ -47,7 +47,7 @@ public class RobotContainer {
 		driver = new XboxController(0);
 		codriver = new XboxController(1);
 		vision = new Vision(tab, true, true);
-		sensors = null;//new Sensors(tab);
+		sensors = new Sensors(tab);
 		swerve = new Swerve(vision, true); /* CHOOSE ONE!!! */
 		arm = null; 
 		madeHub = false;

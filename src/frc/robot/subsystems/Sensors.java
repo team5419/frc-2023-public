@@ -32,7 +32,7 @@ public class Sensors extends SubsystemBase{
 
         sensors = new ArrayList<Sensor>();
 
-        layout.addBoolean("Working", () -> read());
+        layout.addString("Reading", () -> read());
         layout.addNumber("H Offset: ", () -> getHorizontalOffset());
         for(int i = 0; i < SensorArrayConstants.numSensors; i++){
             int savedI = i;
@@ -49,31 +49,46 @@ public class Sensors extends SubsystemBase{
         //serial.enableTermination('-');
     }
 
-    public boolean read(){
+    public String read(){
         //serial.enableTermination('-');
         if(serial.getBytesReceived() > 0){
             String str = serial.readString();
             System.out.println("input: " + str);
-            //System.out.println("bytes: " + serial.getBytesReceived());
-            String[] dataString = str.split(",", SensorArrayConstants.numSensors);
+
+            if(str.charAt(0) == 's'){
+                int endIndex = str.indexOf("e");
+                if(endIndex != -1){
+
+                    str = str.substring(1, endIndex);
+
+                    //System.out.println("bytes: " + serial.getBytesReceived());
+                    String[] dataString = str.split(",");
 
 
-            if (dataString.length == SensorArrayConstants.numSensors){
-                for(int i = 0; i < SensorArrayConstants.numSensors && i < dataString.length; i++){
-                    try {
-                        sensors.get(i).setDistFromPole(Integer.parseInt(dataString[i]));
-                    } catch(NumberFormatException nfe){
-                        return false;
+                    if (dataString.length == SensorArrayConstants.numSensors){
+                        for(int i = 0; i < SensorArrayConstants.numSensors; i++){
+                            System.out.println("Sensor " + i + ": " + dataString[i]);
+                            try {
+                                sensors.get(i).setDistFromPole(Integer.parseInt(dataString[i]));
+                            } catch(NumberFormatException nfe){
+                                return "NFE";
+                            }
+                        }
+                        return "working";
                     }
+                    return "data string wrong length";
                 }
-                return true;
+                return "end char not detected";
             }
-            return false;
+            return "init char not detected";
         }
-        return false;
+        return "no signal";
     }
 
     public double getHorizontalOffset(){
+
+
+        //read();
 
         int closestIndex = 0;
         double closestDist = sensors.get(0).getDist();
