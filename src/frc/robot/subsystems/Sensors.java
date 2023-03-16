@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj.SerialPort.Port;
 
 
 import java.util.ArrayList;
+import java.lang.Math;
 
 import frc.robot.classes.Sensor;
 import frc.robot.Constants.Ports;
@@ -67,11 +68,40 @@ public class Sensors extends SubsystemBase{
         int closestIndex = 0;
         double closestDist = sensors.get(0).getDist();
 
+
         for (int i = 0; i < SensorArrayConstants.numSensors; i++){
             if (sensors.get(i).getDist() < closestDist){
                 closestDist = sensors.get(i).getDist();
                 closestIndex = i;
             }
+        }
+
+        if (closestIndex != 0 && closestIndex != SensorArrayConstants.numSensors - 1) { //make sure its not the end sensors
+            int leftIndex = closestIndex - 1;
+            double leftHyp = sensors.get(leftIndex).getDist();
+            int rightIndex = closestIndex + 1;
+            double rightHyp = sensors.get(rightIndex).getDist();
+
+            double base = Math.abs(sensors.get(leftIndex).getOffset() - sensors.get(rightIndex).getOffset());
+
+            /*
+             * leftHyp^2 - base1^2 = rightHyp^2 - base2^2
+             * 
+             * base1 + base2 = base, where base1 is the distance from the lsensor to the pole-to-base interesection
+             * base2 = base - base1
+             * 
+             * leftHyp^2 - base1^2 = rightHyp^2 - (base - base1)^2
+             * leftHyp^2 - base1^2 = rightHyp^2 - base^2 + 2*base*base1 - base1^2
+             * leftHyp^2 = rightHyp^2 - base^2 + 2*base*base1
+             * 2*base*base1 = leftHyp^2 - rightHyp^2 + base^2
+             * base1 = (leftHyp^2 - rightHyp^2 + base^2) / (2 * base)
+            */
+
+            double base1 = (Math.pow(leftHyp, 2) + Math.pow(base, 2) - Math.pow(rightHyp, 2))/(2*base);
+
+        
+            
+
         }
 
         return sensors.get(closestIndex).getOffset();
