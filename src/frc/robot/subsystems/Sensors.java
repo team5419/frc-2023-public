@@ -37,7 +37,7 @@ public class Sensors extends SubsystemBase{
         for(int i = 0; i < SensorArrayConstants.numSensors; i++){
             int savedI = i;
             sensors.add(new Sensor(i, SensorArrayConstants.sensorOffsets[i]));
-            layout.addNumber("Sensor " + i + " dist: ", () -> sensors.get(savedI).getDist());
+            layout.addNumber("Sensor " + i + " dist: ", () -> sensors.get(savedI).getDist()*0.00328084);
         }
 
         serial = new SerialPort(SensorArrayConstants.baud, Port.kMXP);
