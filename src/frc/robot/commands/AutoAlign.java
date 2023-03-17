@@ -48,7 +48,6 @@ public class AutoAlign extends CommandBase {
         double turn = LimelightConstants.turnPID.calculate(turnDiff); //calculates amt to turn
         double rawDist = vision.getHorizontalDistance();
         double forwardDiff = distance - LimelightConstants.desiredDistance - rawDist; //how far forward to go
-        //System.out.println("turn diff, " + turnDiff + " left diff, " + leftDiff + " forward diff, " + forwardDiff);
         double forward = LimelightConstants.forwardPID.calculate(forwardDiff);
         //double leftDiff = Util.deadband(LimelightConstants.horizontalOffset - vision.getHorizontalOffset(), LimelightConstants.epsilonHorizontal); //how far sidewyas to move across fied
         double leftDiff = LimelightConstants.linHorizontalOffset - vision.getLinearHorizontalOffset(rawDist);
@@ -91,7 +90,6 @@ public class AutoAlign extends CommandBase {
         return false;
     }
     public void end(boolean interrupted) {
-        System.out.println("done aligning");
         drivetrain.stop();
         vision.off();
         timer.stop();

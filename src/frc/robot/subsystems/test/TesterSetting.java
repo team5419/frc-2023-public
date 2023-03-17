@@ -56,6 +56,6 @@ public class TesterSetting {
         }
     }
     public double getSetpoint() {
-        return entry.getDouble(motorDefault) + offset;
+        return (entry == null ? motorDefault : entry.getDouble(motorDefault)) + offset;
     }
 }

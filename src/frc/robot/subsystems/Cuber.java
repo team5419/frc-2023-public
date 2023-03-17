@@ -26,6 +26,7 @@ import frc.robot.Constants.CubeShooterConstants;
 import frc.robot.Constants.Ports;
 import frc.robot.Constants.TargetHeights;
 import frc.robot.classes.PID;
+import frc.robot.subsystems.test.TesterFalcon;
 import frc.robot.subsystems.test.TesterMotor;
 import frc.robot.subsystems.test.TesterNeo;
 import frc.robot.subsystems.test.TesterSetting;
@@ -35,27 +36,28 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.AnalogInput;
 
 public class Cuber extends TesterSubsystem implements GenericShootIntake {
-    private final double down = -1250.0;
-    private final double up = -3262.0;
-    private enum State {
-        DOWN, UP, HOLDUP
-    };
+    private final double down = -1200.0;
+    private final double shotSetpoint = -3260.0;
+    private final double up = -4000.0;
+    private final double lowShot = -2200;
+    
     private final PID lifterPID = new PID(0.5, 0.0, 0.0);
     private AnalogInput sensor;
     private boolean velocity;
     public double offset;
     private TalonFX lifter;
     private CANCoder cancoder;
-    private State state;
+    private double state;
     public Cuber(boolean velocityControl) {
         super("Cube Shooter", new TesterMotor[] {
             new TesterNeo("Indexer", Util.setUpMotor(
                 new CANSparkMax(Ports.indexer, MotorType.kBrushless), false, true
             )).configurePID(CubeShooterConstants.upPID),
-            new TesterNeo("Main", Util.setUpMotor(
-                new CANSparkMax(Ports.intake, MotorType.kBrushless), true, false
+            new TesterFalcon("Main", Util.setUpMotor(
+                new TalonFX(Ports.intake), false, true
             )).configurePID(CubeShooterConstants.upPID)
         }, velocityControl ? velocities : percents);
+        
         lifter = new TalonFX(Ports.lifter, "canivore");
         TalonFXConfiguration tconfig = new TalonFXConfiguration();
         tconfig.remoteFilter0.remoteSensorDeviceID = Ports.lifterCancoder;
@@ -70,7 +72,7 @@ public class Cuber extends TesterSubsystem implements GenericShootIntake {
         lifter.config_kP(0, lifterPID.p);
         lifter.config_kI(0, lifterPID.i);
         lifter.config_kD(0, lifterPID.d);
-        state = State.UP;
+        state = up;
         cancoder = new CANCoder(Ports.lifterCancoder, "canivore"); 
         CANCoderConfiguration config = new CANCoderConfiguration();
         
@@ -86,15 +88,6 @@ public class Cuber extends TesterSubsystem implements GenericShootIntake {
         sensor = new AnalogInput(Ports.cuberSensor);
 
         ShuffleboardTab main = Shuffleboard.getTab("Master");
-        main.addString("Cube state", () -> {
-            switch(state) {
-                case UP:
-                    return "UP";
-                case DOWN: return "DOWN";
-                case HOLDUP: return "HOLD UP";
-            }
-            return "";
-        });
         main.addNumber("Deploy position", () -> lifter.getSelectedSensorPosition()).withSize(1, 1);
         main.addNumber("Cuber sensor", () -> getSensorValue()).withSize(1, 1).withPosition(2, 1);
         //main.addNumber("Backwards setpoint", () -> startingPoint == null ? 0.0 : startingPoint);
@@ -111,42 +104,41 @@ public class Cuber extends TesterSubsystem implements GenericShootIntake {
     public double getSensorValue() {
         return sensor.getValue();
     }
+    public void setSpeed(String height) {
+        motors[0].run(CubeShooterConstants.indexerSlowBackwardsSpeed);
+        runSingle(height, 1);
+    }
     public void shoot(String height) {
         run(height);
         if(height == TargetHeights.INTAKE) {
-            state = State.DOWN;
+            state = down;
         }
     }
     public void stop(String height) {
             super.stop();
-                state = State.UP;
+                state = up;
             
     }
     public SubsystemBase subsystem() {return this;}
     public void setup(String height) {
         if(height != TargetHeights.INTAKE) {
             motors[0].run(CubeShooterConstants.indexerSlowBackwardsSpeed);
-                runSingle(height, 1);
-                state = State.HOLDUP;
+            runSingle(height, 1);
+                state = (height == TargetHeights.LOW || height == TargetHeights.FAR) ? lowShot : shotSetpoint;
+            
         }
     }
     public boolean donePrepping(String height) {
-        return velocity ? (Math.abs(motors[1].getVelocity() - velocities.get(height)[1].getSetpoint()) <= 125.0)
-        : (motors[1].getVelocity() >= CubeShooterConstants.measuredVelocities.get(height));
+        return height == TargetHeights.LOW || (height == TargetHeights.FAR && motors[1].getVelocity() >= 17700.0) || (velocity ? (Math.abs(motors[1].getVelocity() - velocities.get(height)[1].getSetpoint()) <= 125.0)
+        : (motors[1].getVelocity() >= CubeShooterConstants.measuredVelocities.get(height)));
     }
     public void periodic() {
-        double setpoint = (state == State.DOWN) ? down : up;
         double diff = lifter.getSelectedSensorPosition();
-        if(diff - 100.0 <= setpoint && state == State.UP) {
+        if(diff <= -3000.0 && state == up) {
             lifter.set(ControlMode.PercentOutput, 0.0);
             
         } else {
-            // double val = -lifterPID.calculate(diff, setpoint);
-            // if(Math.abs(val) > 0.1) {
-            //     val = 0.1 * Math.signum(val);
-            // }
-            lifter.set(ControlMode.MotionMagic, setpoint);
-            //lifter.set(ControlMode.PercentOutput, val);
+            lifter.set(ControlMode.MotionMagic, state);
         }
     }
     public void simulationPeriodic() {
@@ -194,14 +186,14 @@ public class Cuber extends TesterSubsystem implements GenericShootIntake {
 
     private static final Map<String, TesterSetting[]> velocities = Map.of(
     TargetHeights.LOW, new TesterSetting[] {
-        new TesterSetting(1.0), new TesterSetting(true, 585.0)
+        new TesterSetting(1.0), new TesterSetting(0.13)
     }, TargetHeights.MID, new TesterSetting[] {
-        new TesterSetting(1.0), new TesterSetting(true, 1755.0)//0.14, -0.36
+        new TesterSetting(1.0), new TesterSetting(true, 3300.0)//0.14, -0.36
     }, TargetHeights.HIGH, new TesterSetting[] {
-        new TesterSetting(1.0), new TesterSetting(true, 2225.0)
+        new TesterSetting(1.0), new TesterSetting(true, 6750.0)
     }, TargetHeights.INTAKE, new TesterSetting[] {
-        new TesterSetting(-1.0), new TesterSetting(-0.35)
+        new TesterSetting(-0.2), new TesterSetting(-0.75)
     }, TargetHeights.FAR, new TesterSetting[] {
-        new TesterSetting(1.0), new TesterSetting(true, 4000.0)
+        new TesterSetting(1.0), new TesterSetting(1.0)
     });
 }

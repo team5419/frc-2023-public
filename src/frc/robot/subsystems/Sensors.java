@@ -99,7 +99,7 @@ public class Sensors extends SubsystemBase{
 
             double base1 = (Math.pow(leftHyp, 2) + Math.pow(base, 2) - Math.pow(rightHyp, 2))/(2*base);
 
-        
+            
             
 
         }

@@ -19,6 +19,7 @@ public class TesterFalcon implements TesterMotor {
         talon.config_kP(0, pid.p);
         talon.config_kI(0, pid.i);
         talon.config_kD(0, pid.d);
+        talon.config_kF(0, pid.f);
         return this;
     }
     public String getName() {
@@ -35,7 +36,6 @@ public class TesterFalcon implements TesterMotor {
         return talon.getSelectedSensorVelocity(0);
     }
     public void setVelocity(double velocity) {
-        System.out.println("setting velocity to " + velocity);
         talon.set(ControlMode.Velocity, velocity);
     }
     public double getPosition() {

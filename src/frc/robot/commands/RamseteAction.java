@@ -112,7 +112,6 @@ public class RamseteAction extends CommandBase {
     }
 
     public void end(boolean interrupted) {
-        System.out.println(drivetrain.getAngle());
         drivetrain.setBrakeMode(false);
         drivetrain.drive(0.0, 0.0, false);
     }

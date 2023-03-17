@@ -75,9 +75,7 @@ public class RobotContainer {
 		autoSelector = new SendableChooser<SequentialCommandGroup>();
 		tab.add("Auto selector", autoSelector).withSize(2, 1).withPosition(0, 0);
 		autoSelector.setDefaultOption("Baseline", new Baseline());
-		autoSelector.addOption("Use String Input", null);
-		autoSelector.addOption("Two Cube Balance", new TwoCubeBalance(swerve, vision, coner, cuber, false, lights));
-		autoSelector.addOption("Two Cube Balance, Short Side", new TwoCubeBalance(swerve, vision, coner, cuber, true, lights));
+		autoSelector.addOption("Two Cube Balance", new TwoCubeBalance(swerve, vision, coner, cuber, lights));
 		autoSelector.addOption("Systems Check", new SystemsCheck(swerve, cuber, coner, lights));
 
 		autoSelector.addOption("Preload only", new PreloadOnly(swerve, vision, coner, cuber, false, lights));
@@ -189,9 +187,6 @@ public class RobotContainer {
 
 	public Command getAutonomousCommand() {
 		SequentialCommandGroup res = autoSelector.getSelected();
-		if(res == null) {
-			return new AutoBuilder(autoEntry.getString("P"), swerve, vision, coner, cuber, lights);
-		}
 		return res;
 	}
 

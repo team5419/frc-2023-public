@@ -53,9 +53,10 @@ public class Shoot extends CommandBase {
         isCone = drivetrain.usingCones;
             height = drivetrain.currentHeight; 
         lights.setColor(0, 0, 255);
+        GenericShootIntake shooter = isCone ? coneShooter : cubeShooter;
+        shooter.setup(getHeight());
     }
     public void execute() {
-        System.out.println("going to shoot, height: " + height);
         GenericShootIntake shooter = isCone ? coneShooter : cubeShooter;
         String realHeight = getHeight();
        if(shooter.donePrepping(realHeight) || hasBeenReady) {

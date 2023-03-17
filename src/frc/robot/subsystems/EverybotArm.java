@@ -42,7 +42,7 @@ public class EverybotArm extends SubsystemBase {
     }
 
     public void move(double speed) {
-        System.out.println("setting output to " + speed);
+        //System.out.println("setting output to " + speed);
         leftArm.set(ControlMode.PercentOutput, speed);
     }
 

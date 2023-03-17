@@ -41,7 +41,7 @@ public class TesterProFalcon implements TesterMotor {
         return talon.getVelocity().getValue();
     }
     public void setVelocity(double velocity) {
-        System.out.println("setting velocity to " + velocity);
+        //System.out.println("setting velocity to " + velocity);
         talon.setControl(new VelocityTorqueCurrentFOC(velocity));
     }
     public double getPosition() {

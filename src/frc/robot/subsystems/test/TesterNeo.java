@@ -53,7 +53,7 @@ public class TesterNeo implements TesterMotor {
         if(Math.abs(previousSetpoint) > 1.0) {
             previousSetpoint = Math.signum(previousSetpoint);
         }
-        System.out.println("pid setpoint: " + previousSetpoint);
+        //System.out.println("pid setpoint: " + previousSetpoint);
         neo.set(previousSetpoint);
     }
 }

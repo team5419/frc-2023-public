@@ -38,7 +38,6 @@ public class SpecialRamseteSwerve extends RamseteSwerve {
         this.lights = lights;
     }
     public void initialize() {
-        System.out.println("Special init");
         Pose2d pose = drivetrain.pose();
         Alliance team = vision.team();
         double currentY = pose.getY();
@@ -67,7 +66,7 @@ public class SpecialRamseteSwerve extends RamseteSwerve {
         }
         int section = Util.getSection(currentY);
         this.goal = new Pose2d(targetX, targetY, converted);
-        System.out.println("going to x: " + targetX + ", y: " + targetY + ", theta: " + converted.getDegrees());
+        //System.out.println("going to x: " + targetX + ", y: " + targetY + ", theta: " + converted.getDegrees());
         if((section == Util.getSection(AprilTagConstants.yPositions[closestNum]) && section != -1) || imBasic) {
             this.state = State.POSTDIAGONAL;
         } else {
@@ -107,7 +106,6 @@ public class SpecialRamseteSwerve extends RamseteSwerve {
     }
 
     public void end(boolean interrupted) {
-        System.out.println("SPECIAL SWERVE ENDED!!");
         super.end(interrupted);
     }
 }

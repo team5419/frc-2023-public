@@ -42,7 +42,7 @@ public class Vision extends SubsystemBase { // this keeps track of our limelight
             layout.addNumber("Hor Offset", () -> getHorizontalOffset());
             layout.addNumber("Ver Offset", () -> getVerticalOffset());
             layout.addNumber("Distance", () -> getHorizontalDistance());
-            layout.addNumber("Lin Hor Offset", () -> getLinearHorizontalOffset(getHorizontalDistance()));
+            //layout.addNumber("Lin Hor Offset", () -> getLinearHorizontalOffset(getHorizontalDistance()));
             layout.addBoolean("Sees target", () -> isTargetFound());
             this.off();
         } else {
@@ -61,16 +61,16 @@ public class Vision extends SubsystemBase { // this keeps track of our limelight
         }
         
         if(_photon) { // if we're using photon camera, set it up and add a value to shuffleboard for what team we're on
-            layout.addString("Team", () -> {
-                switch(team()) {
-                    case Red:
-                        return "Red";
-                    case Blue:
-                        return "Blue";
-                    default:
-                        return "None";
-                }
-            });
+            // layout.addString("Team", () -> {
+            //     switch(team()) {
+            //         case Red:
+            //             return "Red";
+            //         case Blue:
+            //             return "Blue";
+            //         default:
+            //             return "None";
+            //     }
+            // });
             layout.addDouble("Last tag x", () -> lastTagPositionFront.getX());
             layout.addDouble("Last tag y", () -> lastTagPositionFront.getY());
             layout.addBoolean("sees tag", () -> seesTag);
@@ -100,7 +100,7 @@ public class Vision extends SubsystemBase { // this keeps track of our limelight
             for(int i = 0; i < targets.size(); i++) {
                 if(targets.get(i).getFiducialId() == number) {
                     seesTag = true;
-                    System.out.println("found target");
+                    //System.out.println("found target");
                     return targets.get(i).getBestCameraToTarget().getY();
                 }
             }
@@ -222,7 +222,7 @@ public class Vision extends SubsystemBase { // this keeps track of our limelight
         if(limelight == null) {
             return;
         }
-        limelight.getEntry("ledMode").setNumber(1);
+        limelight.getEntry("ledMode").setNumber(3);
     }
 
     public Alliance team() {

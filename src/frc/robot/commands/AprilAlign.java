@@ -26,9 +26,7 @@ public class AprilAlign extends CommandBase {
     }
     public void execute() {
         double theta = vision.getHorizontalToTarget(num);
-        //System.out.println("running align"); System.out.println("theta = " + theta);
         if(Math.abs(theta) < 0.04) {
-            //System.out.println("theta is close enough");
             theta = 0.0;
         }
        

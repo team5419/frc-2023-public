@@ -6,24 +6,27 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import java.util.Map;
 
 public class TesterSubsystem extends SubsystemBase {
+    public static boolean usingShuffleboard = false;
     private Map<String, TesterSetting[]> stateMap;
     protected TesterMotor[] motors;
     public TesterSubsystem(String name, TesterMotor[] motors, Map<String, TesterSetting[]> states) {
         ShuffleboardTab tab = Shuffleboard.getTab(name);
         this.motors = motors;
         this.stateMap = states;
-        int i = 0;
-        for(Map.Entry<String, TesterSetting[]> entry : states.entrySet()) {
-            for(int x = 0; x < motors.length; x++) {
-                entry.getValue()[x].initialize(tab, motors[x], entry.getKey(), x, i);
+        if(usingShuffleboard) {
+            int i = 0;
+            for(Map.Entry<String, TesterSetting[]> entry : states.entrySet()) {
+                for(int x = 0; x < motors.length; x++) {
+                    entry.getValue()[x].initialize(tab, motors[x], entry.getKey(), x, i);
+                }
+                i++;
             }
-            i++;
-        }
-        for(int j = 0; j < motors.length; j++) { // display all velocities at the bottom
-            int savedJ = j;
-            tab.addNumber(motors[j].getName() + " VELOCITY", () -> motors[savedJ].getVelocity())
-                .withSize(2, 1)
-                .withPosition(j * 2, i);
+            for(int j = 0; j < motors.length; j++) { // display all velocities at the bottom
+                int savedJ = j;
+                tab.addNumber(motors[j].getName() + " VELOCITY", () -> motors[savedJ].getVelocity())
+                    .withSize(2, 1)
+                    .withPosition(j * 2, i);
+            }
         }
     }
     public void run(String setting) {

@@ -60,8 +60,6 @@ public class AutoBalance extends CommandBase {
         if(targetYaw % 360.0 == 0.0) {
             pitchChange *= -1.0;
         }
-        System.out.println(hasShiftedBack);
-        System.out.println(targetYaw);
         drivetrain.drive(pitchChange, 0.0, yawChange, false, true);
     }
     public boolean isFinished() {

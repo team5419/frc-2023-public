@@ -30,7 +30,6 @@ public class RamseteSwerve extends CommandBase {
     }
     public void initialize() {
         alliance = vision.team();
-        System.out.println("initializing");
         if(options.teamRelative && vision.team() == Alliance.Red) {
             this.goal = new Pose2d(goal.getX(), -goal.getY(), goal.getRotation());
         }
@@ -41,7 +40,6 @@ public class RamseteSwerve extends CommandBase {
     }
     public void execute() { 
         if(goal == null) {
-            System.out.println("goal is null");
             return;
         }
         double thetaDiff = 0.0;
@@ -64,7 +62,7 @@ public class RamseteSwerve extends CommandBase {
         double dx = options.preventDrive ? 0.0 : (SwerveDriveConstants.pXY * Util.deadband(xdiff, SwerveDriveConstants.epsilonXY * options.epsilonMultiplier));
         double dy = options.preventDrive ? 0.0 : (SwerveDriveConstants.pXY * Util.deadband(ydiff, SwerveDriveConstants.epsilonXY * options.epsilonMultiplier));
         double magnitude = Math.sqrt(Math.pow(dx, 2.0) + Math.pow(dy, 2.0));
-        double max = (options.maxSpeed < 0.0 ? SwerveDriveConstants.maxVelocity : options.maxSpeed);
+        double max = (options.maxSpeed < 0.0 ? SwerveDriveConstants.maxVelocity : options.maxSpeed) / 2;
         if(magnitude > max) {
             dx *= (max / magnitude); // straight line ? idk
             dy *= (max / magnitude);
@@ -80,7 +78,6 @@ public class RamseteSwerve extends CommandBase {
         isFinished = (options.preventDrive || (dx == 0 && dy == 0)) && (dtheta == 0 || (options.time != 0.0 && timer.get() >= options.time)) && (!options.speedLimit || drivetrain.getAverageSpeed() < 0.1) && (options.turnToTag == -1 || vision.seesTag);
     }
     public boolean isFinished() {
-        System.out.println("finished");
         return isFinished;
     }
     public void end(boolean interrupted) {

@@ -41,7 +41,6 @@ public class SpecialRamseteTurn extends CommandBase {
     public void initialize() {
         isFinished = false;
         hasSeenTag = false;
-        System.out.println("Special init");
         cones = swerve.usingCones;
         currentHeight = swerve.currentHeight;
         GenericShootIntake shooter = cones ? coner : cuber;
@@ -93,7 +92,6 @@ public class SpecialRamseteTurn extends CommandBase {
             return;
         }
         if(isFinished) {
-            System.out.println("finished!!!!");
             swerve.isAligning = AlignState.CONTROLLERON;
             CommandBase regularer = 
                 cones ? new AutoAlign(swerve, coner, vision, coner.getLimelightDistance(TargetHeights.heights[currentHeight]), currentHeight, lights, 0.0)

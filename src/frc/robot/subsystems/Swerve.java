@@ -80,8 +80,8 @@ public class Swerve extends SubsystemBase { // our swerve drive subsystem
         layout.addNumber("pitch", () -> this.gyro.getPitch());
         // layout.addNumber("roll", () -> this.gyro.getRoll());
         //layout.addNumber("compass", () -> this.gyro.getCompassHeading()); // wtf is this lmao
-        layout.addBoolean("slow mode", () -> this.slowMode); // shows whether we are in slow mode
-        layout.add("reset gyro", new ResetGyro(this)); // add a button on the screen to reset the gyro to 0 degrees
+        //layout.addBoolean("slow mode", () -> this.slowMode); // shows whether we are in slow mode
+        //layout.add("reset gyro", new ResetGyro(this)); // add a button on the screen to reset the gyro to 0 degrees
         layout.addNumber("x position", () -> pose().getX()); // print out our x and y position
         layout.addNumber("y position", () -> pose().getY());
         layout.addNumber("forward m", () -> previousMove.vxMetersPerSecond); // print out our current speed and turning speed
@@ -98,7 +98,7 @@ public class Swerve extends SubsystemBase { // our swerve drive subsystem
         .withSize(2, 1).withPosition(6, 0);
 
         selectionTab.addBoolean("Auto Shoot", () -> autoShoot).withSize(2, 1).withPosition(6, 1);
-        selectionTab.addBoolean("Thinks is aligning", () -> isAligning != AlignState.NOT).withPosition(9, 3).withSize(1, 1);
+        //selectionTab.addBoolean("Thinks is aligning", () -> isAligning != AlignState.NOT).withPosition(9, 3).withSize(1, 1);
     }
     private SwerveModulePosition[] getPositions() { // get the total lengths driven by each module as an array
         SwerveModulePosition[] arr = new SwerveModulePosition[drivers.length];
@@ -135,7 +135,7 @@ public class Swerve extends SubsystemBase { // our swerve drive subsystem
         }
     }
     public void drive(double forward, double left, double rotation, boolean fieldCentric, boolean pid) {
-        System.out.println("driving: " + forward + ", " + left + ", " + rotation);
+        //System.out.println("driving: " + forward + ", " + left + ", " + rotation);
         // drive the robot at a certain speed forward, a certain speed to the left, and rotating at a certain speed
         // if fieldCentric is false, this will drive forward/left from the perspective of the robot. otherwise, it uses the perspective of the field
         // if pid is true, it will use more accurate and brake-y control for the drive motors. this is true for auto but false for regular driving

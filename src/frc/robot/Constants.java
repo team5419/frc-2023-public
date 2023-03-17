@@ -12,6 +12,9 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import java.lang.Math;
 import java.util.Map;
 
+import com.ctre.phoenix.motorcontrol.can.TalonFX;
+import frc.robot.Util;
+
 public class Constants {
     public static enum ConerTypes {
         LOW_CONER, EVERYBOT_MOTORS, EVERYBOT_SUCTION
@@ -40,7 +43,8 @@ public class Constants {
     }
     public static final class CubeShooterConstants {
 
-        public static final PID upPID = new PID(0.000007, 0.0, 0.0);
+        public static final PID upPID = new PID(0.15, 0.0005, 0.0, 0.054);
+       
         // order: indexer, main motor
 
         public static final Map<String, Double> measuredVelocities = Map.of(TargetHeights.LOW, 0.0, TargetHeights.MID, 1550.0, TargetHeights.HIGH, 1900.0, TargetHeights.INTAKE, 0.0, TargetHeights.FAR, 1770.0);
