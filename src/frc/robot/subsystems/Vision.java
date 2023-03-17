@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.AprilTagConstants;
 import frc.robot.Constants.LimelightConstants;
@@ -44,6 +45,12 @@ public class Vision extends SubsystemBase { // this keeps track of our limelight
             layout.addNumber("Distance", () -> getHorizontalDistance());
             //layout.addNumber("Lin Hor Offset", () -> getLinearHorizontalOffset(getHorizontalDistance()));
             layout.addBoolean("Sees target", () -> isTargetFound());
+            layout.add("Limelight on", Commands.runOnce(() -> {
+                this.on();
+            }));
+            layout.add("Limelight off", Commands.runOnce(() -> {
+                this.off();
+            }));
             this.off();
         } else {
             limelight = null;
@@ -222,7 +229,7 @@ public class Vision extends SubsystemBase { // this keeps track of our limelight
         if(limelight == null) {
             return;
         }
-        limelight.getEntry("ledMode").setNumber(3);
+        limelight.getEntry("ledMode").setNumber(1);
     }
 
     public Alliance team() {

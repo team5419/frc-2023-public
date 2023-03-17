@@ -38,7 +38,7 @@ import edu.wpi.first.wpilibj.AnalogInput;
 public class Cuber extends TesterSubsystem implements GenericShootIntake {
     private final double down = -1200.0;
     private final double shotSetpoint = -3260.0;
-    private final double up = -4000.0;
+    private final double up = -3500.0;
     private final double lowShot = -2200;
     
     private final PID lifterPID = new PID(0.5, 0.0, 0.0);
@@ -108,6 +108,9 @@ public class Cuber extends TesterSubsystem implements GenericShootIntake {
         motors[0].run(CubeShooterConstants.indexerSlowBackwardsSpeed);
         runSingle(height, 1);
     }
+    public void runIntake() {
+        run(TargetHeights.INTAKE);
+    }
     public void shoot(String height) {
         run(height);
         if(height == TargetHeights.INTAKE) {
@@ -129,7 +132,7 @@ public class Cuber extends TesterSubsystem implements GenericShootIntake {
         }
     }
     public boolean donePrepping(String height) {
-        return height == TargetHeights.LOW || (height == TargetHeights.FAR && motors[1].getVelocity() >= 17700.0) || (velocity ? (Math.abs(motors[1].getVelocity() - velocities.get(height)[1].getSetpoint()) <= 50.0)
+        return height == TargetHeights.LOW || (height == TargetHeights.FAR && motors[1].getVelocity() >= 14000.0) || (velocity ? (Math.abs(motors[1].getVelocity() - velocities.get(height)[1].getSetpoint()) <= 75.0)
         : (motors[1].getVelocity() >= CubeShooterConstants.measuredVelocities.get(height)));
     }
     public void periodic() {
@@ -194,6 +197,6 @@ public class Cuber extends TesterSubsystem implements GenericShootIntake {
     }, TargetHeights.INTAKE, new TesterSetting[] {
         new TesterSetting(-0.35), new TesterSetting(-0.75)
     }, TargetHeights.FAR, new TesterSetting[] {
-        new TesterSetting(1.0), new TesterSetting(1.0)
+        new TesterSetting(1.0), new TesterSetting(0.8)
     });
 }

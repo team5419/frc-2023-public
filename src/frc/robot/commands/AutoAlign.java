@@ -74,7 +74,6 @@ public class AutoAlign extends CommandBase {
             if(secondPhase && found) {
                 isFinished = false;
                 secondPhase = false;
-                shooter.stopMotors();
             }
         }
     }
@@ -85,6 +84,9 @@ public class AutoAlign extends CommandBase {
         boolean fin= isFinished || (time != 0.0 && timer.get() >= time);
         //return fin;
         if(fin) {
+            if(TargetHeights.heights[height] == TargetHeights.LOW) {
+                return true;
+            }
             secondPhase = true;
             timer.reset();
             timer.start();
