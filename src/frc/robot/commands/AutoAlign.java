@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants.LimelightConstants;
 import frc.robot.Constants.TargetHeights;
+import frc.robot.subsystems.Coner;
 import frc.robot.subsystems.GenericShootIntake;
 import frc.robot.subsystems.Lights;
 import frc.robot.subsystems.Swerve;
@@ -12,14 +13,14 @@ public class AutoAlign extends CommandBase {
     private Swerve drivetrain;
     private Vision vision;
     private double distance;
-    private GenericShootIntake shooter;
+    private Coner shooter;
     private int height;
     private Lights lights;
     private boolean isFinished;
     private Timer timer;
     private double time;
     private boolean secondPhase;
-    public AutoAlign(Swerve drivetrain, GenericShootIntake shooter, Vision vision, double distance, int height, Lights lights, double timeLimit) {
+    public AutoAlign(Swerve drivetrain, Coner shooter, Vision vision, double distance, int height, Lights lights, double timeLimit) {
         this.drivetrain = drivetrain;
         this.vision = vision;
         this.distance = distance;
@@ -40,6 +41,7 @@ public class AutoAlign extends CommandBase {
             timer.reset();
             timer.start();
         }
+        shooter.pneumaticsOut();
     }
     public void execute() {
         double theta = drivetrain.angle();
@@ -72,6 +74,7 @@ public class AutoAlign extends CommandBase {
             if(secondPhase && found) {
                 isFinished = false;
                 secondPhase = false;
+                shooter.stopMotors();
             }
         }
     }

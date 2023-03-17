@@ -3,6 +3,7 @@ import frc.robot.Util;
 
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.subsystems.Coner;
 import frc.robot.subsystems.GenericShootIntake;
 import frc.robot.subsystems.Lights;
 import frc.robot.subsystems.Swerve;
@@ -15,7 +16,7 @@ import frc.robot.classes.RamseteOptions;
 public class SpecialRamseteTurn extends CommandBase {
     private Swerve swerve;
     private double targetRotation;
-    private GenericShootIntake coner;
+    private Coner coner;
     private GenericShootIntake cuber;
     private boolean isFinished;
     private Vision vision;
@@ -24,7 +25,7 @@ public class SpecialRamseteTurn extends CommandBase {
     private boolean cones;
     private Lights lights;
     private int currentHeight;
-    public SpecialRamseteTurn(Swerve drivetrain, Vision vision, XboxController controller, GenericShootIntake coner, GenericShootIntake cuber, Lights lights) {
+    public SpecialRamseteTurn(Swerve drivetrain, Vision vision, XboxController controller, Coner coner, GenericShootIntake cuber, Lights lights) {
         this.coner = coner;
         this.vision = vision;
         this.cuber = cuber;
