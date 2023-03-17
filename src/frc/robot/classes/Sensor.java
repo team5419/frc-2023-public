@@ -3,22 +3,22 @@ package frc.robot.classes;
 public class Sensor {
 
     private int index;
-    private double distFromCenter;
-    private double distFromPole;
+    private int distFromCenter;
+    private int distFromPole;
 
-    public Sensor(int _index, double _distFromCenter){
+    public Sensor(int _index, int _distFromCenter){
         index = _index;
         distFromCenter = _distFromCenter;
-        distFromPole = -1.0;
+        distFromPole = -1;
     }
 
-    public void setDistFromPole(double _dist){
+    public void setDistFromPole(int _dist){
         distFromPole = _dist;
     }
-    public double getOffset(){
+    public int getOffset(){
         return distFromCenter;
     }
-    public double getDist(){
+    public int getDist(){
         return distFromPole;
     }
 
