@@ -71,6 +71,13 @@ public class Coner extends TesterSubsystem implements GenericShootIntake {
         }
         return new TesterNeo(name, Util.setUpMotor(new CANSparkMax(id, MotorType.kBrushless), inverted, true));
     }
+    public void pneumaticsOut() {
+        soOne.set(true);
+        soTwo.set(false);
+    }
+    public void stopMotors() {
+        super.stop();
+    }
     public void shoot(String height) {
         if(height == TargetHeights.LOW) {
             if(!soOne.get()) {
@@ -143,7 +150,7 @@ public class Coner extends TesterSubsystem implements GenericShootIntake {
     TargetHeights.LOW, new TesterSetting[] {
         new TesterSetting(0.11), new TesterSetting(0.11)
     }, TargetHeights.MID, new TesterSetting[] {
-        new TesterSetting(0.15), new TesterSetting(0.41)//0.445
+        new TesterSetting(0.14), new TesterSetting(0.41)//0.445
     }, TargetHeights.HIGH, new TesterSetting[] {
         new TesterSetting(0.22), new TesterSetting(1.0)
     }, TargetHeights.INTAKE, new TesterSetting[] {

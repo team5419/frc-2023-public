@@ -36,7 +36,7 @@ public class RobotContainer {
 	public Swerve swerve;
 	private XboxController driver;
 	private XboxController codriver;
-	private GenericShootIntake coner;
+	private Coner coner;
 	private EverybotArm arm;
 	private boolean madeHub;
 	public Lights lights;
@@ -51,21 +51,9 @@ public class RobotContainer {
 		swerve = new Swerve(vision, true); /* CHOOSE ONE!!! */
 		arm = null; 
 		madeHub = false;
-		coner = null;
+		coner = new Coner(true, false);
 		generateHub();
 		cuber = new Cuber(true);
-		switch(CONER_TYPE) {
-			case LOW_CONER:
-			generateHub();
-				coner = new Coner(true, false);
-				break;
-			case EVERYBOT_MOTORS:
-				coner = new EverybotConer(generateArm(), false);
-				break;
-			case EVERYBOT_SUCTION:
-				coner = new Suction(generateArm());
-				break;
-		}
 		
 	
 		

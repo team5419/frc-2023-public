@@ -13,21 +13,24 @@ public class TesterSubsystem extends SubsystemBase {
         ShuffleboardTab tab = Shuffleboard.getTab(name);
         this.motors = motors;
         this.stateMap = states;
-        if(usingShuffleboard) {
+        
             int i = 0;
             for(Map.Entry<String, TesterSetting[]> entry : states.entrySet()) {
+                if(usingShuffleboard) {
                 for(int x = 0; x < motors.length; x++) {
                     entry.getValue()[x].initialize(tab, motors[x], entry.getKey(), x, i);
                 }
+             }
                 i++;
             }
+        
             for(int j = 0; j < motors.length; j++) { // display all velocities at the bottom
                 int savedJ = j;
                 tab.addNumber(motors[j].getName() + " VELOCITY", () -> motors[savedJ].getVelocity())
                     .withSize(2, 1)
                     .withPosition(j * 2, i);
             }
-        }
+        
     }
     public void run(String setting) {
         TesterSetting[] theSetting = stateMap.get(setting);
