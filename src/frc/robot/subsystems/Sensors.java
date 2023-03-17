@@ -33,7 +33,7 @@ public class Sensors extends SubsystemBase{
         sensors = new ArrayList<Sensor>();
 
         layout.addString("Reading", () -> read());
-        layout.addNumber("H Offset: ", () -> getHorizontalOffset());
+        layout.addNumber("H Offset: ", () -> getHorizontalOffset()*0.00328084*12);
         for(int i = 0; i < SensorArrayConstants.numSensors; i++){
             int savedI = i;
             sensors.add(new Sensor(i, SensorArrayConstants.sensorOffsets[i]));
@@ -69,11 +69,16 @@ public class Sensors extends SubsystemBase{
                         for(int i = 0; i < SensorArrayConstants.numSensors; i++){
                             System.out.println("Sensor " + i + ": " + dataString[i]);
                             try {
-                                sensors.get(i).setDistFromPole(Integer.parseInt(dataString[i]));
+                                int dist = Integer.parseInt(dataString[i]);
+                                if (dist <= 300){
+                                    dist = 8190;
+                                }
+                                sensors.get(i).setDistFromPole(dist);
                             } catch(NumberFormatException nfe){
                                 return "NFE";
                             }
                         }
+                        calcHorizontalOffset();
                         return "working";
                     }
                     return "data string wrong length";
@@ -85,63 +90,61 @@ public class Sensors extends SubsystemBase{
         return "no signal";
     }
 
-    public double getHorizontalOffset(){
+
+    public double calcHorizontalOffset(){
+
+        int closestIndex = 0;
+        double closestDist = sensors.get(0).getDist();
 
 
-        horizontalOffset = -1;
-        if(read().equals("working")){
-
-            int closestIndex = 0;
-            double closestDist = sensors.get(0).getDist();
-
-
-            for (int i = 0; i < SensorArrayConstants.numSensors; i++){
-                if (sensors.get(i).getDist() < closestDist){
-                    closestDist = sensors.get(i).getDist();
-                    closestIndex = i;
-                }
-            }
-
-            if (closestIndex != 0 && closestIndex != SensorArrayConstants.numSensors - 1) { //make sure its not the end sensors
-                int leftIndex = closestIndex - 1;
-                leftHyp = sensors.get(leftIndex).getDist();
-                int rightIndex = closestIndex + 1;
-                double rightHyp = sensors.get(rightIndex).getDist();
-
-                double base = Math.abs(sensors.get(leftIndex).getOffset() - sensors.get(rightIndex).getOffset());
-
-                /*
-
-                    TWO TRINAGLE WITH A SHARED HEIGHT
-                    LEFT TRAINGLE WITH BASE1 AND LEFTHYPOTENOUS
-                    RIGHT TRIANGLE WITH BASE2 AND RIGHTHYPOTENOUS
-                        Ʌ
-                       /|\
-                      / | \
-                     /  |  \
-                    /___|___\
-                    base1 base2
-
-                * leftHyp^2 - base1^2 = rightHyp^2 - base2^2
-                * 
-                * base1 + base2 = base, where base1 is the distance from the lsensor to the pole-to-base interesection
-                * base2 = base - base1
-                * 
-                * leftHyp^2 - base1^2 = rightHyp^2 - (base - base1)^2
-                * leftHyp^2 - base1^2 = rightHyp^2 - base^2 + 2*base*base1 - base1^2
-                * leftHyp^2 = rightHyp^2 - base^2 + 2*base*base1
-                * 2*base*base1 = leftHyp^2 - rightHyp^2 + base^2
-                * base1 = (leftHyp^2 - rightHyp^2 + base^2) / (2 * base)
-                */
-
-                base1 = (Math.pow(leftHyp, 2) + Math.pow(base, 2) - Math.pow(rightHyp, 2))/(2*base);
-
-
-                horizontalOffset = sensors.get(leftIndex).getOffset() + base1;
-            } else {
-                horizontalOffset = sensors.get(closestIndex).getOffset();
+        for (int i = 0; i < SensorArrayConstants.numSensors; i++){
+            if (sensors.get(i).getDist() < closestDist){
+                closestDist = sensors.get(i).getDist();
+                closestIndex = i;
             }
         }
+
+        if (closestIndex != 0 && closestIndex != SensorArrayConstants.numSensors - 1 //make sure its not the end sensors
+            && sensors.get(closestIndex - 1).getDist() != 8190 && sensors.get(closestIndex + 1).getDist() != 8190) { 
+            int leftIndex = closestIndex - 1;
+            leftHyp = sensors.get(leftIndex).getDist();
+            int rightIndex = closestIndex + 1;
+            double rightHyp = sensors.get(rightIndex).getDist();
+
+            double base = Math.abs(sensors.get(leftIndex).getOffset() - sensors.get(rightIndex).getOffset());
+
+            /*
+
+                TWO TRINAGLE WITH A SHARED HEIGHT
+                LEFT TRAINGLE WITH BASE1 AND LEFTHYPOTENOUS
+                RIGHT TRIANGLE WITH BASE2 AND RIGHTHYPOTENOUS
+                    Ʌ
+                   /|\
+                  / | \
+                 /  |  \
+                /___|___\
+                base1 base2
+
+            * leftHyp^2 - base1^2 = rightHyp^2 - base2^2
+            * 
+            * base1 + base2 = base, where base1 is the distance from the lsensor to the pole-to-base interesection
+            * base2 = base - base1
+            * 
+            * leftHyp^2 - base1^2 = rightHyp^2 - (base - base1)^2
+            * leftHyp^2 - base1^2 = rightHyp^2 - base^2 + 2*base*base1 - base1^2
+            * leftHyp^2 = rightHyp^2 - base^2 + 2*base*base1
+            * 2*base*base1 = leftHyp^2 - rightHyp^2 + base^2
+            * base1 = (leftHyp^2 - rightHyp^2 + base^2) / (2 * base)
+            */
+
+            base1 = (Math.pow(leftHyp, 2) + Math.pow(base, 2) - Math.pow(rightHyp, 2))/(2*base);
+
+
+            horizontalOffset = sensors.get(leftIndex).getOffset() + base1;
+        } else {
+            horizontalOffset = sensors.get(closestIndex).getOffset();
+        }
+    
 
         return horizontalOffset;
     }
@@ -187,6 +190,11 @@ public class Sensors extends SubsystemBase{
             verticleOffset = -1;
         }
         return verticleOffset;
+    }
+
+
+    public double getHorizontalOffset(){
+        return horizontalOffset;
     }
 
 }
