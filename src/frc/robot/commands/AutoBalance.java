@@ -11,17 +11,21 @@ public class AutoBalance extends CommandBase {
     private double targetYaw;
     private Timer timer;
     private int hasShiftedBack;
+    private boolean facingForward;
     public AutoBalance(Swerve drivetrain, Lights lights) {
         this.drivetrain = drivetrain;
         this.targetYaw = 0.0;
         this.lights = lights;
+        this.facingForward = false;
         hasShiftedBack = 0;
         this.timer = new Timer();
         addRequirements(drivetrain);
     }
     public void initialize() {
         hasShiftedBack = -1;
-        this.targetYaw = Math.round(drivetrain.angle() / 180.0) * 180.0;
+        int yawInt = (int)Math.round(drivetrain.angle() / 180.0);
+        facingForward = (yawInt % 2) == 0;
+        targetYaw = yawInt * 180.0;
         timer.reset();
         timer.start();
         lights.rainbow();
@@ -57,7 +61,7 @@ public class AutoBalance extends CommandBase {
                 pitchChange = pitchDiff * 0.012;
             }
         }
-        if(targetYaw % 360.0 == 0.0) {
+        if(facingForward) {
             pitchChange *= -1.0;
         }
         drivetrain.drive(pitchChange, 0.0, yawChange, false, true);
