@@ -52,9 +52,9 @@ public class TwoCubeBalanceRed extends SequentialCommandGroup { // basic routine
             Commands.runOnce(() -> {
                 cubeShooter.stop(TargetHeights.INTAKE);
             }),
-            new RamseteSwerve(drivetrain, vision, new Pose2d(new Translation2d(2.8, 1.2), new Rotation2d(0.0)), new RamseteOptions(false, 4.0))
-            // new RamseteSwerve(drivetrain, vision, new Pose2d(new Translation2d(1.0, 1.2 + blueYOffset), new Rotation2d(0.0)), new RamseteOptions(false, 4.0)),
-            // new AutoBalance(drivetrain, lights)
+            // new RamseteSwerve(drivetrain, vision, new Pose2d(new Translation2d(2.0, 1.2), new Rotation2d(0.0)), new RamseteOptions(false, 4.0))
+            new RamseteSwerve(drivetrain, vision, new Pose2d(new Translation2d(-0.4, 1.2 + blueYOffset), new Rotation2d(0.0)), new RamseteOptions(true,  false, false, 4.0, -1, -1.0, 0.0)),
+            new AutoBalance(drivetrain, lights)
         );
     }
 }
