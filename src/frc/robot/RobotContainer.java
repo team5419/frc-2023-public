@@ -171,8 +171,8 @@ public class RobotContainer {
 		// yButtonCodriver.onTrue(new ChangeSystemOffset(1, 0.0025, cuber, coner, swerve));
 		// xButtonCodriver.onTrue(new ChangeSystemOffset(0, 0.0025, cuber, coner, swerve));
 		// bButtonCodriver.onTrue(new ChangeSystemOffset(0, -0.0025, cuber, coner, swerve));
-		aButtonCodriver.whileTrue(Commands.runEnd(() -> coner.shoot(TargetHeights.INTAKE), () -> coner.stop(TargetHeights.INTAKE)));
-		aButtonCodriver.onFalse(new SlightOutake(coner));
+		aButtonCodriver.whileTrue(Commands.run(() -> coner.shoot(TargetHeights.INTAKE)));
+		aButtonCodriver.onFalse(Commands.runEnd(() -> coner.shoot(TargetHeights.MID), () -> coner.stop(TargetHeights.MID)).withTimeout(.08));
 		leftBumperCodriver.onTrue(Commands.runOnce(() -> swerve.autoShoot = !swerve.autoShoot));
 	}
 
