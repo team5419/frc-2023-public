@@ -63,7 +63,8 @@ public class RobotContainer {
 		autoSelector = new SendableChooser<SequentialCommandGroup>();
 		tab.add("Auto selector", autoSelector).withSize(2, 1).withPosition(0, 0);
 		autoSelector.setDefaultOption("Baseline", new Baseline());
-		autoSelector.addOption("Two Cube Balance", new TwoCubeBalance(swerve, vision, coner, cuber, lights));
+		autoSelector.addOption("Two Cube Balance Blue", new TwoCubeBalanceBlue(swerve, vision, coner, cuber, lights));
+		autoSelector.addOption("Two Cube Balance Red", new TwoCubeBalanceRed(swerve, vision, coner, cuber, lights));
 		autoSelector.addOption("Systems Check", new SystemsCheck(swerve, cuber, coner, lights));
 
 		autoSelector.addOption("Preload only", new PreloadOnly(swerve, vision, coner, cuber, false, lights));
@@ -165,11 +166,13 @@ public class RobotContainer {
 		yButtonDriver.onTrue(new ResetGyro(swerve));
 		leftTrigger.whileTrue(new RunIntake(coner));
 		rightTrigger.whileTrue(new RunIntake(cuber));
-		rightTriggerCodriver.whileTrue(Commands.runEnd(() -> cuber.shoot(TargetHeights.INTAKE), () -> cuber.stop(TargetHeights.LOW), cuber.subsystem()));
-		aButtonCodriver.onTrue(new ChangeSystemOffset(1, -0.0025, cuber, coner, swerve));
-		yButtonCodriver.onTrue(new ChangeSystemOffset(1, 0.0025, cuber, coner, swerve));
-		xButtonCodriver.onTrue(new ChangeSystemOffset(0, 0.0025, cuber, coner, swerve));
-		bButtonCodriver.onTrue(new ChangeSystemOffset(0, -0.0025, cuber, coner, swerve));
+		rightTriggerCodriver.whileTrue(Commands.runEnd(() -> cuber.runIntake(), () -> cuber.stop(TargetHeights.LOW), cuber.subsystem()));
+		// aButtonCodriver.onTrue(new ChangeSystemOffset(1, -0.0025, cuber, coner, swerve));
+		// yButtonCodriver.onTrue(new ChangeSystemOffset(1, 0.0025, cuber, coner, swerve));
+		// xButtonCodriver.onTrue(new ChangeSystemOffset(0, 0.0025, cuber, coner, swerve));
+		// bButtonCodriver.onTrue(new ChangeSystemOffset(0, -0.0025, cuber, coner, swerve));
+		aButtonCodriver.whileTrue(Commands.runEnd(() -> coner.shoot(TargetHeights.INTAKE), () -> coner.stop(TargetHeights.INTAKE)));
+		// aButtonCodriver.onFalse(coner.inOut(false));
 		leftBumperCodriver.onTrue(Commands.runOnce(() -> swerve.autoShoot = !swerve.autoShoot));
 	}
 

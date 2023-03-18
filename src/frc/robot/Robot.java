@@ -28,7 +28,7 @@ public class Robot extends TimedRobot {
     robotContainer.setArmState(false);
     robotContainer.swerve.stop();
     robotContainer.useVision(true);
-    robotContainer.vision.off();
+    robotContainer.vision.on();
     robotContainer.lights.off();
   }
 

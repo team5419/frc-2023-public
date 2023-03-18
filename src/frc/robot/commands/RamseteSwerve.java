@@ -62,7 +62,7 @@ public class RamseteSwerve extends CommandBase {
         double dx = options.preventDrive ? 0.0 : (SwerveDriveConstants.pXY * Util.deadband(xdiff, SwerveDriveConstants.epsilonXY * options.epsilonMultiplier));
         double dy = options.preventDrive ? 0.0 : (SwerveDriveConstants.pXY * Util.deadband(ydiff, SwerveDriveConstants.epsilonXY * options.epsilonMultiplier));
         double magnitude = Math.sqrt(Math.pow(dx, 2.0) + Math.pow(dy, 2.0));
-        double max = (options.maxSpeed < 0.0 ? SwerveDriveConstants.maxVelocity : options.maxSpeed) / 2;
+        double max = (options.maxSpeed < 0.0 ? SwerveDriveConstants.maxVelocity : options.maxSpeed) * 0.85;
         if(magnitude > max) {
             dx *= (max / magnitude); // straight line ? idk
             dy *= (max / magnitude);

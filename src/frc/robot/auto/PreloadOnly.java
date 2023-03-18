@@ -10,6 +10,7 @@ import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.TargetHeights;
 import frc.robot.classes.RamseteOptions;
 import frc.robot.commands.*;
+import frc.robot.subsystems.Coner;
 import frc.robot.subsystems.GenericShootIntake;
 import frc.robot.subsystems.Lights;
 import frc.robot.subsystems.Swerve;
@@ -22,7 +23,7 @@ public class PreloadOnly extends SequentialCommandGroup { // basic routine for d
         }
         return new Translation2d(original.getX(), original.getY() * multiplier);
     }
-    public PreloadOnly(Swerve drivetrain, Vision vision, GenericShootIntake coneShooter, GenericShootIntake cubeShooter, boolean _short, Lights lights) {
+    public PreloadOnly(Swerve drivetrain, Vision vision, Coner coneShooter, GenericShootIntake cubeShooter, boolean _short, Lights lights) {
         double multiplier = _short ? -1.0 : 1.0;
         addCommands(
             new UseVision(drivetrain, false), // disable vision
@@ -31,8 +32,8 @@ public class PreloadOnly extends SequentialCommandGroup { // basic routine for d
                 drivetrain.usingCones = false; // just to set lights to purple :)))
                 coneShooter.setup(TargetHeights.INTAKE);
                 drivetrain.currentHeight = 1;
-                cubeShooter.setup(TargetHeights.INTAKE);
             }),
+            new AutoAlign(drivetrain, coneShooter, vision, coneShooter.getLimelightDistance(TargetHeights.MID), 1, lights, 2.0),
             new Shoot(coneShooter, coneShooter, drivetrain, 1.0, lights), // shoot pre-load cone and retract cone intake
             Commands.runOnce(() -> { // drop cube intake and start spinning intake
                 drivetrain.resetOdometry(new Pose2d(0.0, 0.0, Rotation2d.fromDegrees(180.0)));

@@ -118,7 +118,7 @@ public class Coner extends TesterSubsystem implements GenericShootIntake {
         }
     }
     public boolean donePrepping(String height) {
-        return (height == TargetHeights.LOW) || (timestamp >= 0.0 && Timer.getFPGATimestamp() - timestamp >= 0.25 && soOne.get() && !soTwo.get());
+        return (height == TargetHeights.LOW) || (timestamp >= 0.0 && Timer.getFPGATimestamp() - timestamp >= 0.5 && soOne.get() && !soTwo.get());
     }
     public SubsystemBase subsystem() {return this;}
     public final double getAngle() {
@@ -144,15 +144,16 @@ public class Coner extends TesterSubsystem implements GenericShootIntake {
         motors[0].run(ConerConstants.inOutVelocity * (in ? -1 : 1));
         motors[1].run(ConerConstants.inOutVelocity * (in ? 1 : -1));
     }
+    
 
     // CONSTANTS
     private static final Map<String, TesterSetting[]> percents = Map.of(
     TargetHeights.UNSTUCK, new TesterSetting[] {
         new TesterSetting(0.02), new TesterSetting(0.02)
     }, TargetHeights.LOW, new TesterSetting[] {
-        new TesterSetting(0.11), new TesterSetting(0.11)
+        new TesterSetting(0.11), new TesterSetting(0.20)
     }, TargetHeights.MID, new TesterSetting[] {
-        new TesterSetting(0.14), new TesterSetting(0.41)//0.445
+        new TesterSetting(0.142), new TesterSetting(0.406)//0.445
     }, TargetHeights.HIGH, new TesterSetting[] {
         new TesterSetting(0.22), new TesterSetting(1.0)
     }, TargetHeights.INTAKE, new TesterSetting[] {

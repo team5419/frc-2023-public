@@ -44,11 +44,11 @@ public class Constants {
     }
     public static final class CubeShooterConstants {
 
-        public static final PID upPID = new PID(0.17, 0.00015, 0.0, 0.014);
+        public static final PID upPID = new PID(0.15, 0.0007, 0.0, 0.00);//new PID(0.18, 0.0001, 0.0, 0.00);
        
         // order: indexer, main motor
 
-        public static final Map<String, Double> measuredVelocities = Map.of(TargetHeights.LOW, 0.0, TargetHeights.MID, 1550.0, TargetHeights.HIGH, 1900.0, TargetHeights.INTAKE, 0.0, TargetHeights.FAR, 1770.0);
+        public static final Map<String, Double> measuredVelocities = Map.of(TargetHeights.LOW, 0.0, TargetHeights.MID, 1500.0, TargetHeights.HIGH, 1850.0, TargetHeights.INTAKE, 0.0, TargetHeights.FAR, 1770.0);
 
         public static final double indexerSlowBackwardsSpeed = -0.05;
         public static final double sensorThresholdLeft = 880.0;
@@ -146,7 +146,7 @@ public class Constants {
         public static final double linHorizontalOffset = -0.01; // -0.023
         public static final double epsilonTurn = 1.0;
         public static final double epsilonHorizontal = 0.5;
-        public static final double epsilonLinHorizontal = 0.011;
+        public static final double epsilonLinHorizontal = 0.007;
         public static final double epsilonForward = 0.01; // .005
     }
     public static final class AprilTagConstants {
