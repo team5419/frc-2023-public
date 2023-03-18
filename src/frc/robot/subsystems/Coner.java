@@ -149,7 +149,7 @@ public class Coner extends TesterSubsystem implements GenericShootIntake {
     // CONSTANTS
     private static final Map<String, TesterSetting[]> percents = Map.of(
     TargetHeights.UNSTUCK, new TesterSetting[] {
-        new TesterSetting(0.02), new TesterSetting(0.02)
+        new TesterSetting(0.08), new TesterSetting(0.08)
     }, TargetHeights.LOW, new TesterSetting[] {
         new TesterSetting(0.11), new TesterSetting(0.20)
     }, TargetHeights.MID, new TesterSetting[] {
