@@ -29,12 +29,13 @@ public class Constants {
         public static final Translation2d preBalancePosition = new Translation2d(2.4, 1.95); // 2.25
     }
     public static final class TargetHeights { // these need to be stored as strings for shuffleboard
+        public static final String UNSTUCK = "UNSTUCK";
         public static final String LOW = "LOW";
         public static final String MID = "MID";
         public static final String HIGH = "HIGH";
         public static final String INTAKE = "INTAKE";
         public static final String FAR = "FAR";
-        public static final String[] heights = { LOW, MID, HIGH, FAR };
+        public static final String[] heights = { LOW, MID, HIGH, FAR, UNSTUCK };
     }
     public static final class ConerConstants {
         public static final double inOutVelocity = 0.05;

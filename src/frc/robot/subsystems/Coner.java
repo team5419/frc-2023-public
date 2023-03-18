@@ -148,7 +148,9 @@ public class Coner extends TesterSubsystem implements GenericShootIntake {
 
     // CONSTANTS
     private static final Map<String, TesterSetting[]> percents = Map.of(
-    TargetHeights.LOW, new TesterSetting[] {
+    TargetHeights.UNSTUCK, new TesterSetting[] {
+        new TesterSetting(0.08), new TesterSetting(0.08)
+    }, TargetHeights.LOW, new TesterSetting[] {
         new TesterSetting(0.11), new TesterSetting(0.20)
     }, TargetHeights.MID, new TesterSetting[] {
         new TesterSetting(0.144), new TesterSetting(0.408)//0.445
@@ -159,7 +161,9 @@ public class Coner extends TesterSubsystem implements GenericShootIntake {
     });
 
     private static final Map<String, TesterSetting[]> neoVelocities = Map.of(
-    TargetHeights.LOW, new TesterSetting[] {
+    TargetHeights.UNSTUCK, new TesterSetting[] {
+        new TesterSetting(true, 455), new TesterSetting(true, 455)
+    }, TargetHeights.LOW, new TesterSetting[] {
         new TesterSetting(true, 2500.0), new TesterSetting(true, 2500.0)
     }, TargetHeights.MID, new TesterSetting[] {
         new TesterSetting(true, 2500.0), new TesterSetting(true, 2500.0)//0.14, -0.36
@@ -170,7 +174,9 @@ public class Coner extends TesterSubsystem implements GenericShootIntake {
     });
 
     private static final Map<String, TesterSetting[]> falconVelocities = Map.of(
-    TargetHeights.LOW, new TesterSetting[] {
+    TargetHeights.UNSTUCK, new TesterSetting[] {
+        new TesterSetting(true, 1000), new TesterSetting(true, 1000)
+    }, TargetHeights.LOW, new TesterSetting[] {
         new TesterSetting(true, 10000.0), new TesterSetting(true, 10000.0)
     }, TargetHeights.MID, new TesterSetting[] {
         new TesterSetting(true, 10000.0), new TesterSetting(true, 10000.0)//0.14, -0.36
