@@ -132,7 +132,7 @@ public class Cuber extends TesterSubsystem implements GenericShootIntake {
         }
     }
     public boolean donePrepping(String height) {
-        return height == TargetHeights.LOW || (height == TargetHeights.FAR && motors[1].getVelocity() >= 14000.0) || (velocity ? (Math.abs(motors[1].getVelocity() - velocities.get(height)[1].getSetpoint()) <= 75.0)
+        return height == TargetHeights.LOW || (height == TargetHeights.FAR && motors[1].getVelocity() >= 13800.0) || (velocity ? (Math.abs(motors[1].getVelocity() - velocities.get(height)[1].getSetpoint()) <= 75.0)
         : (motors[1].getVelocity() >= CubeShooterConstants.measuredVelocities.get(height)));
     }
     public void periodic() {
