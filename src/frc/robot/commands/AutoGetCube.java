@@ -30,7 +30,7 @@ public class AutoGetCube extends SequentialCommandGroup {
                 new Prep(cubeShooter, cubeShooter, drivetrain, TargetHeights.FAR),
                 new RamseteSwerve(drivetrain, vision, new Pose2d(shootPosition, new Rotation2d(0.0)), new RamseteOptions(true, false, false, 3.0, aprilTagNumber, -1.0, 4.0))
             ),
-            new Shoot(cubeShooter, cubeShooter, drivetrain, 1.25, TargetHeights.FAR, lights) // shoot
+            new Shoot(cubeShooter, cubeShooter, drivetrain, 0.55, TargetHeights.FAR, lights) // shoot
         );
     }
 }

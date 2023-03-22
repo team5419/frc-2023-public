@@ -19,11 +19,11 @@ import frc.robot.subsystems.Vision;
 // SP12CK or P12CK for 2 cubes, SP1CK or P1CK for one cube
 
 
-public class TwoCubeBalanceBlue extends SequentialCommandGroup { // basic routine for diff drive
+public class TwoCubeBalance extends SequentialCommandGroup { // basic routine for diff drive
     private double blueYOffset;
-    public TwoCubeBalanceBlue(Swerve drivetrain, Vision vision, GenericShootIntake coneShooter, Cuber cubeShooter, Lights lights) {
+    public TwoCubeBalance(Swerve drivetrain, Vision vision, GenericShootIntake coneShooter, Cuber cubeShooter, Lights lights, boolean blueOffset) {
 
-        blueYOffset = -0.1;
+        blueYOffset = blueOffset ? -0.1 : 0.0;
 
         addCommands(
             new UseVision(drivetrain, false), // disable vision
@@ -31,24 +31,28 @@ public class TwoCubeBalanceBlue extends SequentialCommandGroup { // basic routin
                 drivetrain.resetGyro(0.0);
                 drivetrain.usingCones = false; // just to set lights to purple :)))
                 drivetrain.currentHeight = 1;
-                cubeShooter.setSpeed(TargetHeights.FAR);
-            }),
-            new WaitCommand(1.0),
-            Commands.runOnce(() -> {
-                cubeShooter.shoot(TargetHeights.FAR);
+                cubeShooter.runPercentOutput(1, 0.7);
             }),
             new WaitCommand(0.75),
+            Commands.runOnce(() -> {
+                cubeShooter.runPercentOutput(0, 1.0);
+                cubeShooter.runPercentOutput(1, 0.7);
+            }),
+            new WaitCommand(0.5),
             //new Shoot(cubeShooter, cubeShooter, drivetrain, 1.5, TargetHeights.FAR, lights), // shoot pre-load cone and retract cone intake
             Commands.runOnce(() -> { // drop cube intake and start spinning intake
                 drivetrain.resetOdometry(new Pose2d(0.0, 0.0, Rotation2d.fromDegrees(0.0)));
+                cubeShooter.shoot(TargetHeights.INTAKE);
             }),
-            new RamseteSwerve(drivetrain, vision, new Pose2d(new Translation2d(0.5, 0.0), Rotation2d.fromDegrees(0.0)), new RamseteOptions(true, false, false, 4.0, -1, -1.0, 0.0)),
-            new RamseteSwerve(drivetrain, vision, new Pose2d(new Translation2d(1.0, -0.18 + blueYOffset), Rotation2d.fromDegrees(180.0)), new RamseteOptions(true, false, false, 4.0, -1, -1.0, 0.0)),
+            new RamseteSwerve(drivetrain, vision, new Pose2d(new Translation2d(0.75, -0.18), Rotation2d.fromDegrees(0.0)), new RamseteOptions(true, false, false, 6.0, -1, -1.0, 0.0)),
+            new RamseteSwerve(drivetrain, vision, new Pose2d(new Translation2d(1.5, -0.18 + blueYOffset), Rotation2d.fromDegrees(180.0)), new RamseteOptions(true, false, false, 4.0, -1, -1.0, 0.0)),
             new AutoGetCube(drivetrain, cubeShooter, vision, new Translation2d(2.3, -0.18 + blueYOffset), new Translation2d(0.85, 0.75 + blueYOffset), -1, lights, false),
-            
+            Commands.runOnce(() -> 
+                cubeShooter.shoot(TargetHeights.INTAKE)
+            ),
             new RamseteSwerve(drivetrain, vision, new Pose2d(new Translation2d(1.1, 0.75 + blueYOffset), Rotation2d.fromDegrees(0.0)), new RamseteOptions(true, false, false, 4.0, -1, -1.0, 0.0)),
-            new RamseteSwerve(drivetrain, vision, new Pose2d(new Translation2d(1.65, 1.2 + blueYOffset), Rotation2d.fromDegrees(180.0)), new RamseteOptions(true, false, false, 4.0, -1, -1.0, 0.0)),
-            new AutoGetCube(drivetrain, cubeShooter, vision, new Translation2d(2.3, 1.2 + blueYOffset), new Translation2d(0.85, 1.2 + blueYOffset), -1, lights, false),
+            new RamseteSwerve(drivetrain, vision, new Pose2d(new Translation2d(1.65, 1.15 + blueYOffset), Rotation2d.fromDegrees(180.0)), new RamseteOptions(true, false, false, 4.0, -1, -1.0, 0.0)),
+            new AutoGetCube(drivetrain, cubeShooter, vision, new Translation2d(2.3, 1.15 + blueYOffset), new Translation2d(0.85, 1.2 + blueYOffset), -1, lights, false),
             Commands.runOnce(() -> {
                 cubeShooter.stop(TargetHeights.INTAKE);
             }),

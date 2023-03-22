@@ -61,7 +61,7 @@ public class AutoAlign extends CommandBase {
             drivetrain.drive(forward , -left , -turn, false, true);
         }
         if(secondPhase) {
-            shooter.setup(TargetHeights.heights[height]);
+            //shooter.setup(TargetHeights.heights[height]);
             drivetrain.stop();
         }
         if(Math.abs(turnDiff) <= LimelightConstants.epsilonTurn && Math.abs(leftDiff) <= LimelightConstants.epsilonLinHorizontal && Math.abs(forwardDiff) <= LimelightConstants.epsilonForward && found) {
@@ -79,7 +79,7 @@ public class AutoAlign extends CommandBase {
     }
     public boolean isFinished() {
         if(secondPhase) {
-            return timer.get() >= 0.5;
+            return timer.get() >= 0.25;
         }
         boolean fin= isFinished || (time != 0.0 && timer.get() >= time);
         //return fin;

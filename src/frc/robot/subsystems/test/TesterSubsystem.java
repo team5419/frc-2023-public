@@ -32,17 +32,23 @@ public class TesterSubsystem extends SubsystemBase {
             }
         
     }
+    public void runPercentOutput(int i, double percent) {
+        motors[i].run(percent);
+    }
+    public void runVelocity(int i, double velocity) {
+        motors[i].setVelocity(velocity);
+    }
     public void run(String setting) {
         TesterSetting[] theSetting = stateMap.get(setting);
         for(int i = 0; i < theSetting.length; i++) {
             theSetting[i].setMotor(motors[i]);
         }
     }
-    protected void runSingle(String setting, int i) {
+    public void runSingle(String setting, int i) {
         TesterSetting[] theSetting = stateMap.get(setting);
         theSetting[i].setMotor(motors[i]);
     }
-    protected void stop() {
+    public void stop() {
         for(int i = 0; i < motors.length; i++) {
             motors[i].stop();
         }

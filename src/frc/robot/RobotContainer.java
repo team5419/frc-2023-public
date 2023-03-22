@@ -63,8 +63,8 @@ public class RobotContainer {
 		autoSelector = new SendableChooser<SequentialCommandGroup>();
 		tab.add("Auto selector", autoSelector).withSize(2, 1).withPosition(0, 0);
 		autoSelector.setDefaultOption("Baseline", new Baseline());
-		autoSelector.addOption("Two Cube Balance Blue", new TwoCubeBalanceBlue(swerve, vision, coner, cuber, lights));
-		autoSelector.addOption("Two Cube Balance Red", new TwoCubeBalanceRed(swerve, vision, coner, cuber, lights));
+		autoSelector.addOption("Two Cube Balance Blue", new TwoCubeBalance(swerve, vision, coner, cuber, lights, true));
+		autoSelector.addOption("Two Cube Balance Red", new TwoCubeBalance(swerve, vision, coner, cuber, lights, false));
 		autoSelector.addOption("Systems Check", new SystemsCheck(swerve, cuber, coner, lights));
 
 		autoSelector.addOption("Preload only", new PreloadOnly(swerve, vision, coner, cuber, false, lights));
@@ -133,9 +133,9 @@ public class RobotContainer {
 		Trigger rightTriggerCodriver = new Trigger(() -> codriver.getRightTriggerAxis() > SwerveDriveConstants.triggerDeadband);
 		Trigger leftTriggerCodriver = new Trigger(() -> codriver.getLeftTriggerAxis() > SwerveDriveConstants.triggerDeadband);
 		
-		 Trigger leftStickPressCodriver = new Trigger(() -> codriver.getLeftStickButton());
-// leftStickPressCodriver.onTrue(new AutoAlign(swerve, coner, vision, 1.0, lights, 1.0 ));
-		leftStickPressCodriver.onTrue(new ResetGyro(swerve, 180.0));
+// 		 Trigger leftStickPressCodriver = new Trigger(() -> codriver.getLeftStickButton());
+// // leftStickPressCodriver.onTrue(new AutoAlign(swerve, coner, vision, 1.0, lights, 1.0 ));
+// 		leftStickPressCodriver.onTrue(new ResetGyro(swerve, 180.0));
 		
 		Trigger alignControllerOff = new Trigger(() -> swerve.isAligning == Swerve.AlignState.CONTROLLERON && (driver.getLeftX() < SwerveDriveConstants.controllerDeadband && 
 				driver.getLeftY() < SwerveDriveConstants.controllerDeadband &&
@@ -172,7 +172,8 @@ public class RobotContainer {
 		// xButtonCodriver.onTrue(new ChangeSystemOffset(0, 0.0025, cuber, coner, swerve));
 		// bButtonCodriver.onTrue(new ChangeSystemOffset(0, -0.0025, cuber, coner, swerve));
 		aButtonCodriver.whileTrue(Commands.run(() -> coner.shoot(TargetHeights.INTAKE)));
-		aButtonCodriver.onFalse(Commands.runEnd(() -> coner.shoot(TargetHeights.MID), () -> coner.stop(TargetHeights.MID)).withTimeout(.08));
+		aButtonCodriver.onFalse(new SlightOutake(coner));
+		yButtonCodriver.onTrue(new ResetGyro(swerve, 180.0));
 		leftBumperCodriver.onTrue(Commands.runOnce(() -> swerve.autoShoot = !swerve.autoShoot));
 	}
 

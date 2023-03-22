@@ -29,13 +29,12 @@ public class Constants {
         public static final Translation2d preBalancePosition = new Translation2d(2.4, 1.95); // 2.25
     }
     public static final class TargetHeights { // these need to be stored as strings for shuffleboard
-        public static final String UNSTUCK = "UNSTUCK";
         public static final String LOW = "LOW";
         public static final String MID = "MID";
         public static final String HIGH = "HIGH";
         public static final String INTAKE = "INTAKE";
         public static final String FAR = "FAR";
-        public static final String[] heights = { LOW, MID, HIGH, FAR, UNSTUCK };
+        public static final String[] heights = { LOW, MID, HIGH, FAR };
     }
     public static final class ConerConstants {
         public static final double inOutVelocity = 0.05;
@@ -44,7 +43,7 @@ public class Constants {
     }
     public static final class CubeShooterConstants {
 
-        public static final PID upPID = new PID(0.15, 0.0007, 0.0, 0.00);//new PID(0.18, 0.0001, 0.0, 0.00);
+        public static final PID upPID = new PID(0.1, 0.0007, 0.0, 0.00);//new PID(0.18, 0.0001, 0.0, 0.00);
        
         // order: indexer, main motor
 
@@ -54,8 +53,8 @@ public class Constants {
         public static final double sensorThresholdLeft = 880.0;
         public static final double sensorThresholdRight = 2170.0;
 
-        public static final double adjustmentLeft = 0.15;
-        public static final double adjustmentRight = -0.15;
+        public static final double adjustmentLeft = -0.125;
+        public static final double adjustmentRight = 0.1;
     }
     public static final class DifferentialDriveConstants {
         public static final double trackWidth = 1.781;
@@ -109,10 +108,10 @@ public class Constants {
         public static final double epsilonXY = 0.0254;
         public static final double epsilonTheta = 1.5;
         public static final ModuleInfo[] info = {
-            new ModuleInfo(7, 8, true, true, 12, 1.97116132825), // 1.6229
-            new ModuleInfo(5, 6, false, true, 11, 5.640435956418514), //4.7247            
-            new ModuleInfo(1, 2, true, true, 9, -4.393312096595764), //numbers are placeholders -1.6521
-            new ModuleInfo(3, 4, false, true, 10, 2.906887717545033) // 1.6230
+            new ModuleInfo(7, 8, true, true, 12, 1.97116132825613 -0.007669888436794), // 1.6229
+            new ModuleInfo(5, 6, false, true, 11, 5.638901978731155  + 0.016873754560947), //4.7247            
+            new ModuleInfo(1, 2, true, true, 9, 1.87758868932724 -0.006135910749435), //numbers are placeholders -1.6521
+            new ModuleInfo(3, 4, false, true, 10, 2.900751806795597 + 0.047553308308125) // 1.6230
             
         };
 
@@ -136,14 +135,14 @@ public class Constants {
         public static final double cameraAngle = 18.0;
         public static final double cameraHeight = 0.1778;
         public static final PIDController horizontalPID = new PIDController(0.08, 0.0, 0.0); // .08
-        public static final PIDController linHorizontalPID = new PIDController(5.1, 0.0, 0.0);
+        public static final PIDController linHorizontalPID = new PIDController(6.5, 0.0, 0.0);
         public static final double closeConstant = 0.1;
         public static final PIDController turnPID = new PIDController(0.095, 0.0, 0.0);
         public static final PIDController forwardPID = new PIDController(6.0, 0.0, 0.0); // 10.0
         public static final double desiredAngle = 180.0;
         public static final double desiredDistance = 0.0;
         public static final double horizontalOffset = -1.65; // 1.65
-        public static final double linHorizontalOffset = -0.01; // -0.023
+        public static final double linHorizontalOffset = -0.016; // -0.023
         public static final double epsilonTurn = 1.0;
         public static final double epsilonHorizontal = 0.5;
         public static final double epsilonLinHorizontal = 0.007;
@@ -173,7 +172,7 @@ public class Constants {
             4.9832 // top pole
         };
 
-            public static final double targetYOffset = 0.9945 - 1.0716;
+            public static final double targetYOffset = 0.001;
         public static final double xPosBeforeBarriers = 1.6; // to be measured
         public static final double xEndOfChargingStation = 2.55; // to be measured
         public static final double yOutsideRightChargingStation = -1.0;

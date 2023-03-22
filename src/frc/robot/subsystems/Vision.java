@@ -43,7 +43,7 @@ public class Vision extends SubsystemBase { // this keeps track of our limelight
             layout.addNumber("Hor Offset", () -> getHorizontalOffset());
             layout.addNumber("Ver Offset", () -> getVerticalOffset());
             layout.addNumber("Distance", () -> getHorizontalDistance());
-            //layout.addNumber("Lin Hor Offset", () -> getLinearHorizontalOffset(getHorizontalDistance()));
+            layout.addNumber("Lin Hor Offset", () -> getLinearHorizontalOffset(getHorizontalDistance()));
             layout.addBoolean("Sees target", () -> isTargetFound());
             layout.add("Limelight on", Commands.runOnce(() -> {
                 this.on();

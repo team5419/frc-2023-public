@@ -11,12 +11,10 @@ public class AutoBalance extends CommandBase {
     private double targetYaw;
     private Timer timer;
     private int hasShiftedBack;
-    private boolean facingForward;
     public AutoBalance(Swerve drivetrain, Lights lights) {
         this.drivetrain = drivetrain;
         this.targetYaw = 0.0;
         this.lights = lights;
-        this.facingForward = false;
         hasShiftedBack = 0;
         this.timer = new Timer();
         addRequirements(drivetrain);
@@ -24,7 +22,6 @@ public class AutoBalance extends CommandBase {
     public void initialize() {
         hasShiftedBack = -1;
         int yawInt = (int)Math.round(drivetrain.angle() / 180.0);
-        facingForward = (yawInt % 2) == 0;
         targetYaw = yawInt * 180.0;
         timer.reset();
         timer.start();
@@ -36,17 +33,11 @@ public class AutoBalance extends CommandBase {
         double pitchDiff = -Util.deadband(drivetrain.anglePitch(), SwerveDriveConstants.epsilonBalance);  //how far to get balanced
         double yawChange = -SwerveDriveConstants.yawBalanceController.calculate(yawDiff);
         double pitchChange = 0.0;
-        // if(hasShiftedBack == -2) {
-        //     if(pitchDiff > -9) {
-        //         hasShiftedBack = -1;
-        //     }
-        //     pitchChange = -0.5;
-        // }
         if(hasShiftedBack == -1) { // 9 and 14 degrees
             if(Math.abs(pitchDiff) > 12.5) {
                 hasShiftedBack = 0;
             }
-            pitchChange = 0.5 * Math.signum(pitchDiff);
+            pitchChange = 1.5 * Math.signum(pitchDiff);
         }
         if(hasShiftedBack == 0) {
             if(Math.abs(pitchDiff) < 11.5) {
@@ -60,9 +51,6 @@ public class AutoBalance extends CommandBase {
             } else {
                 pitchChange = pitchDiff * 0.012;
             }
-        }
-        if(facingForward) {
-            pitchChange *= -1.0;
         }
         drivetrain.drive(pitchChange, 0.0, yawChange, false, true);
     }
