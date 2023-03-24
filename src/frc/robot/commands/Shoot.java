@@ -57,6 +57,10 @@ public class Shoot extends CommandBase {
         shooter.setup(getHeight());
     }
     public void execute() {
+        if(!isCone) {
+            drivetrain.brake();
+        }
+        
         GenericShootIntake shooter = isCone ? coneShooter : cubeShooter;
         String realHeight = getHeight();
        if(shooter.donePrepping(realHeight) || hasBeenReady) {

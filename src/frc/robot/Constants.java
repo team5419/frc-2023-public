@@ -135,7 +135,7 @@ public class Constants {
         public static final double cameraAngle = 18.0;
         public static final double cameraHeight = 0.1778;
         public static final PIDController horizontalPID = new PIDController(0.08, 0.0, 0.0); // .08
-        public static final PIDController linHorizontalPID = new PIDController(6.5, 0.0, 0.0);
+        public static final PIDController linHorizontalPID = new PIDController(6.0, 0.0, 0.0);
         public static final double closeConstant = 0.1;
         public static final PIDController turnPID = new PIDController(0.095, 0.0, 0.0);
         public static final PIDController forwardPID = new PIDController(6.0, 0.0, 0.0); // 10.0
@@ -172,7 +172,7 @@ public class Constants {
             4.9832 // top pole
         };
 
-            public static final double targetYOffset = 0.001;
+            public static final double targetYOffset = 2.565 - 2.748;
         public static final double xPosBeforeBarriers = 1.6; // to be measured
         public static final double xEndOfChargingStation = 2.55; // to be measured
         public static final double yOutsideRightChargingStation = -1.0;

@@ -198,7 +198,7 @@ public class Cuber extends TesterSubsystem implements GenericShootIntake {
     }, TargetHeights.HIGH, new TesterSetting[] {
         new TesterSetting(1.0), new TesterSetting(true, 8500.0)
     }, TargetHeights.INTAKE, new TesterSetting[] {
-        new TesterSetting(-0.35), new TesterSetting(-0.75)
+        new TesterSetting(-0.35), new TesterSetting(-0.95)
     }, TargetHeights.FAR, new TesterSetting[] {
         new TesterSetting(1.0), new TesterSetting(0.8)
     });

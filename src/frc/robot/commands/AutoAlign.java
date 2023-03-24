@@ -57,8 +57,13 @@ public class AutoAlign extends CommandBase {
         
         
         boolean found = vision.isTargetFound();
-        if(found && !secondPhase) {
-            drivetrain.drive(forward , -left , -turn, false, true);
+        if(found) {
+            if(!secondPhase) {
+                drivetrain.drive(forward , -left , -turn, false, true);
+            }
+            if(Math.abs(forwardDiff) < 0.4) {
+                shooter.setup(TargetHeights.heights[this.height]);
+            }
         }
         if(secondPhase) {
             //shooter.setup(TargetHeights.heights[height]);
