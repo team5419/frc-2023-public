@@ -46,7 +46,7 @@ public class SwerveDrive extends CommandBase {
         drivetrain.drive(
             Util.deadband(-driver.getLeftY(), SwerveDriveConstants.controllerDeadband) * SwerveDriveConstants.speedMultiplier,
             Util.deadband(-driver.getLeftX(), SwerveDriveConstants.controllerDeadband) * SwerveDriveConstants.speedMultiplier, 
-            Util.deadband(-driver.getRightX(), SwerveDriveConstants.controllerDeadband) * SwerveDriveConstants.turnMultiplier, true, true);
+            Util.deadband(-driver.getRightX(), SwerveDriveConstants.controllerDeadband) * SwerveDriveConstants.turnMultiplier, true, false);
     }
     public boolean isFinished() {
         return false;

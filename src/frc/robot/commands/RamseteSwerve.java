@@ -31,8 +31,10 @@ public class RamseteSwerve extends CommandBase {
     public void initialize() {
         alliance = vision.team();
         if(options.teamRelative && vision.team() == Alliance.Red) {
+            //System.out.println("is red");
             this.goal = new Pose2d(goal.getX(), -goal.getY(), goal.getRotation());
         }
+        //System.out.println(goal.getY());
         if(options.time != 0.0) {
             timer.reset();
             timer.start();
@@ -59,8 +61,8 @@ public class RamseteSwerve extends CommandBase {
         //System.out.println(xdiff);
         double ydiff = goal.getY() - pose.getY();
         //System.out.println(ydiff);
-        double dx = options.preventDrive ? 0.0 : (SwerveDriveConstants.pXY * Util.deadband(xdiff, SwerveDriveConstants.epsilonXY * options.epsilonMultiplier));
-        double dy = options.preventDrive ? 0.0 : (SwerveDriveConstants.pXY * Util.deadband(ydiff, SwerveDriveConstants.epsilonXY * options.epsilonMultiplier));
+        double dx = options.preventDrive ? 0.0 : (SwerveDriveConstants.pXY * xdiff);
+        double dy = options.preventDrive ? 0.0 : (SwerveDriveConstants.pXY * ydiff);
         double magnitude = Math.sqrt(Math.pow(dx, 2.0) + Math.pow(dy, 2.0));
         double max = (options.maxSpeed < 0.0 ? SwerveDriveConstants.maxVelocity : options.maxSpeed);
         if(magnitude > max) {
@@ -70,17 +72,20 @@ public class RamseteSwerve extends CommandBase {
         // System.out.println(max);
         // System.out.println(options.maxSpeed);
 
-        double dtheta = 1 * SwerveDriveConstants.pTheta * (Math.PI / 180.0) * Util.deadband(thetaDiff, SwerveDriveConstants.epsilonTheta * options.epsilonMultiplier);
+        double dtheta = 1 * SwerveDriveConstants.pTheta * (Math.PI / 180.0) * thetaDiff;
         //System.out.println(dtheta);
         //System.out.println("theta: ${DriveConstants.pTheta * (Math.PI / 180) * (target - theta)}");
         drivetrain.drive(dx , dy , dtheta, true, true);
 
-        isFinished = (options.preventDrive || (dx == 0 && dy == 0)) && (dtheta == 0 || (options.time != 0.0 && timer.get() >= options.time)) && (!options.speedLimit || drivetrain.getAverageSpeed() < 0.1) && (options.turnToTag == -1 || vision.seesTag);
+        isFinished = (options.preventDrive || (Math.abs(xdiff) <= SwerveDriveConstants.epsilonXY * options.epsilonMultiplier && Math.abs(ydiff) <= SwerveDriveConstants.epsilonXY * options.epsilonMultiplier)) && (Math.abs(thetaDiff) <= SwerveDriveConstants.epsilonTheta * options.epsilonMultiplier || (options.time != 0.0 && timer.get() >= options.time)) && (!options.speedLimit || drivetrain.getAverageSpeed() < 0.1) && (options.turnToTag == -1 || vision.seesTag);
     }
     public boolean isFinished() {
         return isFinished;
     }
     public void end(boolean interrupted) {
+
+
+        
         drivetrain.stop();
         if(options.time != 0.0) {
             timer.stop();

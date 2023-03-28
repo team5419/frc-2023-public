@@ -36,10 +36,10 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.AnalogInput;
 
 public class Cuber extends TesterSubsystem implements GenericShootIntake {
-    private final double down = -1200.0;
-    private final double shotSetpoint = -3260.0;
-    private final double up = -3500.0;
-    private final double lowShot = -2200;
+    public final double down = -565.0; // 1200
+    public final double shotSetpoint = -2724.0; // 3408
+    public final double up = -2724.0;
+    public final double lowShot = -1565; // 2200
     
     private final PID lifterPID = new PID(0.5, 0.0, 0.0);
     private AnalogInput sensor;
@@ -47,7 +47,7 @@ public class Cuber extends TesterSubsystem implements GenericShootIntake {
     public double offset;
     private TalonFX lifter;
     private CANCoder cancoder;
-    private double state;
+    public double state;
     public Cuber(boolean velocityControl) {
         super("Cube Shooter", new TesterMotor[] {
             new TesterNeo("Indexer", Util.setUpMotor(
@@ -140,7 +140,7 @@ public class Cuber extends TesterSubsystem implements GenericShootIntake {
     }
     public void periodic() {
         double diff = lifter.getSelectedSensorPosition();
-        if(diff <= -3000.0 && state == up) {
+        if(diff <= -2400.0 && state == up) {
             lifter.set(ControlMode.PercentOutput, 0.0);
             
         } else {
@@ -196,10 +196,10 @@ public class Cuber extends TesterSubsystem implements GenericShootIntake {
     }, TargetHeights.MID, new TesterSetting[] {
         new TesterSetting(1.0), new TesterSetting(true, 3300.0)//0.14, -0.36
     }, TargetHeights.HIGH, new TesterSetting[] {
-        new TesterSetting(1.0), new TesterSetting(true, 8500.0)
+        new TesterSetting(1.0), new TesterSetting(true, 7500.0)
     }, TargetHeights.INTAKE, new TesterSetting[] {
-        new TesterSetting(-0.35), new TesterSetting(-0.95)
+        new TesterSetting(-0.35), new TesterSetting(-0.60)
     }, TargetHeights.FAR, new TesterSetting[] {
-        new TesterSetting(1.0), new TesterSetting(0.8)
+        new TesterSetting(1.0), new TesterSetting(0.77)
     });
 }

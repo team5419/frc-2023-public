@@ -6,6 +6,9 @@ import frc.robot.auto.*;
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
 import frc.robot.subsystems.test.TesterSubsystem;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.Compressor;
@@ -30,7 +33,7 @@ public class RobotContainer {
 
 	private Cuber cuber;
 	public Vision vision;
-	public Sensors sensors;
+	//public Sensors sensors;
 	private SendableChooser<SequentialCommandGroup> autoSelector;
 	//private Drivetrain drivetrain;
 	public Swerve swerve;
@@ -43,11 +46,14 @@ public class RobotContainer {
 	private GenericEntry autoEntry;
 
 	public RobotContainer(ShuffleboardTab tab) {
+		// PowerDistribution dist = new PowerDistribution(1, ModuleType.kRev);
+		// 	dist.setSwitchableChannel(true);
+		// 	dist.close();
 		
 		driver = new XboxController(0);
 		codriver = new XboxController(1);
 		vision = new Vision(tab, true, true);
-		sensors = new Sensors(tab);
+		//sensors = new Sensors(tab);
 		swerve = new Swerve(vision, true); /* CHOOSE ONE!!! */
 		arm = null; 
 		madeHub = false;
@@ -63,16 +69,17 @@ public class RobotContainer {
 		autoSelector = new SendableChooser<SequentialCommandGroup>();
 		tab.add("Auto selector", autoSelector).withSize(2, 1).withPosition(0, 0);
 		autoSelector.setDefaultOption("Baseline", new Baseline());
-		autoSelector.addOption("Two Cube Balance Blue", new TwoCubeBalance(swerve, vision, coner, cuber, lights, true));
-		autoSelector.addOption("Two Cube Balance Red", new TwoCubeBalance(swerve, vision, coner, cuber, lights, false));
-		autoSelector.addOption("Systems Check", new SystemsCheck(swerve, cuber, coner, lights));
-
+		autoSelector.addOption("3 Cube Balance R", new TwoCubeBalance(swerve, vision, coner, cuber, lights, true, true));
+		autoSelector.addOption("3 Cube R", new TwoCubeBalance(swerve, vision, coner, cuber, lights, false, true));
+		autoSelector.addOption("4 Cube Balance R", new ThreeCube(swerve, vision, coner, cuber, lights, true, true));
+		autoSelector.addOption("4 Cube R", new ThreeCube(swerve, vision, coner, cuber, lights, false, true));
+		autoSelector.addOption("3 Cube Balance B", new TwoCubeBalance(swerve, vision, coner, cuber, lights, true, false));
+		autoSelector.addOption("3 Cube B", new TwoCubeBalance(swerve, vision, coner, cuber, lights, false, false));
+		autoSelector.addOption("4 Cube Balance B", new ThreeCube(swerve, vision, coner, cuber, lights, true, false));
+		autoSelector.addOption("4 Cube B", new ThreeCube(swerve, vision, coner, cuber, lights, false, false));
 		autoSelector.addOption("Preload only", new PreloadOnly(swerve, vision, coner, cuber, false, lights));
-
-		autoSelector.addOption("First Cube Only", new FirstCubeOnly(swerve, vision, coner, cuber, false, lights));
-		autoSelector.addOption("First Cube Only, Short Side", new FirstCubeOnly(swerve, vision, coner, cuber, true, lights));
-		autoSelector.addOption("Charge Station Back", new ChargeStationBack(swerve, vision, coner, cuber, false, lights));
 		autoSelector.addOption("Charge Station Only", new ChargeOnly(swerve, vision, coner, cuber, false, lights));
+		autoSelector.addOption("Test Messy Ramsete", new SequentialCommandGroup(new UseVision(swerve, false),new MessyRamsete(swerve, vision, new Pose2d(new Translation2d(0.75, -0.18), Rotation2d.fromDegrees(0.0)), 4.0)));
 		configureButtonBindings();
 		setDefaults();
 

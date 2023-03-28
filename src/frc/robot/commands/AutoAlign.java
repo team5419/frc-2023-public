@@ -61,7 +61,7 @@ public class AutoAlign extends CommandBase {
             if(!secondPhase) {
                 drivetrain.drive(forward , -left , -turn, false, true);
             }
-            if(Math.abs(forwardDiff) < 0.4) {
+            if(Math.abs(forwardDiff) < 0.25) {
                 shooter.setup(TargetHeights.heights[this.height]);
             }
         }
@@ -84,7 +84,7 @@ public class AutoAlign extends CommandBase {
     }
     public boolean isFinished() {
         if(secondPhase) {
-            return timer.get() >= 0.25;
+            return timer.get() >= 0.3;
         }
         boolean fin= isFinished || (time != 0.0 && timer.get() >= time);
         //return fin;

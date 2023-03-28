@@ -37,7 +37,7 @@ public class AutoBalance extends CommandBase {
             if(Math.abs(pitchDiff) > 12.5) {
                 hasShiftedBack = 0;
             }
-            pitchChange = 1.5 * Math.signum(pitchDiff);
+            pitchChange = 3.0 * Math.signum(pitchDiff);
         }
         if(hasShiftedBack == 0) {
             if(Math.abs(pitchDiff) < 11.5) {

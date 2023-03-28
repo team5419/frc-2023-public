@@ -26,7 +26,7 @@ public class SlightOutake extends CommandBase {
         coner.runPercentOutput(1, 0.06);
     }
     public boolean isFinished() {
-        System.out.println(timer.get());
+        //System.out.println(timer.get());
         return timer.get() > 0.05;
     }
     public void end(boolean interrupted) {
