@@ -1,11 +1,9 @@
-package frc.robot.commands; // auto align using only limelight 
-import frc.robot.Util;
+package frc.robot.commands.driving; // auto align using only limelight 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants.LimelightConstants;
 import frc.robot.Constants.TargetHeights;
 import frc.robot.subsystems.Coner;
-import frc.robot.subsystems.GenericShootIntake;
 import frc.robot.subsystems.Lights;
 import frc.robot.subsystems.Swerve;
 import frc.robot.subsystems.Vision;

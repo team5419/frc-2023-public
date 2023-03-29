@@ -1,10 +1,7 @@
 package frc.robot.subsystems;
-
-import java.lang.annotation.Target;
 import java.util.Map;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.RemoteSensorSource;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
@@ -16,9 +13,6 @@ import com.ctre.phoenix.sensors.SensorTimeBase;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
-import edu.wpi.first.wpilibj.PneumaticHub;
-import edu.wpi.first.wpilibj.PneumaticsModuleType;
-import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -32,7 +26,6 @@ import frc.robot.subsystems.test.TesterNeo;
 import frc.robot.subsystems.test.TesterSetting;
 import frc.robot.subsystems.test.TesterSubsystem;
 import frc.robot.Util;
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.AnalogInput;
 
 public class Cuber extends TesterSubsystem implements GenericShootIntake {
@@ -162,9 +155,6 @@ public class Cuber extends TesterSubsystem implements GenericShootIntake {
         }
         return 1.94;
         //return 1.84;
-    }
-    public final double getLimelightDistance(String height) {
-        return -1.0;
     }
     public double getOffset() {
         //double val = getSensorValue();

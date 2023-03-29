@@ -6,14 +6,13 @@ import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 
 import java.lang.Math;
 import java.util.Map;
-
-import com.ctre.phoenix.motorcontrol.can.TalonFX;
-import frc.robot.Util;
 
 public class Constants {
     public static enum ConerTypes {
@@ -77,7 +76,16 @@ public class Constants {
         public static final PID DrivePID = new PID(0.1, 0.0, 0.0);
         public static final PID TurnPID = new PID(8.0 / 12.0, 0.0, 0.0); // 8/12
         public static final double slow = 0.2;
-        public static final double maxVelocity = 4.0;  
+
+
+        public static final double maxVelocity = 4.0; 
+        public static final double maxAcceleration = 2.3;
+        public static final PIDController xController = new PIDController(1.0, 0.0, 0.0);
+        public static final PIDController yController = new PIDController(1.0, 0.0, 0.0);
+        public static final double maxAngularSpeed = 1.2 * Math.PI;
+        public static final TrapezoidProfile.Constraints thetaConstraints = new TrapezoidProfile.Constraints(maxAngularSpeed, Math.pow(maxAngularSpeed, 2.0));
+        public static final ProfiledPIDController thetaController = new ProfiledPIDController(5.0, 0.0, 0.0, thetaConstraints);
+
         public static final double kv = (2.298 / 12); // 2.1737
         public static final double ka = (0.17118 / 12); // 0.29281
         public static final double ks = (0.10352 / 12); // 0.63566
@@ -181,15 +189,6 @@ public class Constants {
         public static final double yOutsideLeftChargingStation = 1000.0;
         public static final double ambiguityRequirement = 0.9;
     }
-    public static final class EverybotArmConstants {
-        public static final PID PID = new PID(0.01, 0.0, 0.0);
-        public static final double inPosition = -3000.0;
-        public static final double outPosition = 62500.0;
-        public static final double realInPosition = 1800.0;
-        public static final double realOutPosition = 57000.0;
-        public static final double moveSpeed = 0.3;
-    }
-
     public static final class SensorArrayConstants {
         public static final int numSensors = 8;
         public static final int[] sensorOffsets = {-135, -90, -45, -15, 15, 45, 90, 135}; //mm
@@ -208,8 +207,6 @@ public class Constants {
         public static final int coneTop = 17;
         public static final int coneBottom = 16;
         public static final int everyIntakeMotor = 19;
-        public static final int everyArm0 = 20;
-        public static final int everyArm1 = 21;
         public static final int suctionMotor = 22;
         public static final int cuberSolenoidA = 7;
         public static final int cuberSolenoidB = 0;

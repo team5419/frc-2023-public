@@ -1,20 +1,15 @@
 package frc.robot.subsystems;
-
-import java.lang.annotation.Target;
 import java.util.Map;
 
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
-import com.ctre.phoenixpro.configs.TalonFXConfiguration;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.networktables.GenericEntry;
-import edu.wpi.first.wpilibj.PneumaticHub;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -25,7 +20,6 @@ import frc.robot.classes.PID;
 import frc.robot.subsystems.test.TesterFalcon;
 import frc.robot.subsystems.test.TesterMotor;
 import frc.robot.subsystems.test.TesterNeo;
-import frc.robot.subsystems.test.TesterProFalcon;
 import frc.robot.subsystems.test.TesterSetting;
 import frc.robot.subsystems.test.TesterSubsystem;
 import frc.robot.Util;
@@ -38,8 +32,8 @@ public class Coner extends TesterSubsystem implements GenericShootIntake {
     private final double defaultDist = 0.4642; // .4962;
     public Coner(boolean falcons, boolean velocityControl) {
         super("Cone Shooter", new TesterMotor[] {
-            generateTesterMotor("Low motor", falcons, Ports.coneBottom, false, false),
-            generateTesterMotor("High motor", falcons, Ports.coneTop, false, true)
+            generateTesterMotor("Low motor", falcons, Ports.coneBottom, false),
+            generateTesterMotor("High motor", falcons, Ports.coneTop, true)
         }, velocityControl ? (falcons ? falconVelocities : neoVelocities) : percents);
 
         soOne = new Solenoid(PneumaticsModuleType.CTREPCM, Ports.conerSolenoidA); //hub.makeSolenoid(Ports.conerSolenoidA);
@@ -53,14 +47,8 @@ public class Coner extends TesterSubsystem implements GenericShootIntake {
             .withSize(1, 1)
             .getEntry();
     }
-    public static TesterMotor generateTesterMotor(String name, boolean falcons, int id, boolean pro, boolean inverted) {
+    public static TesterMotor generateTesterMotor(String name, boolean falcons, int id, boolean inverted) {
         if(falcons) {
-            if(pro) {
-                com.ctre.phoenixpro.hardware.TalonFX fx = new com.ctre.phoenixpro.hardware.TalonFX(id, "canivore");
-                TalonFXConfiguration config = Util.getSetup(inverted, new PID(0.5, 0, 0), true, 1.0);
-                config.CurrentLimits.SupplyCurrentLimit = 20;
-                return new TesterProFalcon(name, fx, config);
-            }
             TalonFX motor = new TalonFX(id, "canivore");
             Util.setUpMotor(motor, false, inverted, new PID(0.1, 0, 0), true, 1.0);
             
@@ -124,14 +112,8 @@ public class Coner extends TesterSubsystem implements GenericShootIntake {
     public final double getAngle() {
         return 180.0;
     }
-    public final double getOffset() {
-        return 0.0;
-    }
     public final boolean prepsByDefault() {
         return false;
-    }
-    public final double getDistance(String height) {
-        return 2.1; // a little off so that we can rotate freely
     }
     public final double getLimelightDistance(String height) {
         //return 0.2678; // 0.325

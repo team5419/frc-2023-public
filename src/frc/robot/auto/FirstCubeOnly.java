@@ -11,8 +11,11 @@ import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.TargetHeights;
 import frc.robot.classes.RamseteOptions;
 import frc.robot.commands.*;
+import frc.robot.commands.driving.AutoAlign;
+import frc.robot.commands.driving.RamseteSwerve;
+import frc.robot.commands.shooting.Shoot;
 import frc.robot.subsystems.Coner;
-import frc.robot.subsystems.GenericShootIntake;
+import frc.robot.subsystems.Cuber;
 import frc.robot.subsystems.Lights;
 import frc.robot.subsystems.Swerve;
 import frc.robot.subsystems.Vision;
@@ -24,7 +27,7 @@ public class FirstCubeOnly extends SequentialCommandGroup { // basic routine for
         }
         return new Translation2d(original.getX(), original.getY() * multiplier);
     }
-    public FirstCubeOnly(Swerve drivetrain, Vision vision, Coner coneShooter, GenericShootIntake cubeShooter, boolean _short, Lights lights) {
+    public FirstCubeOnly(Swerve drivetrain, Vision vision, Coner coneShooter, Cuber cubeShooter, boolean _short, Lights lights) {
         double multiplier = _short ? -1.0 : 1.0;
         addCommands(
             new UseVision(drivetrain, false), // disable vision

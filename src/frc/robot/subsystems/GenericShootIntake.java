@@ -7,9 +7,6 @@ public interface GenericShootIntake {
     public void stop(String height);
     public void setup(String height);
     public double getAngle();
-    public double getOffset();
-    public double getDistance(String height);
-    public double getLimelightDistance(String height);
     public boolean prepsByDefault();
     public boolean donePrepping(String height);
     public SubsystemBase subsystem();

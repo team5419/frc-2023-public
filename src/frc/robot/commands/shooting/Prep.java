@@ -1,16 +1,17 @@
-package frc.robot.commands;
+package frc.robot.commands.shooting;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.GenericShootIntake;
+import frc.robot.subsystems.Coner;
+import frc.robot.subsystems.Cuber;
 import frc.robot.subsystems.Swerve;
 import frc.robot.Constants.TargetHeights;
 public class Prep extends CommandBase {
     private Swerve drivetrain;
-    private GenericShootIntake coneShooter;
-    private GenericShootIntake cubeShooter;
+    private Coner coneShooter;
+    private Cuber cubeShooter;
     private boolean isCone;
     private int height;
     private String overrideHeight;
-    public Prep(GenericShootIntake coneShooter, GenericShootIntake cubeShooter, Swerve drivetrain, String overrideHeight) {
+    public Prep(Coner coneShooter, Cuber cubeShooter, Swerve drivetrain, String overrideHeight) {
         this.drivetrain = drivetrain;
         this.coneShooter = coneShooter;
         this.cubeShooter = cubeShooter;

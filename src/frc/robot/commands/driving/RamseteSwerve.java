@@ -1,8 +1,7 @@
-package frc.robot.commands;
+package frc.robot.commands.driving;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Swerve;
 import frc.robot.subsystems.Vision;
-import frc.robot.Util;
 import frc.robot.Constants.SwerveDriveConstants;
 import frc.robot.classes.RamseteOptions;
 import edu.wpi.first.math.geometry.Pose2d;

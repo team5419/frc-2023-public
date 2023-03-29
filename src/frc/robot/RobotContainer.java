@@ -1,35 +1,31 @@
 package frc.robot;
-import frc.robot.Constants.ConerTypes;
 import frc.robot.Constants.SwerveDriveConstants;
 import frc.robot.Constants.TargetHeights;
 import frc.robot.auto.*;
 import frc.robot.commands.*;
+import frc.robot.commands.driving.MessyRamsete;
+import frc.robot.commands.driving.SpecialRamseteTurn;
+import frc.robot.commands.driving.SwerveDrive;
+import frc.robot.commands.driving.TeleopBalance;
+import frc.robot.commands.shooting.Prep;
+import frc.robot.commands.shooting.RunIntake;
+import frc.robot.commands.shooting.Shoot;
+import frc.robot.commands.shooting.SlightOutake;
 import frc.robot.subsystems.*;
-import frc.robot.subsystems.test.TesterSubsystem;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.networktables.GenericEntry;
-import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.Compressor;
-import edu.wpi.first.wpilibj.PneumaticHub;
-import edu.wpi.first.wpilibj.PneumaticsBase;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
-import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-import edu.wpi.first.wpilibj.shuffleboard.SuppliedValueWidget;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 
 public class RobotContainer {
-	private final ConerTypes CONER_TYPE = ConerTypes.LOW_CONER; // THIS IS HOW YOU CHANGE WHICH CONE SHOOTER TO USE!!!!!
 
 	private Cuber cuber;
 	public Vision vision;
@@ -40,10 +36,8 @@ public class RobotContainer {
 	private XboxController driver;
 	private XboxController codriver;
 	private Coner coner;
-	private EverybotArm arm;
 	private boolean madeHub;
 	public Lights lights;
-	private GenericEntry autoEntry;
 
 	public RobotContainer(ShuffleboardTab tab) {
 		// PowerDistribution dist = new PowerDistribution(1, ModuleType.kRev);
@@ -55,7 +49,6 @@ public class RobotContainer {
 		vision = new Vision(tab, true, true);
 		//sensors = new Sensors(tab);
 		swerve = new Swerve(vision, true); /* CHOOSE ONE!!! */
-		arm = null; 
 		madeHub = false;
 		coner = new Coner(true, false);
 		generateHub();
@@ -82,43 +75,14 @@ public class RobotContainer {
 		autoSelector.addOption("Test Messy Ramsete", new SequentialCommandGroup(new UseVision(swerve, false),new MessyRamsete(swerve, vision, new Pose2d(new Translation2d(0.75, -0.18), Rotation2d.fromDegrees(0.0)), 4.0)));
 		configureButtonBindings();
 		setDefaults();
-
-		autoEntry = tab.add("Auto input", "")
-            .withPosition(0, 1)
-            .withSize(2, 1)
-            .getEntry();
 	}
-
-	private EverybotArm generateArm() {
-		if(arm == null) {
-			arm = new EverybotArm(true);
-		}
-		return arm;
-	}
-
-	public void setArmState(boolean state) {
-		if(arm != null) {
-			arm.enabled = state;
-		}
-	}
-
 	private void generateHub() {
 		if(!madeHub) {
 			Compressor compressor = new Compressor(PneumaticsModuleType.CTREPCM);
 			compressor.enableDigital();
+			compressor.close();
 			madeHub = true;
 		}
-		
-		// if(hub == null) {
-		// 	PowerDistribution dist = new PowerDistribution(1, ModuleType.kRev);
-		// 	dist.setSwitchableChannel(true);
-		// 	dist.close();
-		// 	hub = new PneumaticHub();
-			
-		// 	Compressor compressor = hub.makeCompressor();
-		// 	compressor.enableDigital();
-		// }
-		// return hub;
 	}
   
 	private void configureButtonBindings() {
@@ -132,8 +96,8 @@ public class RobotContainer {
 		Trigger dpad = new Trigger(() -> driver.getPOV() != -1);
 
 		Trigger aButtonCodriver = new Trigger(() -> codriver.getAButton());
-		Trigger bButtonCodriver = new Trigger(() -> codriver.getBButton());
-		Trigger xButtonCodriver = new Trigger(() -> codriver.getXButton());
+		// Trigger bButtonCodriver = new Trigger(() -> codriver.getBButton());
+		// Trigger xButtonCodriver = new Trigger(() -> codriver.getXButton());
 		Trigger yButtonCodriver = new Trigger(() -> codriver.getYButton());
 		Trigger leftBumperCodriver = new Trigger(() -> codriver.getLeftBumper());
 		Trigger rightBumperCodriver = new Trigger(() -> codriver.getRightBumper());
@@ -198,8 +162,5 @@ public class RobotContainer {
 
 	private void setDefaults() {
 		swerve.setDefaultCommand(new SwerveDrive(swerve, driver, codriver, cuber));
-		if(arm != null) {
-			arm.setDefaultCommand(new ManualMoveArm(arm, codriver));
-		}
 	}
 }

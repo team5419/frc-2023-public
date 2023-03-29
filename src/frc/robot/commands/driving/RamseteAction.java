@@ -1,4 +1,4 @@
-package frc.robot.commands;
+package frc.robot.commands.driving;
 import edu.wpi.first.math.trajectory.constraint.DifferentialDriveVoltageConstraint;
 import edu.wpi.first.math.trajectory.constraint.DifferentialDriveKinematicsConstraint;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;

@@ -24,7 +24,6 @@ public class Robot extends TimedRobot {
   }
 
   public void disabledInit() {
-    robotContainer.setArmState(false);
     robotContainer.swerve.stop();
     robotContainer.useVision(true);
     robotContainer.vision.on();
@@ -42,7 +41,6 @@ public class Robot extends TimedRobot {
   public void autonomousPeriodic() {}
 
   public void teleopInit() {
-    robotContainer.setArmState(true);
     robotContainer.vision.off();
     robotContainer.useVision(true);
     robotContainer.lights.off(robotContainer.swerve);

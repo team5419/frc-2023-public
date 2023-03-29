@@ -20,7 +20,6 @@ import frc.robot.modules.SwerveModule;
 import frc.robot.Constants.Ports;
 import frc.robot.Constants.SwerveDriveConstants;
 import frc.robot.Util; 
-import frc.robot.commands.ResetGyro;
 public class Swerve extends SubsystemBase { // our swerve drive subsystem
     public enum AlignState {
         NOT,
@@ -175,7 +174,7 @@ public class Swerve extends SubsystemBase { // our swerve drive subsystem
         };
         return total / drivers.length;
     }
-    private void updateMotors(SwerveModuleState[] myStates, boolean pid, boolean preventTurn) { // update each motor based on desired swerve module states
+    public void updateMotors(SwerveModuleState[] myStates, boolean pid, boolean preventTurn) { // update each motor based on desired swerve module states
         for(int i = 0; i < drivers.length; i++) {
             drivers[i].setDesiredState(myStates[i], preventTurn, this.slowMode, pid); // iterate through the array and set each motor
         }

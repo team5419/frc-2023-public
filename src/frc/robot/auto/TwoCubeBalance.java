@@ -7,12 +7,13 @@ import edu.wpi.first.wpilibj2.command.Commands;
 // import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.TargetHeights;
 import frc.robot.classes.RamseteOptions;
 import frc.robot.commands.*;
+import frc.robot.commands.driving.AutoBalance;
+import frc.robot.commands.driving.RamseteSwerve;
+import frc.robot.subsystems.Coner;
 import frc.robot.subsystems.Cuber;
-import frc.robot.subsystems.GenericShootIntake;
 import frc.robot.subsystems.Lights;
 import frc.robot.subsystems.Swerve;
 import frc.robot.subsystems.Vision;
@@ -21,7 +22,7 @@ import frc.robot.subsystems.Vision;
 
 public class TwoCubeBalance extends SequentialCommandGroup { // basic routine for diff drive
     private static double shootX = 0.78;
-    public TwoCubeBalance(Swerve drivetrain, Vision vision, GenericShootIntake coneShooter, Cuber cubeShooter, Lights lights, boolean balance, boolean red) {
+    public TwoCubeBalance(Swerve drivetrain, Vision vision, Coner coneShooter, Cuber cubeShooter, Lights lights, boolean balance, boolean red) {
 
         addCommands(
             new UseVision(drivetrain, false), // disable vision
@@ -48,7 +49,7 @@ public class TwoCubeBalance extends SequentialCommandGroup { // basic routine fo
             new RamseteSwerve(drivetrain, vision, new Pose2d(new Translation2d(0.75, -0.18), Rotation2d.fromDegrees(0.0)), new RamseteOptions(true, false, false, 10.0, -1, -1.0, 0.0)),
             //new MessyRamsete(drivetrain, vision, new Pose2d(new Translation2d(1.5, -0.18), Rotation2d.fromDegrees(180.0)), 4.0), 
             new RamseteSwerve(drivetrain, vision, new Pose2d(new Translation2d(1.5, -0.13), Rotation2d.fromDegrees(180.0)), new RamseteOptions(true, false, false, 10.0, -1, -1.0, 0.0)),
-            new AutoGetCube(drivetrain, cubeShooter, vision, new Translation2d(2.5, -0.13), new Translation2d(shootX, 0.75), -1, lights, false),
+            new AutoGetCube(drivetrain, cubeShooter, coneShooter, vision, new Translation2d(2.5, -0.13), new Translation2d(shootX, 0.75), -1, lights, false),
             Commands.runOnce(() -> {
                 cubeShooter.state = cubeShooter.down;
                 cubeShooter.runPercentOutput(0, -0.4);
@@ -58,7 +59,7 @@ public class TwoCubeBalance extends SequentialCommandGroup { // basic routine fo
             new RamseteSwerve(drivetrain, vision, new Pose2d(new Translation2d(1.4, 0.75), Rotation2d.fromDegrees(0.0)), new RamseteOptions(true, false, false, 5.0, -1, -1.0, 0.0)),
             //new MessyRamsete(drivetrain, vision, new Pose2d(new Translation2d(1.65, 1.15), Rotation2d.fromDegrees(180.0)), 4.0),
             new RamseteSwerve(drivetrain, vision, new Pose2d(new Translation2d(1.6,  0.99), Rotation2d.fromDegrees(180.0)), new RamseteOptions(true, false, false, 3.0, -1, -1.0, 0.0)),
-            new AutoGetCube(drivetrain, cubeShooter, vision, new Translation2d(2.5, 0.99), new Translation2d(shootX, 1.2), -1, lights, false),
+            new AutoGetCube(drivetrain, cubeShooter, coneShooter, vision, new Translation2d(2.5, 0.99), new Translation2d(shootX, 1.2), -1, lights, false),
             Commands.runOnce(() -> {
                 cubeShooter.stop(TargetHeights.INTAKE);
             }));

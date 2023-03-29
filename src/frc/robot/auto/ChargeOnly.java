@@ -6,12 +6,15 @@ import edu.wpi.first.wpilibj2.command.Commands;
 // import edu.wpi.first.math.geometry.Pose2d;
 // import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.TargetHeights;
 import frc.robot.classes.RamseteOptions;
 import frc.robot.commands.*;
+import frc.robot.commands.driving.AutoAlign;
+import frc.robot.commands.driving.AutoBalance;
+import frc.robot.commands.driving.RamseteSwerve;
+import frc.robot.commands.shooting.Shoot;
 import frc.robot.subsystems.Coner;
-import frc.robot.subsystems.GenericShootIntake;
+import frc.robot.subsystems.Cuber;
 import frc.robot.subsystems.Lights;
 import frc.robot.subsystems.Swerve;
 import frc.robot.subsystems.Vision;
@@ -23,7 +26,7 @@ public class ChargeOnly extends SequentialCommandGroup { // basic routine for di
         }
         return new Translation2d(original.getX(), original.getY() * multiplier);
     }
-    public ChargeOnly(Swerve drivetrain, Vision vision, Coner coneShooter, GenericShootIntake cubeShooter, boolean _short, Lights lights) {
+    public ChargeOnly(Swerve drivetrain, Vision vision, Coner coneShooter, Cuber cubeShooter, boolean _short, Lights lights) {
         double multiplier = _short ? -1.0 : 1.0;
         addCommands(
             new UseVision(drivetrain, false), // disable vision

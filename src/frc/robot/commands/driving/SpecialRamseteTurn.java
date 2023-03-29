@@ -1,9 +1,10 @@
-package frc.robot.commands;
+package frc.robot.commands.driving;
 import frc.robot.Util;
 
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Coner;
+import frc.robot.subsystems.Cuber;
 import frc.robot.subsystems.GenericShootIntake;
 import frc.robot.subsystems.Lights;
 import frc.robot.subsystems.Swerve;
@@ -12,12 +13,13 @@ import frc.robot.subsystems.Swerve.AlignState;
 import frc.robot.Constants.SwerveDriveConstants;
 import frc.robot.Constants.TargetHeights;
 import frc.robot.classes.RamseteOptions;
+import frc.robot.commands.shooting.Shoot;
 
 public class SpecialRamseteTurn extends CommandBase {
     private Swerve swerve;
     private double targetRotation;
     private Coner coner;
-    private GenericShootIntake cuber;
+    private Cuber cuber;
     private boolean isFinished;
     private Vision vision;
     private boolean hasSeenTag;
@@ -25,7 +27,7 @@ public class SpecialRamseteTurn extends CommandBase {
     private boolean cones;
     private Lights lights;
     private int currentHeight;
-    public SpecialRamseteTurn(Swerve drivetrain, Vision vision, XboxController controller, Coner coner, GenericShootIntake cuber, Lights lights) {
+    public SpecialRamseteTurn(Swerve drivetrain, Vision vision, XboxController controller, Coner coner, Cuber cuber, Lights lights) {
         this.coner = coner;
         this.vision = vision;
         this.cuber = cuber;
@@ -96,7 +98,7 @@ public class SpecialRamseteTurn extends CommandBase {
             swerve.isAligning = AlignState.CONTROLLERON;
             CommandBase regularer = 
                 cones ? new AutoAlign(swerve, coner, vision, coner.getLimelightDistance(TargetHeights.heights[currentHeight]), currentHeight, lights, 0.0)
-                : new SpecialRamseteSwerve(swerve, vision, cuber, true, currentHeight, false, new RamseteOptions(4.0), lights);// if we're on cones, up epsilons hella and don't enforce a speed limit so we're fast before limelight
+                : new SpecialRamseteSwerve(swerve, vision, cuber, currentHeight, new RamseteOptions(4.0), lights);// if we're on cones, up epsilons hella and don't enforce a speed limit so we're fast before limelight
             
             if(swerve.autoShoot) {
                 regularer = regularer.andThen(new Shoot(coner, cuber, swerve, cones ? 1.0 : 0.0, lights));
