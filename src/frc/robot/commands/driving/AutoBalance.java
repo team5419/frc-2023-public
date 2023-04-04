@@ -34,16 +34,16 @@ public class AutoBalance extends CommandBase {
         double yawChange = -SwerveDriveConstants.yawBalanceController.calculate(yawDiff);
         double pitchChange = 0.0;
         if(hasShiftedBack == -1) { // 9 and 14 degrees
-            if(Math.abs(pitchDiff) > 12.5) {
+            if(Math.abs(pitchDiff) > 10.0) { // 12.5
                 hasShiftedBack = 0;
             }
-            pitchChange = 3.0 * Math.signum(pitchDiff);
+            pitchChange = 1.0 * Math.signum(pitchDiff); // 3.0
         }
         if(hasShiftedBack == 0) {
-            if(Math.abs(pitchDiff) < 11.5) {
+            if(Math.abs(pitchDiff) < 9.5) { // 11.5
                 hasShiftedBack = 3;
             }
-            pitchChange = 0.5 * Math.signum(pitchDiff);
+            pitchChange = 0.75 * Math.signum(pitchDiff); // 0.5
         } 
         if(hasShiftedBack == 3) {
             if(Math.abs(pitchDiff) < 2.0) {

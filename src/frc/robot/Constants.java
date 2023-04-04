@@ -79,12 +79,12 @@ public class Constants {
 
 
         public static final double maxVelocity = 4.0; 
-        public static final double maxAcceleration = 2.3;
+        public static final double maxAcceleration = 3.3;
         public static final PIDController xController = new PIDController(1.0, 0.0, 0.0);
         public static final PIDController yController = new PIDController(1.0, 0.0, 0.0);
         public static final double maxAngularSpeed = 1.2 * Math.PI;
         public static final TrapezoidProfile.Constraints thetaConstraints = new TrapezoidProfile.Constraints(maxAngularSpeed, Math.pow(maxAngularSpeed, 2.0));
-        public static final ProfiledPIDController thetaController = new ProfiledPIDController(5.0, 0.0, 0.0, thetaConstraints);
+        public static final ProfiledPIDController thetaController = new ProfiledPIDController(10.0, 0.0, 0.0, thetaConstraints);
 
         public static final double kv = (2.298 / 12); // 2.1737
         public static final double ka = (0.17118 / 12); // 0.29281
@@ -180,7 +180,7 @@ public class Constants {
             4.9832 // top pole
         };
 
-            public static final double targetYOffset = 1.0647 - 1.0716;
+            public static final double targetYOffset = 2.549 - 2.748;
         public static final double xPosBeforeBarriers = 1.6; // to be measured
         public static final double xEndOfChargingStation = 2.55; // to be measured
         public static final double yOutsideRightChargingStation = -1.0;

@@ -153,7 +153,7 @@ public class Cuber extends TesterSubsystem implements GenericShootIntake {
         if(height == TargetHeights.HIGH) {
             return 2.25;
         }
-        return 1.94;
+        return 2.064;
         //return 1.84;
     }
     public double getOffset() {

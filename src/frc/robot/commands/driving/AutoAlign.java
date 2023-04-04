@@ -81,12 +81,13 @@ public class AutoAlign extends CommandBase {
         }
     }
     public boolean isFinished() {
+        if(time != 0.0 && timer.get() >= time) {
+            return true;
+        }
         if(secondPhase) {
             return timer.get() >= 0.3;
         }
-        boolean fin= isFinished || (time != 0.0 && timer.get() >= time);
-        //return fin;
-        if(fin) {
+        if(isFinished) {
             if(TargetHeights.heights[height] == TargetHeights.LOW) {
                 return true;
             }

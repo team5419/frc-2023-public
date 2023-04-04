@@ -3,6 +3,7 @@ import frc.robot.Constants.SwerveDriveConstants;
 import frc.robot.Constants.TargetHeights;
 import frc.robot.auto.*;
 import frc.robot.commands.*;
+import frc.robot.commands.driving.AutoBalance;
 import frc.robot.commands.driving.MessyRamsete;
 import frc.robot.commands.driving.SpecialRamseteTurn;
 import frc.robot.commands.driving.SwerveDrive;
@@ -72,7 +73,10 @@ public class RobotContainer {
 		autoSelector.addOption("4 Cube B", new ThreeCube(swerve, vision, coner, cuber, lights, false, false));
 		autoSelector.addOption("Preload only", new PreloadOnly(swerve, vision, coner, cuber, false, lights));
 		autoSelector.addOption("Charge Station Only", new ChargeOnly(swerve, vision, coner, cuber, false, lights));
-		autoSelector.addOption("Test Messy Ramsete", new SequentialCommandGroup(new UseVision(swerve, false),new MessyRamsete(swerve, vision, new Pose2d(new Translation2d(0.75, -0.18), Rotation2d.fromDegrees(0.0)), 4.0)));
+		autoSelector.addOption("Test Using Waypoints 1", new TestWaypointing(swerve));
+		autoSelector.addOption("Test Using Waypoints 2", new TestWaypointing2(swerve));
+		autoSelector.addOption("Test Using Waypoints 3", new TestWaypointing3(swerve, vision));
+		autoSelector.addOption("new auto", new ConeDoubleCube(swerve, vision, coner, cuber, lights, true, false));
 		configureButtonBindings();
 		setDefaults();
 	}
@@ -86,6 +90,7 @@ public class RobotContainer {
 	}
   
 	private void configureButtonBindings() {
+		// driver controls
 		Trigger aButtonDriver = new Trigger(() -> driver.getAButton());
 		Trigger bButtonDriver = new Trigger(() -> driver.getBButton());
 		Trigger yButtonDriver = new Trigger(() -> driver.getYButton());
@@ -94,20 +99,6 @@ public class RobotContainer {
 		Trigger leftBumper = new Trigger(() -> driver.getLeftBumper());
 		Trigger rightBumper = new Trigger(() -> driver.getRightBumper() || driver.getXButton());
 		Trigger dpad = new Trigger(() -> driver.getPOV() != -1);
-
-		Trigger aButtonCodriver = new Trigger(() -> codriver.getAButton());
-		// Trigger bButtonCodriver = new Trigger(() -> codriver.getBButton());
-		// Trigger xButtonCodriver = new Trigger(() -> codriver.getXButton());
-		Trigger yButtonCodriver = new Trigger(() -> codriver.getYButton());
-		Trigger leftBumperCodriver = new Trigger(() -> codriver.getLeftBumper());
-		Trigger rightBumperCodriver = new Trigger(() -> codriver.getRightBumper());
-		Trigger rightTriggerCodriver = new Trigger(() -> codriver.getRightTriggerAxis() > SwerveDriveConstants.triggerDeadband);
-		Trigger leftTriggerCodriver = new Trigger(() -> codriver.getLeftTriggerAxis() > SwerveDriveConstants.triggerDeadband);
-		
-// 		 Trigger leftStickPressCodriver = new Trigger(() -> codriver.getLeftStickButton());
-// // leftStickPressCodriver.onTrue(new AutoAlign(swerve, coner, vision, 1.0, lights, 1.0 ));
-// 		leftStickPressCodriver.onTrue(new ResetGyro(swerve, 180.0));
-		
 		Trigger alignControllerOff = new Trigger(() -> swerve.isAligning == Swerve.AlignState.CONTROLLERON && (driver.getLeftX() < SwerveDriveConstants.controllerDeadband && 
 				driver.getLeftY() < SwerveDriveConstants.controllerDeadband &&
 				driver.getRightX() < SwerveDriveConstants.controllerDeadband &&
@@ -122,26 +113,28 @@ public class RobotContainer {
 		alignControllerOff.onTrue(Commands.runOnce(() -> {
 			swerve.isAligning = Swerve.AlignState.CONTROLLEROFF;
 		}));
-
 		dpad.onTrue(new Snap(swerve, vision, driver, 4));
-
 		leftBumper.whileTrue(Commands.runEnd(() -> { swerve.slowMode = true; }, () -> { swerve.slowMode = false; }));
 		rightBumper.onTrue(new SpecialRamseteTurn(swerve, vision, driver, coner, cuber, lights));
+		aButtonDriver.whileTrue(new Prep(coner, cuber, swerve, null));
+		bButtonDriver.whileTrue(new Shoot(coner, cuber, swerve, lights));
+		yButtonDriver.onTrue(new ResetGyro(swerve));
+		leftTrigger.whileTrue(new RunIntake(coner));
+		rightTrigger.whileTrue(new RunIntake(cuber));
+
+		// codriver controls
+		Trigger aButtonCodriver = new Trigger(() -> codriver.getAButton());
+		Trigger yButtonCodriver = new Trigger(() -> codriver.getYButton());
+		Trigger leftBumperCodriver = new Trigger(() -> codriver.getLeftBumper());
+		Trigger rightBumperCodriver = new Trigger(() -> codriver.getRightBumper());
+		Trigger rightTriggerCodriver = new Trigger(() -> codriver.getRightTriggerAxis() > SwerveDriveConstants.triggerDeadband);
+		Trigger leftTriggerCodriver = new Trigger(() -> codriver.getLeftTriggerAxis() > SwerveDriveConstants.triggerDeadband);
 		rightBumperCodriver.onTrue(Commands.runOnce(() -> {
 			swerve.usingCones = !swerve.usingCones;
 			lights.off(swerve);
 		}));
-		aButtonDriver.whileTrue(new Prep(coner, cuber, swerve, null));
-		bButtonDriver.whileTrue(new Shoot(coner, cuber, swerve, lights));
-		leftTriggerCodriver.whileTrue(new TeleopBalance(swerve, lights, driver));
-		yButtonDriver.onTrue(new ResetGyro(swerve));
-		leftTrigger.whileTrue(new RunIntake(coner));
-		rightTrigger.whileTrue(new RunIntake(cuber));
+		leftTriggerCodriver.whileTrue(new AutoBalance(swerve, lights));
 		rightTriggerCodriver.whileTrue(Commands.runEnd(() -> cuber.runIntake(), () -> cuber.stop(TargetHeights.LOW), cuber.subsystem()));
-		// aButtonCodriver.onTrue(new ChangeSystemOffset(1, -0.0025, cuber, coner, swerve));
-		// yButtonCodriver.onTrue(new ChangeSystemOffset(1, 0.0025, cuber, coner, swerve));
-		// xButtonCodriver.onTrue(new ChangeSystemOffset(0, 0.0025, cuber, coner, swerve));
-		// bButtonCodriver.onTrue(new ChangeSystemOffset(0, -0.0025, cuber, coner, swerve));
 		aButtonCodriver.whileTrue(Commands.run(() -> coner.shoot(TargetHeights.INTAKE)));
 		aButtonCodriver.onFalse(new SlightOutake(coner));
 		yButtonCodriver.onTrue(new ResetGyro(swerve, 180.0));

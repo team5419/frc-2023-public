@@ -47,7 +47,7 @@ public class Shoot extends CommandBase {
     public void initialize() {
         if(time != 0.0) {
             timer.reset();
-            timer.start();
+            timer.stop();
         }
         hasBeenReady = false;
         isCone = drivetrain.usingCones;
@@ -63,8 +63,14 @@ public class Shoot extends CommandBase {
         
         GenericShootIntake shooter = isCone ? coneShooter : cubeShooter;
         String realHeight = getHeight();
-       if(shooter.donePrepping(realHeight) || hasBeenReady) {
+        if(shooter.donePrepping(realHeight) && !hasBeenReady) {
             hasBeenReady = true;
+            if(time != 0.0) {
+                timer.reset();
+                timer.start();
+            }
+        }
+       if(hasBeenReady) {
             shooter.shoot(realHeight);
        } else {
             shooter.setup(realHeight);

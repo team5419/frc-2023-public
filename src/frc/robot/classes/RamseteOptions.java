@@ -8,6 +8,7 @@ public class RamseteOptions {
     public int turnToTag;
     public double maxSpeed;
     public double time;
+    public boolean constantSpeed;
     public RamseteOptions(double maxSpeed) {
         this.teamRelative = true;
         this.preventDrive = false;
@@ -15,6 +16,7 @@ public class RamseteOptions {
         this.epsilonMultiplier = 1.0;
         this.turnToTag = -1;
         this.maxSpeed = maxSpeed;
+        this.constantSpeed = false;
         time = 0.0;
     }
     public RamseteOptions() {
@@ -22,6 +24,7 @@ public class RamseteOptions {
         this.preventDrive = false;
         this.speedLimit = true;
         this.epsilonMultiplier = 1.0;
+        this.constantSpeed = false;
         this.turnToTag = -1;
         this.maxSpeed = -1.0;
         time = 0.0;
@@ -31,6 +34,7 @@ public class RamseteOptions {
         this.preventDrive = preventDrive;
         this.speedLimit = true;
         this.epsilonMultiplier = 1.0;
+        this.constantSpeed = false;
         this.turnToTag = -1;
         this.maxSpeed = -1.0;
         time = 0.0;
@@ -40,6 +44,7 @@ public class RamseteOptions {
         this.epsilonMultiplier = epsilonMultiplier;
         this.teamRelative = true;
         this.preventDrive = false;
+        this.constantSpeed = false;
         this.turnToTag = -1;
         this.maxSpeed = -1.0;
         time = 0.0;
@@ -51,6 +56,17 @@ public class RamseteOptions {
         this.epsilonMultiplier = epsilonMultiplier;
         this.turnToTag = turnToTag;
         this.maxSpeed = maxSpeed;
+        this.constantSpeed = false;
+        this.time = time;
+    }
+    public RamseteOptions(boolean teamRelative, boolean preventDrive, boolean speedLimit, double epsilonMultiplier, int turnToTag, double maxSpeed, double time, boolean constantSpeed) {
+        this.teamRelative = teamRelative;
+        this.preventDrive = preventDrive;
+        this.speedLimit = speedLimit;
+        this.epsilonMultiplier = epsilonMultiplier;
+        this.turnToTag = turnToTag;
+        this.maxSpeed = maxSpeed;
+        this.constantSpeed = constantSpeed;
         this.time = time;
     }
     public RamseteOptions(int turnToTag, double time) {
@@ -61,5 +77,6 @@ public class RamseteOptions {
         this.turnToTag = turnToTag;
         this.maxSpeed = -1.0;
         this.time = time;
+        this.constantSpeed = false;
     }
 }

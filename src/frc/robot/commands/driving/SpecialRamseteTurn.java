@@ -69,8 +69,8 @@ public class SpecialRamseteTurn extends CommandBase {
         //System.out.println(dtheta);
         //System.out.println("theta: ${DriveConstants.pTheta * (Math.PI / 180) * (target - theta)}");
         swerve.drive(
-            Util.deadband(-driver.getLeftY(), SwerveDriveConstants.controllerDeadband) * SwerveDriveConstants.speedMultiplier,
-            Util.deadband(-driver.getLeftX(), SwerveDriveConstants.controllerDeadband) * SwerveDriveConstants.speedMultiplier, 
+            Util.deadband(driver == null ? 0.0 : -driver.getLeftY(), SwerveDriveConstants.controllerDeadband) * SwerveDriveConstants.speedMultiplier,
+            Util.deadband(driver == null ? 0.0 : -driver.getLeftX(), SwerveDriveConstants.controllerDeadband) * SwerveDriveConstants.speedMultiplier, 
             dtheta, true, true);
         if(vision.seesTag) {
             hasSeenTag = true;
@@ -101,7 +101,7 @@ public class SpecialRamseteTurn extends CommandBase {
                 : new SpecialRamseteSwerve(swerve, vision, cuber, currentHeight, new RamseteOptions(4.0), lights);// if we're on cones, up epsilons hella and don't enforce a speed limit so we're fast before limelight
             
             if(swerve.autoShoot) {
-                regularer = regularer.andThen(new Shoot(coner, cuber, swerve, cones ? 1.0 : 0.0, lights));
+                regularer = regularer.andThen(new Shoot(coner, cuber, swerve, cones ? 0.6 : 1.0, lights));
             }
             regularer.schedule();
         }

@@ -40,10 +40,11 @@ public class Vision extends SubsystemBase { // this keeps track of our limelight
     public Vision(ShuffleboardTab tab, boolean _limelight, boolean _photon) { // the boolean parameters tell the code if we're using limelight and photon vision
         layout = Shuffleboard.getTab("Vision"); // create a shuffleboard layout to print data
         if(_limelight) { // if we're using a limelight, set it up and add some values to shuffleboard
-            limelight = NetworkTableInstance.getDefault().getTable("limelight");            
+            limelight = NetworkTableInstance.getDefault().getTable("limelight");    
+            limelight.getEntry("pipeline").setNumber(1.0);        
             //layout.addNumber("Hor Offset", () -> getHorizontalOffset());
             //layout.addNumber("Ver Offset", () -> getVerticalOffset());
-            //layout.addNumber("Distance", () -> getHorizontalDistance());
+            layout.addNumber("Distance", () -> getHorizontalDistance());
             //layout.addNumber("Lin Hor Offset", () -> getLinearHorizontalOffset(getHorizontalDistance()));
             layout.addBoolean("Sees target", () -> isTargetFound());
             layout.add("Limelight on", Commands.runOnce(() -> {
@@ -68,17 +69,7 @@ public class Vision extends SubsystemBase { // this keeps track of our limelight
             //System.out.println(e);
         }
         
-        if(_photon) { // if we're using photon camera, set it up and add a value to shuffleboard for what team we're on
-            // layout.addString("Team", () -> {
-            //     switch(team()) {
-            //         case Red:
-            //             return "Red";
-            //         case Blue:
-            //             return "Blue";
-            //         default:
-            //             return "None";
-            //     }
-            // });
+        if(_photon) { 
             layout.addDouble("Last tag x", () -> lastTagPositionFront.getX());
             layout.addDouble("Last tag y", () -> lastTagPositionFront.getY());
             layout.addBoolean("sees tag", () -> seesTag);
