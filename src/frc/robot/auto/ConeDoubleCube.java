@@ -54,7 +54,7 @@ public class ConeDoubleCube extends SequentialCommandGroup { // basic routine fo
                 cubeShooter.runPercentOutput(1, -0.6);
             }),
             // next, drive all the way back to the first cube and pick it up
-            new RamseteSwerve(drivetrain, vision, new Pose2d(new Translation2d(4.5, 0.6), _180), new RamseteOptions(true, false, false, 2.0, -1, -1.0, 0.0)),
+            new RamseteSwerve(drivetrain, vision, new Pose2d(new Translation2d(4.7, 0.6), _180), new RamseteOptions(true, false, false, 2.0, -1, -1.0, 0.0)),
             Commands.runOnce(() -> {
                 cubeShooter.state = cubeShooter.shotSetpoint; // pull the cube intake back up and hold it up
                 cubeShooter.runPercentOutput(0, 0.0); // stop the intake motors
