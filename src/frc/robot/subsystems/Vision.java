@@ -83,6 +83,10 @@ public class Vision extends SubsystemBase { // this keeps track of our limelight
         //poseEstimator = null; // we'll create the pose estimator once we know what team we're on
     }
 
+    public void setPipeline(int id) {
+        this.limelight.getEntry("pipeline").setNumber(id - 1);
+    }
+
     public boolean usesCamera() {
         return cameras != null;
     }

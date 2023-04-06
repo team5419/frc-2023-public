@@ -40,6 +40,10 @@ public class AutoAlign extends CommandBase {
             timer.start();
         }
         shooter.pneumaticsOut();
+        
+        if (this.vision != null) {
+            this.vision.setPipeline(this.drivetrain.currentHeight);
+        }
     }
     public void execute() {
         double theta = drivetrain.angle();
