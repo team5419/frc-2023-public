@@ -4,18 +4,14 @@ import frc.robot.Constants.TargetHeights;
 import frc.robot.auto.*;
 import frc.robot.commands.*;
 import frc.robot.commands.driving.AutoBalance;
-import frc.robot.commands.driving.MessyRamsete;
 import frc.robot.commands.driving.SpecialRamseteTurn;
 import frc.robot.commands.driving.SwerveDrive;
-import frc.robot.commands.driving.TeleopBalance;
+// import frc.robot.commands.driving.TeleopBalance;
 import frc.robot.commands.shooting.Prep;
 import frc.robot.commands.shooting.RunIntake;
 import frc.robot.commands.shooting.Shoot;
 import frc.robot.commands.shooting.SlightOutake;
 import frc.robot.subsystems.*;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.XboxController;
@@ -39,6 +35,7 @@ public class RobotContainer {
 	private Coner coner;
 	private boolean madeHub;
 	public Lights lights;
+	private Elevator elevator;
 
 	public RobotContainer(ShuffleboardTab tab) {
 		// PowerDistribution dist = new PowerDistribution(1, ModuleType.kRev);
@@ -51,7 +48,8 @@ public class RobotContainer {
 		//sensors = new Sensors(tab);
 		swerve = new Swerve(vision, true); /* CHOOSE ONE!!! */
 		madeHub = false;
-		coner = new Coner(true, false);
+		elevator = new Elevator();
+		coner = new Coner(elevator, true, false);
 		generateHub();
 		cuber = new Cuber(true);
 		
@@ -91,12 +89,12 @@ public class RobotContainer {
   
 	private void configureButtonBindings() {
 		// driver controls
-		Trigger aButtonDriver = new Trigger(() -> driver.getAButton());
-		Trigger bButtonDriver = new Trigger(() -> driver.getBButton());
-		Trigger yButtonDriver = new Trigger(() -> driver.getYButton());
+		Trigger aButtonDriver = new Trigger(driver::getAButton);
+		Trigger bButtonDriver = new Trigger(driver::getBButton);
+		Trigger yButtonDriver = new Trigger(driver::getYButton);
 		Trigger rightTrigger = new Trigger(() -> driver.getRightTriggerAxis() > SwerveDriveConstants.triggerDeadband);
 		Trigger leftTrigger = new Trigger(() -> driver.getLeftTriggerAxis() > SwerveDriveConstants.triggerDeadband);
-		Trigger leftBumper = new Trigger(() -> driver.getLeftBumper());
+		Trigger leftBumper = new Trigger(driver::getLeftBumper);
 		Trigger rightBumper = new Trigger(() -> driver.getRightBumper() || driver.getXButton());
 		Trigger dpad = new Trigger(() -> driver.getPOV() != -1);
 		Trigger alignControllerOff = new Trigger(() -> swerve.isAligning == Swerve.AlignState.CONTROLLERON && (driver.getLeftX() < SwerveDriveConstants.controllerDeadband && 
@@ -123,10 +121,10 @@ public class RobotContainer {
 		rightTrigger.whileTrue(new RunIntake(cuber));
 
 		// codriver controls
-		Trigger aButtonCodriver = new Trigger(() -> codriver.getAButton());
-		Trigger yButtonCodriver = new Trigger(() -> codriver.getYButton());
-		Trigger leftBumperCodriver = new Trigger(() -> codriver.getLeftBumper());
-		Trigger rightBumperCodriver = new Trigger(() -> codriver.getRightBumper());
+		Trigger aButtonCodriver = new Trigger(codriver::getAButton);
+		Trigger yButtonCodriver = new Trigger(codriver::getYButton);
+		Trigger leftBumperCodriver = new Trigger(codriver::getLeftBumper);
+		Trigger rightBumperCodriver = new Trigger(codriver::getRightBumper);
 		Trigger rightTriggerCodriver = new Trigger(() -> codriver.getRightTriggerAxis() > SwerveDriveConstants.triggerDeadband);
 		Trigger leftTriggerCodriver = new Trigger(() -> codriver.getLeftTriggerAxis() > SwerveDriveConstants.triggerDeadband);
 		rightBumperCodriver.onTrue(Commands.runOnce(() -> {
@@ -134,7 +132,7 @@ public class RobotContainer {
 			lights.off(swerve);
 		}));
 		leftTriggerCodriver.whileTrue(new AutoBalance(swerve, lights));
-		rightTriggerCodriver.whileTrue(Commands.runEnd(() -> cuber.runIntake(), () -> cuber.stop(TargetHeights.LOW), cuber.subsystem()));
+		rightTriggerCodriver.whileTrue(Commands.runEnd(cuber::runIntake, () -> cuber.stop(TargetHeights.LOW), cuber.subsystem()));
 		aButtonCodriver.whileTrue(Commands.run(() -> coner.shoot(TargetHeights.INTAKE)));
 		aButtonCodriver.onFalse(new SlightOutake(coner));
 		yButtonCodriver.onTrue(new ResetGyro(swerve, 180.0));

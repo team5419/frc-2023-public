@@ -26,7 +26,7 @@ public class TesterSubsystem extends SubsystemBase {
         
             for(int j = 0; j < motors.length; j++) { // display all velocities at the bottom
                 int savedJ = j;
-                tab.addNumber(motors[j].getName() + " VELOCITY", () -> motors[savedJ].getVelocity())
+                tab.addNumber(motors[j].getName() + " VELOCITY", motors[savedJ]::getVelocity)
                     .withSize(2, 1)
                     .withPosition(j * 2, i);
             }

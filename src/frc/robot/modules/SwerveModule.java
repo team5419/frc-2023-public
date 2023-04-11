@@ -75,7 +75,7 @@ public class SwerveModule implements ISwerveModule {
             ShuffleboardTab tab = Shuffleboard.getTab("Drivetrain");
             ShuffleboardLayout layout = tab.getLayout("Module " + num, BuiltInLayouts.kList).withPosition(num + 4, 0).withSize(1, 4);
         layout.addNumber("angle", () -> getTurn().getRadians());
-        layout.addNumber("drive", () -> getDrive());
+        layout.addNumber("drive", this::getDrive);
         layout.addNumber("desired angle output", () -> this.lastTurnOutput);
         layout.addNumber("desired percent output", () -> this.lastPercentOutput);
     }

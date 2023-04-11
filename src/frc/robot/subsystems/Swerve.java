@@ -75,8 +75,8 @@ public class Swerve extends SubsystemBase { // our swerve drive subsystem
 
         ShuffleboardTab tab = Shuffleboard.getTab("Drivetrain"); // add a special drivetrain tab to shuffleboard
         ShuffleboardLayout layout = tab.getLayout("Main", BuiltInLayouts.kList).withPosition(0, 0).withSize(2, 5); // add a main layout within the tab
-         layout.addNumber("yaw", () -> this.angle()); // print all 3 euler angles of the gyro at all times for testing
-        layout.addNumber("pitch", () -> this.gyro.getPitch());
+         layout.addNumber("yaw", this::angle); // print all 3 euler angles of the gyro at all times for testing
+        layout.addNumber("pitch", this.gyro::getPitch);
         // layout.addNumber("roll", () -> this.gyro.getRoll());
         //layout.addNumber("compass", () -> this.gyro.getCompassHeading()); // wtf is this lmao
         //layout.addBoolean("slow mode", () -> this.slowMode); // shows whether we are in slow mode

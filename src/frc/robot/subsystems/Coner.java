@@ -7,8 +7,6 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.networktables.GenericEntry;
-import edu.wpi.first.wpilibj.PneumaticsModuleType;
-import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -25,21 +23,16 @@ import frc.robot.subsystems.test.TesterSubsystem;
 import frc.robot.Util;
 
 public class Coner extends TesterSubsystem implements GenericShootIntake {
-    private Solenoid soOne;
-    private Solenoid soTwo;
+    private Elevator elevator;
     private double timestamp;
     private GenericEntry dist;
     private final double defaultDist = 0.4642; // .4962;
-    public Coner(boolean falcons, boolean velocityControl) {
+    public Coner(Elevator elevator, boolean falcons, boolean velocityControl) {
         super("Cone Shooter", new TesterMotor[] {
             generateTesterMotor("Low motor", falcons, Ports.coneBottom, false),
             generateTesterMotor("High motor", falcons, Ports.coneTop, true)
         }, velocityControl ? (falcons ? falconVelocities : neoVelocities) : percents);
-
-        soOne = new Solenoid(PneumaticsModuleType.CTREPCM, Ports.conerSolenoidA); //hub.makeSolenoid(Ports.conerSolenoidA);
-        soTwo = new Solenoid(PneumaticsModuleType.CTREPCM, Ports.conerSolenoidB);//hub.makeSolenoid(Ports.conerSolenoidB);
-        soOne.set(false);
-        soTwo.set(true);
+        this.elevator = elevator;
         timestamp = -1.0;
         ShuffleboardTab tab = Shuffleboard.getTab("Master");
         dist = tab.add("Limelight dist", defaultDist)
@@ -59,22 +52,13 @@ public class Coner extends TesterSubsystem implements GenericShootIntake {
         }
         return new TesterNeo(name, Util.setUpMotor(new CANSparkMax(id, MotorType.kBrushless), inverted, true));
     }
-    public void pneumaticsOut() {
-        soOne.set(true);
-        soTwo.set(false);
+    public void elevatorOut(String height) {
+        elevator.state = Elevator.heights.get(height);
     }
     public void stopMotors() {
         super.stop();
     }
     public void shoot(String height) {
-        if(height == TargetHeights.LOW) {
-            if(!soOne.get()) {
-                soOne.set(true);
-            }
-            if(soTwo.get()) {
-                soTwo.set(false);
-            }
-        }
         if(height == TargetHeights.FAR) {
             run(TargetHeights.HIGH);
         } else {
@@ -85,28 +69,19 @@ public class Coner extends TesterSubsystem implements GenericShootIntake {
     public void stop(String height) {
         timestamp = -1.0;
         super.stop();
-            soOne.set(false);
-            soTwo.set(true);
-        
+        elevator.state = Elevator.down;
     }
     public void setup(String height) {
-        if(height != TargetHeights.INTAKE && height != TargetHeights.LOW && soOne.get() && !soTwo.get()) {
+        if(height != TargetHeights.INTAKE && height != TargetHeights.LOW) {
             run(TargetHeights.INTAKE);
             if(timestamp == -1.0) {
                 timestamp = Timer.getFPGATimestamp();
             }
         }
-        if(height != TargetHeights.LOW) {
-            if(!soOne.get()) {
-                soOne.set(true);
-            }
-            if(soTwo.get()) {
-                soTwo.set(false);
-            }
-        }
+        elevator.state = Elevator.heights.get(height);
     }
     public boolean donePrepping(String height) {
-        return (height == TargetHeights.LOW) || (timestamp >= 0.0 && Timer.getFPGATimestamp() - timestamp >= 0.4 && soOne.get() && !soTwo.get());
+        return (height == TargetHeights.LOW) || (timestamp >= 0.0 && Timer.getFPGATimestamp() - timestamp >= 0.4 && elevator.closeEnough());
     }
     public SubsystemBase subsystem() {return this;}
     public final double getAngle() {

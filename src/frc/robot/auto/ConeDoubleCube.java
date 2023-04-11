@@ -4,20 +4,14 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
-// import edu.wpi.first.math.geometry.Pose2d;
-// import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants.TargetHeights;
 import frc.robot.classes.RamseteOptions;
 import frc.robot.commands.*;
-import frc.robot.commands.driving.AutoAlign;
 import frc.robot.commands.driving.AutoBalance;
 import frc.robot.commands.driving.RamseteSwerve;
 import frc.robot.commands.driving.SpecialRamseteSwerve;
-import frc.robot.commands.driving.SpecialRamseteTurn;
-import frc.robot.commands.driving.Waypointer;
 import frc.robot.commands.shooting.Shoot;
 import frc.robot.subsystems.Coner;
 import frc.robot.subsystems.Cuber;
@@ -28,7 +22,6 @@ import frc.robot.subsystems.Vision;
 
 
 public class ConeDoubleCube extends SequentialCommandGroup { // basic routine for diff drive
-    private static double shootX = 0.78;
     public ConeDoubleCube(Swerve drivetrain, Vision vision, Coner coneShooter, Cuber cubeShooter, Lights lights, boolean balance, boolean red) {
         Rotation2d _180 = Rotation2d.fromDegrees(180.0); // make this beforehand so we don't have to write it out every time - 180 degrees is when the cone shooter faces the grid
         addCommands(
@@ -90,13 +83,12 @@ public class ConeDoubleCube extends SequentialCommandGroup { // basic routine fo
             }),
             // turn back to 0 degrees and drive up against the charge station
             new RamseteSwerve(drivetrain, vision, new Pose2d(new Translation2d(2.5, 1.6), Rotation2d.fromDegrees(0.0)), new RamseteOptions(true, false, false, 6.0, -1, -1.0, 0.0, true)),
-            Commands.runOnce(() -> {
-                cubeShooter.setup(TargetHeights.HIGH); // stop intaking and spin up for a high shot with the last cube
-            }),
             new ParallelCommandGroup(
                 new AutoBalance(drivetrain, lights),// auto balance at the end 
                 new SequentialCommandGroup( // meanwhile, run this sequential group
-                    new WaitUntilCommand(() -> Math.abs(drivetrain.anglePitch()) < 2.0), // wait until the robot is roughly balanced
+                    Commands.run(() -> {
+                        cubeShooter.setup(TargetHeights.HIGH); // stop intaking and spin up for a high shot with the last cube
+                    }).until(() -> Math.abs(drivetrain.anglePitch()) < 2.0), // wait until the robot is roughly balanced
                     new Shoot(coneShooter, cubeShooter, drivetrain, 0.0, TargetHeights.HIGH, lights) // do a high shot with the last cube
                 )
             )

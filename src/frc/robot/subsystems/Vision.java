@@ -26,6 +26,11 @@ import java.util.List;
 import java.util.Optional;
 
 public class Vision extends SubsystemBase { // this keeps track of our limelight and photon camera
+    private static final double yAdjustment0 = -0.75;
+    private static final double xAdjustment0 = 0.0;
+    private static final double yAdjustment1 = 0.0;
+    private static final double xAdjustment1 = 0.0;
+
 
     private NetworkTable limelight; // keep track of the limelight
     private ShuffleboardTab layout; // keep track of a shuffleboard layout for printing data
@@ -36,23 +41,26 @@ public class Vision extends SubsystemBase { // this keeps track of our limelight
     public boolean seesTag;
     private double previousLimelightHorizontal;
     private double previousLimelightVertical;
-    private static double filterPercent = 0.6;
+    private static double filterPercent = 0.6; // 0.6
+    private double adjustedYAngle;
+    private double adjustedXAngle;
     public Vision(ShuffleboardTab tab, boolean _limelight, boolean _photon) { // the boolean parameters tell the code if we're using limelight and photon vision
         layout = Shuffleboard.getTab("Vision"); // create a shuffleboard layout to print data
         if(_limelight) { // if we're using a limelight, set it up and add some values to shuffleboard
             limelight = NetworkTableInstance.getDefault().getTable("limelight");    
-            limelight.getEntry("pipeline").setNumber(1.0);        
-            //layout.addNumber("Hor Offset", () -> getHorizontalOffset());
-            //layout.addNumber("Ver Offset", () -> getVerticalOffset());
-            layout.addNumber("Distance", () -> getHorizontalDistance());
-            //layout.addNumber("Lin Hor Offset", () -> getLinearHorizontalOffset(getHorizontalDistance()));
-            layout.addBoolean("Sees target", () -> isTargetFound());
-            layout.add("Limelight on", Commands.runOnce(() -> {
-                this.on();
-            }));
-            layout.add("Limelight off", Commands.runOnce(() -> {
-                this.off();
-            }));
+            limelight.getEntry("pipeline").setNumber(0.0);
+            adjustedXAngle = xAdjustment0;
+            adjustedYAngle = yAdjustment0;        
+            layout.addString("Distance info", () -> { // DISABLE FOR COMP - ONLY USE FOR TESTING
+                double rawDist = getHorizontalDistance();
+                double linOffset = getLinearHorizontalOffset(rawDist);
+                double convertedDist = getRobotRelativeHorizontalDistance(rawDist, linOffset);
+                double convertedOffset = getRobotRelativeHorizontalOffset(rawDist, linOffset);
+                return "Raw dist: " + rawDist + ", Linear offset: " + linOffset + ", Converted dist: " + convertedDist + ", Converted offset: " + convertedOffset;
+            }).withSize(6, 1);
+            layout.addBoolean("Sees target", this::isTargetFound);
+            layout.add("Limelight on", Commands.runOnce(this::on));
+            layout.add("Limelight off", Commands.runOnce(this::off));
             this.off();
         } else {
             limelight = null;
@@ -83,8 +91,15 @@ public class Vision extends SubsystemBase { // this keeps track of our limelight
         //poseEstimator = null; // we'll create the pose estimator once we know what team we're on
     }
 
-    public void setPipeline(int id) {
-        this.limelight.getEntry("pipeline").setNumber(id - 1);
+    public void setPipelineToHigh(boolean high) {
+        this.limelight.getEntry("pipeline").setNumber(high ? 1 : 0);
+        if(high) {
+            adjustedXAngle = xAdjustment1;
+            adjustedYAngle = yAdjustment1;
+        } else {
+            adjustedXAngle = xAdjustment0;
+            adjustedYAngle = yAdjustment0;
+        }
     }
 
     public boolean usesCamera() {
@@ -176,6 +191,7 @@ public class Vision extends SubsystemBase { // this keeps track of our limelight
         if(!isTargetFound()) {
             return previousLimelightHorizontal;
         }
+        val += adjustedXAngle * 17.85;
         previousLimelightHorizontal = filterPercent * previousLimelightHorizontal + (1.0 - filterPercent) * val;
         return previousLimelightHorizontal;
     }
@@ -185,6 +201,7 @@ public class Vision extends SubsystemBase { // this keeps track of our limelight
         if(!isTargetFound()) {
             return previousLimelightVertical;
         }
+        val += adjustedYAngle * 24.85;
         previousLimelightVertical = filterPercent * previousLimelightVertical + (1.0 - filterPercent) * val;
         return previousLimelightVertical;
     }
@@ -193,20 +210,27 @@ public class Vision extends SubsystemBase { // this keeps track of our limelight
         if(limelight == null) {
             return 0.0;
         }
-        double horOffset = getHorizontalOffset();
         //double dist = getHorizontalDistance();
-        return Math.tan(Math.toRadians(horOffset)) * dist;
+        return Math.tan(Math.toRadians(previousLimelightHorizontal)) * dist;
     }
 
     public double getHorizontalDistance() { 
         if(limelight == null) {
             return 0.0;
         }
-        double offset = getVerticalOffset();
+        double offset = previousLimelightVertical;
         if(LimelightConstants.cameraAngle + offset == 0.0) {
             return 0.0;
         }
-        return (LimelightConstants.lowTargetHeight - LimelightConstants.cameraHeight) / Math.tan(Math.toRadians(LimelightConstants.cameraAngle + getVerticalOffset()));
+        return (LimelightConstants.lowTargetHeight - LimelightConstants.cameraHeight) / Math.tan(Math.toRadians(LimelightConstants.cameraAngle + offset));
+    }
+
+    public double getRobotRelativeHorizontalDistance(double horizontalDist, double linearHorizontalOffset) {
+        return horizontalDist * LimelightConstants.cosYaw - linearHorizontalOffset * LimelightConstants.sinYaw;
+    }
+
+    public double getRobotRelativeHorizontalOffset(double horizontalDist, double linearHorizontalOffset) {
+        return horizontalDist * LimelightConstants.sinYaw + linearHorizontalOffset * LimelightConstants.cosYaw;
     }
 
     // check if the limelight is picking up on the target
@@ -233,5 +257,7 @@ public class Vision extends SubsystemBase { // this keeps track of our limelight
     }
 
     public void periodic() {
+        getHorizontalOffset();
+        getVerticalOffset();
     }
 }

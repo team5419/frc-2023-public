@@ -33,8 +33,7 @@ public class Constants {
         public static final String HIGH = "HIGH";
         public static final String INTAKE = "INTAKE";
         public static final String FAR = "FAR";
-        public static final String AUTO = "AUTO";
-        public static final String[] heights = { LOW, MID, HIGH, FAR, AUTO };
+        public static final String[] heights = { LOW, MID, HIGH, FAR };
     }
     public static final class ConerConstants {
         public static final double inOutVelocity = 0.05;
@@ -47,7 +46,7 @@ public class Constants {
        
         // order: indexer, main motor
 
-        public static final Map<String, Double> measuredVelocities = Map.of(TargetHeights.LOW, 0.0, TargetHeights.MID, 1500.0, TargetHeights.HIGH, /*1850.0,*/ 2800.0, TargetHeights.INTAKE, 0.0, TargetHeights.FAR, 1770.0, TargetHeights.AUTO, 2000.0);
+        public static final Map<String, Double> measuredVelocities = Map.of(TargetHeights.LOW, 0.0, TargetHeights.MID, 1500.0, TargetHeights.HIGH, /*1850.0,*/ 2800.0, TargetHeights.INTAKE, 0.0, TargetHeights.FAR, 1770.0);
 
         public static final double indexerSlowBackwardsSpeed = -0.05;
         public static final double sensorThresholdLeft = 880.0;
@@ -156,6 +155,9 @@ public class Constants {
         public static final double epsilonHorizontal = 0.5;
         public static final double epsilonLinHorizontal = 0.007;
         public static final double epsilonForward = 0.01; // .005
+        public static final double limelightYawAngle = 11.0 * Math.PI / 180.0;
+        public static final double cosYaw = Math.cos(limelightYawAngle);
+        public static final double sinYaw = Math.sin(limelightYawAngle);
     }
     public static final class AprilTagConstants {
 
@@ -218,5 +220,6 @@ public class Constants {
         public static final int lifterCancoder = 25;
         public static final int cuberSensor = 3;
         public static final int candlePort = 23;
+        public static final int elevatorPort = 26;
     }
 };

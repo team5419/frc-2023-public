@@ -81,10 +81,10 @@ public class Cuber extends TesterSubsystem implements GenericShootIntake {
         sensor = new AnalogInput(Ports.cuberSensor);
 
         ShuffleboardTab main = Shuffleboard.getTab("Master");
-        main.addNumber("Deploy position", () -> lifter.getSelectedSensorPosition()).withSize(1, 1);
-        main.addNumber("Cuber sensor", () -> getSensorValue()).withSize(1, 1).withPosition(2, 1);
+        main.addNumber("Deploy position", lifter::getSelectedSensorPosition).withSize(1, 1);
+        main.addNumber("Cuber sensor", this::getSensorValue).withSize(1, 1).withPosition(2, 1);
         //main.addNumber("Backwards setpoint", () -> startingPoint == null ? 0.0 : startingPoint);
-        main.addNumber("Cuber velocity", () -> motors[1].getVelocity());
+        main.addNumber("Cuber velocity", motors[1]::getVelocity);
         ShuffleboardTab tab = Shuffleboard.getTab("Shot Selection");
         tab.addBoolean("CUBE SENSOR MANUAL", () -> getSensorValue() < 400.0).withPosition(7, 3).withSize(1, 1);
         for(int i = 0; i < 3; i++) {

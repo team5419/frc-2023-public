@@ -13,6 +13,7 @@ public class AutoAlign extends CommandBase {
     private double distance;
     private Coner shooter;
     private int height;
+    private String convertedHeight;
     private Lights lights;
     private boolean isFinished;
     private Timer timer;
@@ -25,6 +26,7 @@ public class AutoAlign extends CommandBase {
         this.time = timeLimit;
         this.shooter = shooter;
         this.height = height;
+        this.convertedHeight = TargetHeights.heights[this.height];
         this.lights = lights;
         this.secondPhase = false;
         isFinished = false;
@@ -39,10 +41,10 @@ public class AutoAlign extends CommandBase {
             timer.reset();
             timer.start();
         }
-        shooter.pneumaticsOut();
+        shooter.elevatorOut(convertedHeight);
         
         if (this.vision != null) {
-            this.vision.setPipeline(this.drivetrain.currentHeight);
+            this.vision.setPipelineToHigh(convertedHeight == TargetHeights.HIGH);
         }
     }
     public void execute() {
@@ -50,21 +52,26 @@ public class AutoAlign extends CommandBase {
         double target = Math.round((theta - LimelightConstants.desiredAngle) / 360.0) * 360.0 + LimelightConstants.desiredAngle;
         double turnDiff = target - drivetrain.angle(); //calculates how many degrees to turn
         double turn = LimelightConstants.turnPID.calculate(turnDiff); //calculates amt to turn
+
         double rawDist = vision.getHorizontalDistance();
-        double forwardDiff = distance - LimelightConstants.desiredDistance - rawDist; //how far forward to go
+        double rawOffset = vision.getLinearHorizontalOffset(rawDist);
+        double robotDist = vision.getRobotRelativeHorizontalDistance(rawDist, rawOffset);
+        double robotOffset = vision.getRobotRelativeHorizontalOffset(rawDist, rawOffset);
+
+        double forwardDiff = distance - LimelightConstants.desiredDistance - robotDist; //how far forward to go
         double forward = LimelightConstants.forwardPID.calculate(forwardDiff);
-        //double leftDiff = Util.deadband(LimelightConstants.horizontalOffset - vision.getHorizontalOffset(), LimelightConstants.epsilonHorizontal); //how far sidewyas to move across fied
-        double leftDiff = LimelightConstants.linHorizontalOffset - vision.getLinearHorizontalOffset(rawDist);
+        double leftDiff = LimelightConstants.linHorizontalOffset - robotOffset;
         double left = LimelightConstants.linHorizontalPID.calculate(leftDiff);// ''
         
         
         boolean found = vision.isTargetFound();
         if(found) {
             if(!secondPhase) {
+                System.out.println(forward);
                 drivetrain.drive(forward , -left , -turn, false, true);
             }
             if(Math.abs(forwardDiff) < 0.25) {
-                shooter.setup(TargetHeights.heights[this.height]);
+                shooter.setup(convertedHeight);
             }
         }
         if(secondPhase) {
@@ -92,7 +99,7 @@ public class AutoAlign extends CommandBase {
             return timer.get() >= 0.3;
         }
         if(isFinished) {
-            if(TargetHeights.heights[height] == TargetHeights.LOW) {
+            if(convertedHeight == TargetHeights.LOW) {
                 return true;
             }
             secondPhase = true;
