@@ -68,7 +68,7 @@ public class AutoAlign extends CommandBase {
         if(found) {
             if(!secondPhase) {
                 System.out.println(forward);
-                drivetrain.drive(forward , -left , -turn, false, true);
+                drivetrain.drive(forward ,-left , -turn, false, true);
             }
             if(Math.abs(forwardDiff) < 0.25) {
                 shooter.setup(convertedHeight);

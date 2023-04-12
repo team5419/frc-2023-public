@@ -92,10 +92,22 @@ public class RobotContainer {
 		Trigger aButtonDriver = new Trigger(driver::getAButton);
 		Trigger bButtonDriver = new Trigger(driver::getBButton);
 		Trigger yButtonDriver = new Trigger(driver::getYButton);
+		Trigger xButtonDriver = new Trigger(driver::getXButton);
+		xButtonDriver.onTrue(Commands.runOnce(() -> {
+			double mid = Elevator.heights.get(TargetHeights.MID);
+			double high = Elevator.heights.get(TargetHeights.HIGH);
+			if(elevator.state == mid) {
+				elevator.state = high;
+			} else if(elevator.state == high) {
+				elevator.state = Elevator.down;
+			} else {
+				elevator.state = mid;
+			}
+		}));
 		Trigger rightTrigger = new Trigger(() -> driver.getRightTriggerAxis() > SwerveDriveConstants.triggerDeadband);
 		Trigger leftTrigger = new Trigger(() -> driver.getLeftTriggerAxis() > SwerveDriveConstants.triggerDeadband);
 		Trigger leftBumper = new Trigger(driver::getLeftBumper);
-		Trigger rightBumper = new Trigger(() -> driver.getRightBumper() || driver.getXButton());
+		Trigger rightBumper = new Trigger(() -> driver.getRightBumper());
 		Trigger dpad = new Trigger(() -> driver.getPOV() != -1);
 		Trigger alignControllerOff = new Trigger(() -> swerve.isAligning == Swerve.AlignState.CONTROLLERON && (driver.getLeftX() < SwerveDriveConstants.controllerDeadband && 
 				driver.getLeftY() < SwerveDriveConstants.controllerDeadband &&

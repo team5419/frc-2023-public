@@ -44,7 +44,7 @@ public class Swerve extends SubsystemBase { // our swerve drive subsystem
         drivers = new SwerveModule[SwerveDriveConstants.info.length]; // instantiate the module array
         usingVision = true;
         for(int i = 0; i < drivers.length; i++)  {
-            drivers[i] = new SwerveModule(SwerveDriveConstants.info[i], i); // for each module, instantiate the module with predefined constant module info
+            drivers[i] = new SwerveModule(SwerveDriveConstants.info[i], i, i % 2 == 0); // for each module, instantiate the module with predefined constant module info
         }
         slowMode = false; // slow mode starts off
         previousMove = new ChassisSpeeds(); // the last chassisspeeds were zero

@@ -25,20 +25,18 @@ import frc.robot.Util;
 public class Coner extends TesterSubsystem implements GenericShootIntake {
     private Elevator elevator;
     private double timestamp;
-    private GenericEntry dist;
-    private final double defaultDist = 0.4642; // .4962;
     public Coner(Elevator elevator, boolean falcons, boolean velocityControl) {
         super("Cone Shooter", new TesterMotor[] {
             generateTesterMotor("Low motor", falcons, Ports.coneBottom, false),
-            generateTesterMotor("High motor", falcons, Ports.coneTop, true)
+            generateTesterMotor("High motor", falcons, Ports.coneTop, false)
         }, velocityControl ? (falcons ? falconVelocities : neoVelocities) : percents);
         this.elevator = elevator;
         timestamp = -1.0;
         ShuffleboardTab tab = Shuffleboard.getTab("Master");
-        dist = tab.add("Limelight dist", defaultDist)
-            .withPosition(0, 3)
-            .withSize(1, 1)
-            .getEntry();
+        // dist = tab.add("Limelight dist", defaultDist)
+        //     .withPosition(0, 3)
+        //     .withSize(1, 1)
+        //     .getEntry();
     }
     public static TesterMotor generateTesterMotor(String name, boolean falcons, int id, boolean inverted) {
         if(falcons) {
@@ -91,8 +89,7 @@ public class Coner extends TesterSubsystem implements GenericShootIntake {
         return false;
     }
     public final double getLimelightDistance(String height) {
-        //return 0.2678; // 0.325
-        return dist.getDouble(defaultDist);
+        return height == TargetHeights.MID ? 0.995 : 1.0;
     }
     public void simulationPeriodic() {
 
@@ -105,11 +102,11 @@ public class Coner extends TesterSubsystem implements GenericShootIntake {
     // CONSTANTS
     private static final Map<String, TesterSetting[]> percents = Map.of(
     TargetHeights.LOW, new TesterSetting[] {
-        new TesterSetting(0.11), new TesterSetting(0.20)
+        new TesterSetting(0.50), new TesterSetting(1.00)
     }, TargetHeights.MID, new TesterSetting[] {
-        new TesterSetting(0.1465), new TesterSetting(0.4025)//0.445
+        new TesterSetting(0.035), new TesterSetting(0.30)//0.445
     }, TargetHeights.HIGH, new TesterSetting[] {
-        new TesterSetting(0.225), new TesterSetting(1.0)
+        new TesterSetting(0.09), new TesterSetting(0.48)
     }, TargetHeights.INTAKE, new TesterSetting[] {
         new TesterSetting(-0.2), new TesterSetting(-0.2)
     });

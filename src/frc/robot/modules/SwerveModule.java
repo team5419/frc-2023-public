@@ -27,12 +27,12 @@ public class SwerveModule implements ISwerveModule {
     private double offset;
     private double lastTurnOutput;
     private double lastPercentOutput;
-    public SwerveModule(ModuleInfo info, int num) {
+    public SwerveModule(ModuleInfo info, int num, boolean canivore) {
         this.offset = info.offset;
         this.lastTurnOutput = 0.0;
         this.lastPercentOutput = 0.0;
-        this.driveMotor = new TalonFX(info.driverPort, "canivore");
-        this.turnMotor = new TalonFX(info.turnerPort, "canivore");
+        this.driveMotor = canivore ? new TalonFX(info.driverPort, "canivore") : new TalonFX(info.driverPort);
+        this.turnMotor = canivore ? new TalonFX(info.turnerPort, "canivore"): new TalonFX(info.turnerPort);
           turnMotor.configFactoryDefault(100);
           turnMotor.setNeutralMode(NeutralMode.Coast);
           turnMotor.setInverted(info.turnInverted);
@@ -44,7 +44,7 @@ public class SwerveModule implements ISwerveModule {
             turnMotor.config_kI( 0, SwerveDriveConstants.TurnPID.i , 100 );
             turnMotor.config_kD( 0, SwerveDriveConstants.TurnPID.d , 100 );
             turnMotor.config_kF( 0, 0.0 , 100 );
-        this.turnEncoder = new CANCoder(info.cancoderPort, "canivore");
+        this.turnEncoder = canivore ? new CANCoder(info.cancoderPort, "canivore") : new CANCoder(info.cancoderPort);
         CANCoderConfiguration config = new CANCoderConfiguration();
         config.sensorCoefficient = Math.PI / 2048.0;
         config.unitString = "rad";

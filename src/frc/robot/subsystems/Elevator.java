@@ -2,9 +2,11 @@ package frc.robot.subsystems;
 
 import java.util.Map;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -18,18 +20,19 @@ public class Elevator extends SubsystemBase {
     private static final PID PID = new PID(0.5, 0.0, 0.0);
     public static final Map<String, Double> heights = Map.of(
         TargetHeights.LOW, 0.0,
-        TargetHeights.MID, 0.0,
-        TargetHeights.HIGH, 0.0,
+        TargetHeights.MID, 42992.0,
+        TargetHeights.HIGH, 42292.0,
         TargetHeights.FAR, 0.0, 
-        TargetHeights.INTAKE, 0.0
+        TargetHeights.INTAKE, 14000.0
     );
     public static final double down = 0.0;
     public double state;
+    private double timestamp;
     public Elevator() {
-        controller = new TalonFX(Ports.elevatorPort, "canivore");
-        Util.setUpMotor(controller, false, false);
-        controller.configMotionCruiseVelocity(3200.0);
-        controller.configMotionAcceleration(9600.0 * 4);
+        controller = new TalonFX(Ports.elevatorPort);
+        Util.setUpMotor(controller, false, true);
+        controller.configMotionCruiseVelocity(34000.0);
+        controller.configMotionAcceleration(48000.0);
         controller.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 40.0, 0.0, 0.0));
         controller.config_kP(0, PID.p);
         controller.config_kI(0, PID.i);
@@ -38,11 +41,23 @@ public class Elevator extends SubsystemBase {
         ShuffleboardTab tab = Shuffleboard.getTab("Elevator");
         tab.addNumber("position", controller::getSelectedSensorPosition);
         tab.addNumber("setpoint", () -> state);
+        timestamp = -1.0;
     }
     public void periodic() {
-        //controller.set(ControlMode.MotionMagic, state);
+        if(Math.abs(controller.getSelectedSensorPosition() - state) < 4000.0) {
+            if(timestamp == -1.0) {
+                timestamp = Timer.getFPGATimestamp();
+            }
+        } else {
+            timestamp = -1.0;
+        }
+        if(state <= 5000.0 && controller.getSelectedSensorPosition() <= 2000.0) {
+            controller.set(ControlMode.PercentOutput, 0.0);
+            return;
+        }
+        controller.set(ControlMode.MotionMagic, state);
     }
     public boolean closeEnough() {
-        return Math.abs(controller.getSelectedSensorPosition() - state) < 100.0;
+        return timestamp != -1.0 && Timer.getFPGATimestamp() - timestamp >= 0.2;
     }
 }
