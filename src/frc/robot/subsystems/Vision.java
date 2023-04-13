@@ -56,8 +56,8 @@ public class Vision extends SubsystemBase { // this keeps track of our limelight
                 double linOffset = getLinearHorizontalOffset(rawDist);
                 double convertedDist = getRobotRelativeHorizontalDistance(rawDist, linOffset);
                 double convertedOffset = getRobotRelativeHorizontalOffset(rawDist, linOffset);
-                return "Raw dist: " + rawDist + ", Linear offset: " + linOffset + ", Converted dist: " + convertedDist + ", Converted offset: " + convertedOffset;
-            }).withSize(6, 1);
+                return "Raw dist: " + rawDist + "\nLinear offset: " + linOffset + "\nConverted dist: " + convertedDist + "\nConverted offset: " + convertedOffset;
+            }).withSize(6, 3);
             layout.addBoolean("Sees target", this::isTargetFound);
             layout.add("Limelight on", Commands.runOnce(this::on));
             layout.add("Limelight off", Commands.runOnce(this::off));

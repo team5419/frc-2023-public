@@ -6,19 +6,24 @@ import frc.robot.subsystems.Swerve;
 import frc.robot.Util;
 import frc.robot.Constants.SwerveDriveConstants;
 
+
+import frc.robot.subsystems.Vision;
+
 public class SwerveDrive extends CommandBase {
     private XboxController driver;
     private XboxController codriver;
     private Swerve drivetrain;
     private boolean letGo;
     private Cuber cuber;
-    public SwerveDrive(Swerve drivetrain, XboxController _driver, XboxController _codriver, Cuber cuber){
+    private Vision vision;
+    public SwerveDrive(Swerve drivetrain, XboxController _driver, XboxController _codriver, Cuber cuber, Vision _vision){
         driver = _driver;
         codriver = _codriver;
         this.drivetrain = drivetrain;
         addRequirements(drivetrain);
         letGo = true;
         this.cuber = cuber;
+        this.vision = _vision;
     }
 
     public void initialize() {
@@ -32,6 +37,7 @@ public class SwerveDrive extends CommandBase {
             letGo = false;
             if((pov <= SwerveDriveConstants.dPadInputRange || pov >= 360 - SwerveDriveConstants.dPadInputRange) && drivetrain.currentHeight < 3) {
                 drivetrain.currentHeight++;
+                vision.setPipelineToHigh(true);
             }
             if(pov >= 90 - SwerveDriveConstants.dPadInputRange && pov <= 90 + SwerveDriveConstants.dPadInputRange && cuber.offset < 2) {
                 cuber.offset++;
@@ -41,6 +47,7 @@ public class SwerveDrive extends CommandBase {
             }
             if(pov >= 180 - SwerveDriveConstants.dPadInputRange && pov <= 180 + SwerveDriveConstants.dPadInputRange && drivetrain.currentHeight > 0) {
                 drivetrain.currentHeight--;
+                vision.setPipelineToHigh(false);
             }
         } 
         drivetrain.drive(

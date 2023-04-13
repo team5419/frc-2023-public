@@ -6,6 +6,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -25,11 +26,12 @@ public class Elevator extends SubsystemBase {
         TargetHeights.FAR, 0.0, 
         TargetHeights.INTAKE, 14000.0
     );
+    private static final PIDController additionalPID = new PIDController(0.00005, 0, 0);
     public static final double down = 0.0;
     public double state;
     private double timestamp;
     public Elevator() {
-        controller = new TalonFX(Ports.elevatorPort);
+        controller = new TalonFX(Ports.elevatorPort, "canivore");
         Util.setUpMotor(controller, false, true);
         controller.configMotionCruiseVelocity(34000.0);
         controller.configMotionAcceleration(48000.0);
@@ -44,16 +46,19 @@ public class Elevator extends SubsystemBase {
         timestamp = -1.0;
     }
     public void periodic() {
-        if(Math.abs(controller.getSelectedSensorPosition() - state) < 4000.0) {
+        double sensor = controller.getSelectedSensorPosition();
+        if(state <= 5000.0 && sensor <= 2000.0) {
+            controller.set(ControlMode.PercentOutput, 0.0);
+            return;
+        }
+        if(Math.abs(sensor - state) < 4000.0) {
             if(timestamp == -1.0) {
                 timestamp = Timer.getFPGATimestamp();
             }
+            //controller.set(ControlMode.PercentOutput, additionalPID.calculate(sensor, state));
         } else {
             timestamp = -1.0;
-        }
-        if(state <= 5000.0 && controller.getSelectedSensorPosition() <= 2000.0) {
-            controller.set(ControlMode.PercentOutput, 0.0);
-            return;
+            
         }
         controller.set(ControlMode.MotionMagic, state);
     }

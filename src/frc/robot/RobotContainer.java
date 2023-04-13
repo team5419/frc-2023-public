@@ -74,7 +74,7 @@ public class RobotContainer {
 		autoSelector.addOption("Test Using Waypoints 1", new TestWaypointing(swerve));
 		autoSelector.addOption("Test Using Waypoints 2", new TestWaypointing2(swerve));
 		autoSelector.addOption("Test Using Waypoints 3", new TestWaypointing3(swerve, vision));
-		autoSelector.addOption("new auto", new ConeDoubleCube(swerve, vision, coner, cuber, lights, true, false));
+		autoSelector.addOption("new auto", new ConeDoubleCube(swerve, vision, coner, cuber, lights, false));
 		configureButtonBindings();
 		setDefaults();
 	}
@@ -164,6 +164,6 @@ public class RobotContainer {
 	}
 
 	private void setDefaults() {
-		swerve.setDefaultCommand(new SwerveDrive(swerve, driver, codriver, cuber));
+		swerve.setDefaultCommand(new SwerveDrive(swerve, driver, codriver, cuber, vision));
 	}
 }

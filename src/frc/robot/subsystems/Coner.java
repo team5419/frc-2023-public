@@ -23,7 +23,7 @@ import frc.robot.subsystems.test.TesterSubsystem;
 import frc.robot.Util;
 
 public class Coner extends TesterSubsystem implements GenericShootIntake {
-    private Elevator elevator;
+    public Elevator elevator;
     private double timestamp;
     public Coner(Elevator elevator, boolean falcons, boolean velocityControl) {
         super("Cone Shooter", new TesterMotor[] {
@@ -55,6 +55,9 @@ public class Coner extends TesterSubsystem implements GenericShootIntake {
     }
     public void stopMotors() {
         super.stop();
+    }
+    public void resetTimestamp() {
+        timestamp = Timer.getFPGATimestamp();
     }
     public void shoot(String height) {
         if(height == TargetHeights.FAR) {
@@ -89,7 +92,7 @@ public class Coner extends TesterSubsystem implements GenericShootIntake {
         return false;
     }
     public final double getLimelightDistance(String height) {
-        return height == TargetHeights.MID ? 0.995 : 1.0;
+        return height == TargetHeights.MID ? 0.995 : 2.0;
     }
     public void simulationPeriodic() {
 

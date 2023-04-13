@@ -55,6 +55,7 @@ public class Cuber extends TesterSubsystem implements GenericShootIntake {
         TalonFXConfiguration tconfig = new TalonFXConfiguration();
         tconfig.remoteFilter0.remoteSensorDeviceID = Ports.lifterCancoder;
         tconfig.remoteFilter0.remoteSensorSource = RemoteSensorSource.CANCoder;
+        
         lifter.configAllSettings(tconfig);
         //Util.setUpMotor(lifter, false, false);
         lifter.setSensorPhase(true);
@@ -112,8 +113,7 @@ public class Cuber extends TesterSubsystem implements GenericShootIntake {
     }
     public void stop(String height) {
             super.stop();
-                state = up;
-            
+                state = up;  
     }
     public SubsystemBase subsystem() {return this;}
     public void setup(String height) {
@@ -124,6 +124,10 @@ public class Cuber extends TesterSubsystem implements GenericShootIntake {
             
         }
     }
+    public void setup(double setpoint) {
+        motors[0].run(CubeShooterConstants.indexerSlowBackwardsSpeed);
+        runVelocity(1, setpoint);
+    }
     public boolean donePrepping(String height) {
         if(height == TargetHeights.LOW) {
             return Math.abs(lifter.getSelectedSensorPosition() - lowShot) < 150.0;
@@ -131,14 +135,18 @@ public class Cuber extends TesterSubsystem implements GenericShootIntake {
         return (height == TargetHeights.FAR && motors[1].getVelocity() >= 13800.0) || (velocity ? (Math.abs(motors[1].getVelocity() - velocities.get(height)[1].getSetpoint()) <= 75.0)
         : (motors[1].getVelocity() >= CubeShooterConstants.measuredVelocities.get(height)));
     }
+    public boolean donePrepping(double velocity) {
+        return Math.abs(motors[1].getVelocity() - velocity) <= 75.0;
+    }
     public void periodic() {
         double diff = lifter.getSelectedSensorPosition();
         if(diff <= -2400.0 && state == up) {
-            lifter.set(ControlMode.PercentOutput, 0.0);
+            //lifter.set(ControlMode.PercentOutput, 0.0);
             
         } else {
-            lifter.set(ControlMode.MotionMagic, state);
+           // lifter.set(ControlMode.MotionMagic, state);
         }
+        System.out.println(diff);
     }
     public void simulationPeriodic() {
 

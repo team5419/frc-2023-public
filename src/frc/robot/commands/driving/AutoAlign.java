@@ -53,21 +53,31 @@ public class AutoAlign extends CommandBase {
         double turnDiff = target - drivetrain.angle(); //calculates how many degrees to turn
         double turn = LimelightConstants.turnPID.calculate(turnDiff); //calculates amt to turn
 
+        // limelight frame
         double rawDist = vision.getHorizontalDistance();
         double rawOffset = vision.getLinearHorizontalOffset(rawDist);
-        double robotDist = vision.getRobotRelativeHorizontalDistance(rawDist, rawOffset);
-        double robotOffset = vision.getRobotRelativeHorizontalOffset(rawDist, rawOffset);
+        // robot x-y frame
+        // double robotDist = vision.getRobotRelativeHorizontalDistance(rawDist, rawOffset); // rawDist;
+        // double robotOffset = vision.getRobotRelativeHorizontalOffset(rawDist, rawOffset); // rawOffset;
+        // if 15 deg lineup
+        double robotDist = rawDist;
+        double robotOffset = rawOffset;
 
         double forwardDiff = distance - LimelightConstants.desiredDistance - robotDist; //how far forward to go
         double forward = LimelightConstants.forwardPID.calculate(forwardDiff);
         double leftDiff = LimelightConstants.linHorizontalOffset - robotOffset;
         double left = LimelightConstants.linHorizontalPID.calculate(leftDiff);// ''
+
+
+        double forward85 = forward * LimelightConstants.cosYaw - left * LimelightConstants.sinYaw;
+        double left15 = forward * LimelightConstants.sinYaw + left * LimelightConstants.cosYaw;
+        forward = forward85;
+        left = left15;
         
         
         boolean found = vision.isTargetFound();
         if(found) {
             if(!secondPhase) {
-                System.out.println(forward);
                 drivetrain.drive(forward ,-left , -turn, false, true);
             }
             if(Math.abs(forwardDiff) < 0.25) {
@@ -78,7 +88,8 @@ public class AutoAlign extends CommandBase {
             //shooter.setup(TargetHeights.heights[height]);
             drivetrain.stop();
         }
-        if(Math.abs(turnDiff) <= LimelightConstants.epsilonTurn && Math.abs(leftDiff) <= LimelightConstants.epsilonLinHorizontal && Math.abs(forwardDiff) <= LimelightConstants.epsilonForward && found) {
+        double epsilonMultiplier = convertedHeight == TargetHeights.HIGH ? 1.0 : 3.0; // first number is high multiplier, second number is everything else multiplier
+        if(Math.abs(turnDiff) <= LimelightConstants.epsilonTurn * epsilonMultiplier && Math.abs(leftDiff) <= LimelightConstants.epsilonLinHorizontal * epsilonMultiplier && Math.abs(forwardDiff) <= LimelightConstants.epsilonForward * epsilonMultiplier && found) {
             lights.setColor(0, 255, 0);
             if(drivetrain.getAverageSpeed() <= 0.1) {
                 isFinished = true;

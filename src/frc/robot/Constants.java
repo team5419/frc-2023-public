@@ -143,19 +143,23 @@ public class Constants {
         public static final double cameraAngle = 18.0;
         public static final double cameraHeight = 0.1778;
         public static final PIDController horizontalPID = new PIDController(0.08, 0.0, 0.0); // .08
-        public static final PIDController linHorizontalPID = new PIDController(3.0, 0.0, 0.0); // 6.0
+        public static final PIDController linHorizontalPID = new PIDController(3.2, 0.0, 0.0); // 6.0
         public static final double closeConstant = 0.1;
         public static final PIDController turnPID = new PIDController(0.065, 0.0, 0.0); // .065
-        public static final PIDController forwardPID = new PIDController(1.5, 0.0, 0.0); //6.2
+        public static final PIDController forwardPID = new PIDController(1.65, 0.0, 0.0); //6.2
         public static final double desiredAngle = 180.0;
         public static final double desiredDistance = 0.0;
         public static final double horizontalOffset = -1.65; // 1.65
-        public static final double linHorizontalOffset = 0.166; // 0.008; // -0.023
+        public static final double linHorizontalOffset = 0.02; //0.166 before theo left 0.008; // -0.023
+        public static final double linHorizontalOffsetHigh = -0.02;
+
+
         public static final double epsilonTurn = 1.0;
         public static final double epsilonHorizontal = 0.5;
         public static final double epsilonLinHorizontal = 0.007;
         public static final double epsilonForward = 0.01; // .005
-        public static final double limelightYawAngle = 11.0 * Math.PI / 180.0;
+
+        public static final double limelightYawAngle = 11.5 * Math.PI / 180.0;
         public static final double cosYaw = Math.cos(limelightYawAngle);
         public static final double sinYaw = Math.sin(limelightYawAngle);
     }

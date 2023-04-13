@@ -12,6 +12,7 @@ import frc.robot.commands.*;
 import frc.robot.commands.driving.AutoBalance;
 import frc.robot.commands.driving.RamseteSwerve;
 import frc.robot.commands.driving.SpecialRamseteSwerve;
+import frc.robot.commands.shooting.CustomShoot;
 import frc.robot.commands.shooting.Shoot;
 import frc.robot.subsystems.Coner;
 import frc.robot.subsystems.Cuber;
@@ -22,14 +23,14 @@ import frc.robot.subsystems.Vision;
 
 
 public class ConeDoubleCube extends SequentialCommandGroup { // basic routine for diff drive
-    public ConeDoubleCube(Swerve drivetrain, Vision vision, Coner coneShooter, Cuber cubeShooter, Lights lights, boolean balance, boolean red) {
+    public ConeDoubleCube(Swerve drivetrain, Vision vision, Coner coneShooter, Cuber cubeShooter, Lights lights, boolean shootHigh) {
         Rotation2d _180 = Rotation2d.fromDegrees(180.0); // make this beforehand so we don't have to write it out every time - 180 degrees is when the cone shooter faces the grid
         addCommands(
             new UseVision(drivetrain, false), // first turn off photonvision tracking so that the position is given using dead reckoning
             Commands.runOnce(() -> {
                 drivetrain.resetGyro(180.0); // we start facing backwards
                 drivetrain.usingCones = true; // our first shot is a cone
-                drivetrain.currentHeight = 1; // 1 = shooting mid
+                drivetrain.currentHeight = shootHigh ? 2 : 1; // 1 = shooting mid
             }),
             //new AutoAlign(drivetrain, coneShooter, vision, coneShooter.getLimelightDistance(TargetHeights.MID), 1, lights, 1.0), // optional - add an auto align before shooting for 1 second
             new Shoot(coneShooter, cubeShooter, drivetrain, 0.5, lights), // shoot the cone shooter for a total of 0.9 seconds (0.4 prep, 0.5 shot)
@@ -89,7 +90,7 @@ public class ConeDoubleCube extends SequentialCommandGroup { // basic routine fo
                     Commands.run(() -> {
                         cubeShooter.setup(TargetHeights.HIGH); // stop intaking and spin up for a high shot with the last cube
                     }).until(() -> Math.abs(drivetrain.anglePitch()) < 2.0), // wait until the robot is roughly balanced
-                    new Shoot(coneShooter, cubeShooter, drivetrain, 0.0, TargetHeights.HIGH, lights) // do a high shot with the last cube
+                    new CustomShoot(cubeShooter, drivetrain, 7000.0, 0.0, lights)
                 )
             )
         ); 
