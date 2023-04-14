@@ -107,7 +107,7 @@ public class Coner extends TesterSubsystem implements GenericShootIntake {
     TargetHeights.LOW, new TesterSetting[] {
         new TesterSetting(0.50), new TesterSetting(1.00)
     }, TargetHeights.MID, new TesterSetting[] {
-        new TesterSetting(0.04), new TesterSetting(0.29)//0.445
+        new TesterSetting(0.03), new TesterSetting(0.3)//0.445
     }, TargetHeights.HIGH, new TesterSetting[] {
         // new TesterSetting(0.09), new TesterSetting(0.48)
         new TesterSetting(0.25), new TesterSetting(0.58)

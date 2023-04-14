@@ -29,12 +29,12 @@ import frc.robot.Util;
 import edu.wpi.first.wpilibj.AnalogInput;
 
 public class Cuber extends TesterSubsystem implements GenericShootIntake {
-    public final double down = -565.0; // 1200
-    public final double shotSetpoint = -2724.0; // 3408
-    public final double up = -2724.0;
-    public final double lowShot = -1565; // 2200
+    public final double down = -68.0; //-565.0; // 1200
+    public final double shotSetpoint = 114.0;//-2724.0; // 3408
+    public final double up = 114.0; //-2724.0;
+    public final double lowShot = 5.9; // 2200
     
-    private final PID lifterPID = new PID(0.5, 0.0, 0.0);
+    private final PID lifterPID = new PID(0.05, 0.0, 0.0);
     private AnalogInput sensor;
     private boolean velocity;
     public double offset;
@@ -73,7 +73,7 @@ public class Cuber extends TesterSubsystem implements GenericShootIntake {
         config.sensorTimeBase = SensorTimeBase.PerSecond;
         cancoder.configAllSettings(config, 100);
         cancoder.setPositionToAbsolute(100);
-        
+        cancoder.setPositionToAbsolute();
         
     
         offset = 1;
@@ -82,7 +82,8 @@ public class Cuber extends TesterSubsystem implements GenericShootIntake {
         sensor = new AnalogInput(Ports.cuberSensor);
 
         ShuffleboardTab main = Shuffleboard.getTab("Master");
-        main.addNumber("Deploy position", lifter::getSelectedSensorPosition).withSize(1, 1);
+        main.addNumber("Deploy position", this.lifter::getSelectedSensorPosition).withSize(1, 1);
+        main.addNumber("Encoder Deploy position", this.cancoder::getPosition).withSize(1, 1);
         main.addNumber("Cuber sensor", this::getSensorValue).withSize(1, 1).withPosition(2, 1);
         //main.addNumber("Backwards setpoint", () -> startingPoint == null ? 0.0 : startingPoint);
         main.addNumber("Cuber velocity", motors[1]::getVelocity);
@@ -130,7 +131,7 @@ public class Cuber extends TesterSubsystem implements GenericShootIntake {
     }
     public boolean donePrepping(String height) {
         if(height == TargetHeights.LOW) {
-            return Math.abs(lifter.getSelectedSensorPosition() - lowShot) < 150.0;
+            return Math.abs(cancoder.getPosition() - lowShot) < 150.0;
         }
         return (height == TargetHeights.FAR && motors[1].getVelocity() >= 13800.0) || (velocity ? (Math.abs(motors[1].getVelocity() - velocities.get(height)[1].getSetpoint()) <= 75.0)
         : (motors[1].getVelocity() >= CubeShooterConstants.measuredVelocities.get(height)));
@@ -139,12 +140,12 @@ public class Cuber extends TesterSubsystem implements GenericShootIntake {
         return Math.abs(motors[1].getVelocity() - velocity) <= 75.0;
     }
     public void periodic() {
-        double diff = lifter.getSelectedSensorPosition();
+        double diff = cancoder.getPosition();
         if(diff <= -2400.0 && state == up) {
-            //lifter.set(ControlMode.PercentOutput, 0.0);
+            lifter.set(ControlMode.PercentOutput, 0.0);
             
         } else {
-           // lifter.set(ControlMode.MotionMagic, state);
+           //lifter.set(ControlMode.MotionMagic, state);
         }
         System.out.println(diff);
     }

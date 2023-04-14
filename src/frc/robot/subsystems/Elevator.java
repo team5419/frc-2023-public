@@ -24,7 +24,7 @@ public class Elevator extends SubsystemBase {
         TargetHeights.MID, 42992.0,
         TargetHeights.HIGH, 42292.0,
         TargetHeights.FAR, 0.0, 
-        TargetHeights.INTAKE, 16000.0
+        TargetHeights.INTAKE, 14200.0
     );
     private static final PIDController additionalPID = new PIDController(0.00005, 0, 0);
     public static final double down = 0.0;
