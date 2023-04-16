@@ -143,21 +143,21 @@ public class Constants {
         public static final double cameraAngle = 18.0;
         public static final double cameraHeight = 0.1778;
         public static final PIDController horizontalPID = new PIDController(0.08, 0.0, 0.0); // .08
-        public static final PIDController linHorizontalPID = new PIDController(3.2, 0.0, 0.0); // 6.0
+        public static final PIDController linHorizontalPID = new PIDController(3.8, 0.0, 0.0); // 6.0, MID: 3.2 //high P .75 
         public static final double closeConstant = 0.1;
         public static final PIDController turnPID = new PIDController(0.065, 0.0, 0.0); // .065
-        public static final PIDController forwardPID = new PIDController(1.3, 0.0, 0.0); //6.2
+        public static final PIDController forwardPID = new PIDController(1.2, 0.0, 0.0); //6.2 // MID: 0.35 // High: .28
         public static final double desiredAngle = 180.0;
         public static final double desiredDistance = 0.0;
         public static final double horizontalOffset = -1.65; // 1.65
-        public static final double linHorizontalOffset = 0.02; //0.166 before theo left 0.008; // -0.023
-        public static final double linHorizontalOffsetHigh = -0.52;
+        public static final double linHorizontalOffset = 0.024; //0.166 before theo left 0.008; // -0.023
+        public static final double linHorizontalOffsetHigh = 0.2;
 
 
         public static final double epsilonTurn = 1.0;
         public static final double epsilonHorizontal = 0.5;
-        public static final double epsilonLinHorizontal = 0.01; // 0.007
-        public static final double epsilonForward = 0.02; // .005
+        public static final double epsilonLinHorizontal = .08; //0.01; // 0.007 //temp .02
+        public static final double epsilonForward = .20; // .005 //.02 //good: .2
 
         public static final double limelightYawAngle = 11.5 * Math.PI / 180.0;
         public static final double cosYaw = Math.cos(limelightYawAngle);

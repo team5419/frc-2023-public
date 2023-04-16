@@ -18,13 +18,13 @@ import frc.robot.classes.PID;
 
 public class Elevator extends SubsystemBase {
     private TalonFX controller;
-    private static final PID PID = new PID(0.5, 0.0, 0.0);
+    private static final PID PID = new PID(0.2, 0.0, 0.0);
     public static final Map<String, Double> heights = Map.of(
         TargetHeights.LOW, 0.0,
-        TargetHeights.MID, 42992.0,
+        TargetHeights.MID, 32000.2,
         TargetHeights.HIGH, 42292.0,
         TargetHeights.FAR, 0.0, 
-        TargetHeights.INTAKE, 14200.0
+        TargetHeights.INTAKE, 12500.0
     );
     private static final PIDController additionalPID = new PIDController(0.00005, 0, 0);
     public static final double down = 0.0;
