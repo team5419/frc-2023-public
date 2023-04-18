@@ -42,10 +42,6 @@ public class AutoAlign extends CommandBase {
             timer.start();
         }
         shooter.elevatorOut(convertedHeight);
-        
-        if (this.vision != null) {
-            this.vision.setPipelineToHigh(convertedHeight == TargetHeights.HIGH);
-        }
     }
     public void execute() {
         double theta = drivetrain.angle();

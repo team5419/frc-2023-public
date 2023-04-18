@@ -61,20 +61,14 @@ public class RobotContainer {
 		autoSelector = new SendableChooser<SequentialCommandGroup>();
 		tab.add("Auto selector", autoSelector).withSize(2, 1).withPosition(0, 0);
 		autoSelector.setDefaultOption("Baseline", new Baseline());
-		autoSelector.addOption("3 Cube Balance R", new TwoCubeBalance(swerve, vision, coner, cuber, lights, true, true));
-		autoSelector.addOption("3 Cube R", new TwoCubeBalance(swerve, vision, coner, cuber, lights, false, true));
-		autoSelector.addOption("4 Cube Balance R", new ThreeCube(swerve, vision, coner, cuber, lights, true, true));
-		autoSelector.addOption("4 Cube R", new ThreeCube(swerve, vision, coner, cuber, lights, false, true));
-		autoSelector.addOption("3 Cube Balance B", new TwoCubeBalance(swerve, vision, coner, cuber, lights, true, false));
-		autoSelector.addOption("3 Cube B", new TwoCubeBalance(swerve, vision, coner, cuber, lights, false, false));
-		autoSelector.addOption("4 Cube Balance B", new ThreeCube(swerve, vision, coner, cuber, lights, true, false));
-		autoSelector.addOption("4 Cube B", new ThreeCube(swerve, vision, coner, cuber, lights, false, false));
+		autoSelector.addOption("3 Cube Balance", new TwoCubeBalance(swerve, vision, coner, cuber, lights, true, false));
+		autoSelector.addOption("3 Cube", new TwoCubeBalance(swerve, vision, coner, cuber, lights, false, false));
+		autoSelector.addOption("4 Cube", new ThreeCube(swerve, vision, coner, cuber, lights, false, false));
 		autoSelector.addOption("Preload only", new PreloadOnly(swerve, vision, coner, cuber, false, lights));
 		autoSelector.addOption("Charge Station Only", new ChargeOnly(swerve, vision, coner, cuber, false, lights));
-		autoSelector.addOption("Test Using Waypoints 1", new TestWaypointing(swerve));
-		autoSelector.addOption("Test Using Waypoints 2", new TestWaypointing2(swerve));
-		autoSelector.addOption("Test Using Waypoints 3", new TestWaypointing3(swerve, vision));
-		autoSelector.addOption("new auto", new ConeDoubleCube(swerve, vision, coner, cuber, lights, false));
+		autoSelector.addOption("Charge Station Back", new ChargeStationBack(swerve, vision, coner, cuber, false, lights));
+		autoSelector.addOption("GOAT Cable Side", new ConeDoubleCube(swerve, vision, coner, cuber, lights, false, true));
+		autoSelector.addOption("GOAT Non-Cable Side", new ConeDoubleCube(swerve, vision, coner, cuber, lights, false, false));
 		configureButtonBindings();
 		setDefaults();
 	}
