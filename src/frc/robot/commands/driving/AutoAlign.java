@@ -64,15 +64,20 @@ public class AutoAlign extends CommandBase {
         double robotOffset = rawOffset;
 
         double forwardDiff = distance - LimelightConstants.desiredDistance - robotDist; //how far forward to go
-        double forward = LimelightConstants.forwardPID.calculate(forwardDiff);
 
+        double forward = LimelightConstants.forwardPID.calculate(forwardDiff);
+        if (convertedHeight == TargetHeights.HIGH)
+            forward = LimelightConstants.forawrdPIDHigh.calculate(forwardDiff);// ''
 
         double horiOffset = LimelightConstants.linHorizontalOffset;
         if(convertedHeight == TargetHeights.HIGH){
             horiOffset = LimelightConstants.linHorizontalOffsetHigh;
         }
         double leftDiff = horiOffset - robotOffset;
+
         double left = LimelightConstants.linHorizontalPID.calculate(leftDiff);// ''
+        if (convertedHeight == TargetHeights.HIGH)
+            left = LimelightConstants.linHorizontalPIDHigh.calculate(leftDiff);// ''
 
 
         double forward85 = forward * LimelightConstants.cosYaw - left * LimelightConstants.sinYaw;

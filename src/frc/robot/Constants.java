@@ -154,6 +154,9 @@ public class Constants {
         public static final double linHorizontalOffsetHigh = 0.2;
 
 
+        public static final PIDController linHorizontalPIDHigh = new PIDController(0.75, 0.0, 0.0);
+        public static final PIDController forawrdPIDHigh = new PIDController(0.28, 0.0, 0.0);
+
         public static final double epsilonTurn = 1.0;
         public static final double epsilonHorizontal = 0.5;
         public static final double epsilonLinHorizontal = .08; //0.01; // 0.007 //temp .02
