@@ -8,17 +8,12 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.shuffleboard.SimpleWidget;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.RobotContainer;
-public class ChoicedAuto extends SequentialCommandGroup {
+public class ChoicedAuto {
     private static Dictionary<String, GenericEntry> params;
     private static ShuffleboardTab tab = null;
     private static int lastX = 0;
     private static int lastY = 2;
-    public static void handleReqs(String[] reqs) {
-        for(String str : reqs) {
-            registerKey(str);
-        }
-    } 
-    public static void registerKey(String key) {
+    protected void registerKey(String key) {
         if(tab == null) {
             tab = Shuffleboard.getTab("Auto");
         }
@@ -36,14 +31,17 @@ public class ChoicedAuto extends SequentialCommandGroup {
             }
         }
     }
-    public boolean getKey(String key) {
+    protected boolean getKey(String key) {
         GenericEntry entry = params.get(key);
         if(entry == null) {
             return false;
         }
         return entry.getBoolean(false);
     }
-    public SequentialCommandGroup setupWith(RobotContainer container) {
-        return this;
+    protected void handle(RobotContainer container, SequentialCommandGroup group) {}
+    public SequentialCommandGroup evaluate(RobotContainer container) {
+        SequentialCommandGroup group = new SequentialCommandGroup();
+        handle(container, group);
+        return group;
     }
 }

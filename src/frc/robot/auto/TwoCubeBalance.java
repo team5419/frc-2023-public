@@ -23,9 +23,9 @@ import frc.robot.subsystems.Vision;
 
 public class TwoCubeBalance extends ChoicedAuto { // basic routine for diff drive
     private static double shootX = 0.78;
-    public SequentialCommandGroup setupWith(RobotContainer container) {
+    protected void handle(RobotContainer container, SequentialCommandGroup group) {
         boolean engage = getKey("engage");
-        addCommands(
+        group.addCommands(
             new UseVision(container.swerve, false), // disable container.vision
             Commands.runOnce(() -> { // reset position and drop cone intake
                 container.swerve.resetGyro(0.0);
@@ -66,12 +66,13 @@ public class TwoCubeBalance extends ChoicedAuto { // basic routine for diff driv
             })
         );
         if(engage) {
-            addCommands(new RamseteSwerve(container.swerve, container.vision, new Pose2d(new Translation2d(-0.4, 1.2), new Rotation2d(0.0)), new RamseteOptions(true,  false, false, 4.0, -1, -1.0, 0.0)),
+            group.addCommands(new RamseteSwerve(container.swerve, container.vision, new Pose2d(new Translation2d(-0.4, 1.2), new Rotation2d(0.0)), new RamseteOptions(true,  false, false, 4.0, -1, -1.0, 0.0)),
             new AutoBalance(container.swerve, container.lights, container.vision, -1));
         } else {
-            addCommands(new RamseteSwerve(container.swerve, container.vision, new Pose2d(new Translation2d(1.25, 1.2), new Rotation2d(0.0)), new RamseteOptions(true,  false, false, 4.0, -1, -1.0, 0.0)));
+            group.addCommands(new RamseteSwerve(container.swerve, container.vision, new Pose2d(new Translation2d(1.25, 1.2), new Rotation2d(0.0)), new RamseteOptions(true,  false, false, 4.0, -1, -1.0, 0.0)));
         }
-        return this;
     }
-    public static String[] requirements = { "engage" };
+    public TwoCubeBalance() {
+        registerKey("engage");
+    }
 }

@@ -68,12 +68,14 @@ public class RobotContainer {
 		autoSelector.addOption("Preload only", () -> new PreloadOnly(swerve, vision, coner, cuber, lights));
 		autoSelector.addOption("Charge Station Only", () -> new ChargeOnly(swerve, vision, coner, cuber, lights));
 		autoSelector.addOption("Charge Station Back", () -> new ChargeStationBack(swerve, vision, coner, cuber, lights));
-		autoSelector.addOption("GOAT", () -> new ConeDoubleCube().setupWith(this));
-		ChoicedAuto.handleReqs(ConeDoubleCube.requirements);
-		autoSelector.addOption("Three Cube", () -> new ThreeCube().setupWith(this));
-		ChoicedAuto.handleReqs(ThreeCube.requirements);
-		autoSelector.addOption("Two Cube + Balance", () -> new TwoCubeBalance().setupWith(this));
-		ChoicedAuto.handleReqs(TwoCubeBalance.requirements);
+
+		ChoicedAuto coneDoubleCube = new ConeDoubleCube();
+		ChoicedAuto threeCube = new ThreeCube();
+		ChoicedAuto twoCubeBalance = new TwoCubeBalance();
+
+		autoSelector.addOption("GOAT", () -> coneDoubleCube.evaluate(this));
+		autoSelector.addOption("Three Cube", () -> threeCube.evaluate(this));
+		autoSelector.addOption("Two Cube + Balance", () -> twoCubeBalance.evaluate(this));
 
 		configureButtonBindings();
 		setDefaults();

@@ -23,9 +23,9 @@ import frc.robot.subsystems.Vision;
 
 public class ThreeCube extends ChoicedAuto { // basic routine for diff drive
     private static double shootX = 0.78;
-    public SequentialCommandGroup setupWith(RobotContainer container) {
+    protected void handle(RobotContainer container, SequentialCommandGroup group) {
         boolean engage = getKey("engage");
-        addCommands(
+        group.addCommands(
             new UseVision(container.swerve, false), // disable container.vision
             Commands.runOnce(() -> { // reset position and drop cone intake
                 container.swerve.resetGyro(0.0);
@@ -68,12 +68,12 @@ public class ThreeCube extends ChoicedAuto { // basic routine for diff drive
              // drive back to second cube
         );
         if(engage) {
-            addCommands(
+            group.addCommands(
                 new AutoGetCube(container.swerve, container.cuber, container.coner, container.vision, new Translation2d(2.3, 2.1), new Translation2d(shootX, 1.87), -1, container.lights, false),
                 new RamseteSwerve(container.swerve, container.vision, new Pose2d(new Translation2d(-0.4, 1.87), new Rotation2d(0.0)), new RamseteOptions(true,  false, false, 4.0, -1, -1.0, 0.0)),
             new AutoBalance(container.swerve, container.lights, container.vision, -1));
         } else {
-            addCommands(
+            group.addCommands(
                 new RamseteSwerve(container.swerve, container.vision, new Pose2d(new Translation2d(1.6, 2.1), Rotation2d.fromDegrees(180.0)), new RamseteOptions(true, false, false, 5.0, -1, -1.0, 0.0)),
                 new RamseteSwerve(container.swerve, container.vision, new Pose2d(new Translation2d(2.3, 2.1), Rotation2d.fromDegrees(180.0)), new RamseteOptions(true, false, false, 2.0, -1, -1.0, 0.0)),
                 new RamseteSwerve(container.swerve, container.vision, new Pose2d(new Translation2d(2.2, 2.1), new Rotation2d(0.0)), new RamseteOptions(true,  false, false, 1.0, -1, -1.0, 0.0)), 
@@ -82,7 +82,8 @@ public class ThreeCube extends ChoicedAuto { // basic routine for diff drive
                 //container.cuber.shoot(TargetHeights.INTAKE);
             }));
         }
-        return this;
     }
-    public static String[] requirements = { "engage" };
+    public ThreeCube() {
+        registerKey("engage");
+    }
 }

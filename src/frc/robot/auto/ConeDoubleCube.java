@@ -28,12 +28,12 @@ public class ConeDoubleCube extends ChoicedAuto { // basic routine for diff driv
     private double y(double _x) {
         return cableSide ? _x : -_x;
     }
-    public SequentialCommandGroup setupWith(RobotContainer container) {
+    protected void handle(RobotContainer container, SequentialCommandGroup group) {
         this.cableSide = getKey("cableSide");
         boolean shootHigh = getKey("shootHigh");
         boolean engage = getKey("engage");
         Rotation2d _180 = Rotation2d.fromDegrees(180.0); // make this beforehand so we don't have to write it out every time - 180 degrees is when the cone shooter faces the grid
-        addCommands(
+        group.addCommands(
             new UseVision(container.swerve, false), // first turn off photoncontainer.vision tracking so that the position is given using dead reckoning
             Commands.runOnce(() -> {
                 container.swerve.resetGyro(180.0); // we start facing backwards
@@ -48,14 +48,14 @@ public class ConeDoubleCube extends ChoicedAuto { // basic routine for diff driv
             })
         );
         if(cableSide) {
-            addCommands(
+            group.addCommands(
                 // this first action drives quickly back until a little before the cable bump
                 new RamseteSwerve(container.swerve, container.vision, new Pose2d(new Translation2d(1.0, y(0.2)), _180), new RamseteOptions(true, false, false, 10.0, -1, -1.0, 0.0, true)),
                 // we slow down going over the bump (note that maxSpeed has changed from -1.0, which signals to use the default max, to 1.5)
                 new RamseteSwerve(container.swerve, container.vision, new Pose2d(new Translation2d(2.6, y(0.4)), _180), new RamseteOptions(true, false, false, 10.0, -1, 1.5, 0.0, true))
             );
         }
-        addCommands(    
+        group.addCommands(    
             Commands.runOnce(() -> {
                 container.cuber.state = container.cuber.down; // put down the cube intake
                 container.cuber.runPercentOutput(0, -0.35); // run both cuber motors at intake speed to pick up the first cube
@@ -80,14 +80,14 @@ public class ConeDoubleCube extends ChoicedAuto { // basic routine for diff driv
             })
         );
         if(cableSide) {
-            addCommands(
+            group.addCommands(
                     // drive fast until a little before the cable bump just like before
                 new RamseteSwerve(container.swerve, container.vision, new Pose2d(new Translation2d(1.25, y(-0.3)), Rotation2d.fromDegrees(0.0)), new RamseteOptions(true, false, false, 10.0, -1, -1.0, 0.0, true)),
                 // drive slowly while going over the bump
                 new RamseteSwerve(container.swerve, container.vision, new Pose2d(new Translation2d(2.5, y(-0.3)), Rotation2d.fromDegrees(0.0)), new RamseteOptions(true, false, false, 10.0, -1, 2.0, 0.0, true))
             );
         }
-        addCommands(    
+        group.addCommands(    
             // drive fast until we're past the charge station, and turn 60 degrees so we're facing the right direction for intake
             new RamseteSwerve(container.swerve, container.vision, new Pose2d(new Translation2d(3.5, y(-0.3)), Rotation2d.fromDegrees(-60.0)), new RamseteOptions(true, false, false, 6.0, -1, -1.0, 0.0, true)),
             Commands.runOnce(() -> {
@@ -104,7 +104,7 @@ public class ConeDoubleCube extends ChoicedAuto { // basic routine for diff driv
             })
         );
         if(engage) {
-            addCommands(
+            group.addCommands(
                 new RamseteSwerve(container.swerve, container.vision, new Pose2d(new Translation2d(2.5, y(1.6)), Rotation2d.fromDegrees(0.0)), new RamseteOptions(true, false, false, 6.0, -1, -1.0, 0.0, true)),
                 new ParallelCommandGroup(
                     new AutoBalance(container.swerve, container.lights, container.vision, 2),// auto balance at the end 
@@ -117,7 +117,7 @@ public class ConeDoubleCube extends ChoicedAuto { // basic routine for diff driv
                 )
             );
         } else {
-            addCommands(
+            group.addCommands(
                 Commands.runOnce(() -> {
                     container.swerve.currentHeight = shootHigh ? 1 : 2; // the opposite of what we did before to fill the other node
                 }),
@@ -129,7 +129,10 @@ public class ConeDoubleCube extends ChoicedAuto { // basic routine for diff driv
                 new Shoot(container.coner, container.cuber, container.swerve, 0.5, container.lights) // spin up and shoot for half a second
             );
         }
-        return this;
     }
-    public static String[] requirements = { "cableSide", "shootHigh", "engage" };
+    public ConeDoubleCube() {
+        registerKey("cableSide");
+        registerKey("shootHigh");
+        registerKey("engage");
+    }
 }
