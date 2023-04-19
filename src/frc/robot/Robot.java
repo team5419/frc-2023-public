@@ -12,7 +12,7 @@ public class Robot extends TimedRobot {
   private Command autoCommand;
   public Robot() {
     tab = Shuffleboard.getTab("Master");
-    robotContainer = new RobotContainer(tab);
+    robotContainer = new RobotContainer();
     autoCommand = null;
   }
 
@@ -30,11 +30,13 @@ public class Robot extends TimedRobot {
     robotContainer.lights.off();
   }
 
-  public void disabledPeriodic() {}
+  public void disabledPeriodic() {
+    robotContainer.loadAuto();
+  }
 
   public void autonomousInit() {
     robotContainer.vision.off();
-    autoCommand = robotContainer.getAutonomousCommand();
+    autoCommand = robotContainer.currentAuto;
     autoCommand.schedule();
   }
 

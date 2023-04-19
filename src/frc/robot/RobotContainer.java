@@ -12,36 +12,44 @@ import frc.robot.commands.shooting.RunIntake;
 import frc.robot.commands.shooting.Shoot;
 import frc.robot.commands.shooting.SlightOutake;
 import frc.robot.subsystems.*;
+
+import java.util.function.Supplier;
+
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.shuffleboard.SimpleWidget;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 
 public class RobotContainer {
 
-	private Cuber cuber;
+	public Cuber cuber;
 	public Vision vision;
 	//public Sensors sensors;
-	private SendableChooser<SequentialCommandGroup> autoSelector;
+	private SendableChooser<Supplier<SequentialCommandGroup>> autoSelector;
+	public SequentialCommandGroup currentAuto;
 	//private Drivetrain drivetrain;
 	public Swerve swerve;
 	private XboxController driver;
 	private XboxController codriver;
-	private Coner coner;
+	public Coner coner;
 	private boolean madeHub;
 	public Lights lights;
-	private Elevator elevator;
-
-	public RobotContainer(ShuffleboardTab tab) {
+	public Elevator elevator;
+	private SimpleWidget reloader;
+	public RobotContainer() {
+		ShuffleboardTab tab = Shuffleboard.getTab("Auto");
 		// PowerDistribution dist = new PowerDistribution(1, ModuleType.kRev);
 		// 	dist.setSwitchableChannel(true);
 		// 	dist.close();
-		
+		currentAuto = null;
 		driver = new XboxController(0);
 		codriver = new XboxController(1);
 		vision = new Vision(tab, true, true);
@@ -52,25 +60,41 @@ public class RobotContainer {
 		coner = new Coner(elevator, true, false);
 		generateHub();
 		cuber = new Cuber(true);
-		
-	
-		
-		//drivetrain = new Drivetrain(); /* ^^^ */
 		lights = new Lights();
 	
-		autoSelector = new SendableChooser<SequentialCommandGroup>();
+		autoSelector = new SendableChooser<Supplier<SequentialCommandGroup>>();
 		tab.add("Auto selector", autoSelector).withSize(2, 1).withPosition(0, 0);
-		autoSelector.setDefaultOption("Baseline", new Baseline());
-		autoSelector.addOption("3 Cube Balance", new TwoCubeBalance(swerve, vision, coner, cuber, lights, true, false));
-		autoSelector.addOption("3 Cube", new TwoCubeBalance(swerve, vision, coner, cuber, lights, false, false));
-		autoSelector.addOption("4 Cube", new ThreeCube(swerve, vision, coner, cuber, lights, false, false));
-		autoSelector.addOption("Preload only", new PreloadOnly(swerve, vision, coner, cuber, false, lights));
-		autoSelector.addOption("Charge Station Only", new ChargeOnly(swerve, vision, coner, cuber, false, lights));
-		autoSelector.addOption("Charge Station Back", new ChargeStationBack(swerve, vision, coner, cuber, false, lights));
-		autoSelector.addOption("GOAT Cable Side", new ConeDoubleCube(swerve, vision, coner, cuber, lights, false, true));
-		autoSelector.addOption("GOAT Non-Cable Side", new ConeDoubleCube(swerve, vision, coner, cuber, lights, false, false));
+		autoSelector.setDefaultOption("Baseline", () -> new Baseline());
+		autoSelector.addOption("Preload only", () -> new PreloadOnly(swerve, vision, coner, cuber, lights));
+		autoSelector.addOption("Charge Station Only", () -> new ChargeOnly(swerve, vision, coner, cuber, lights));
+		autoSelector.addOption("Charge Station Back", () -> new ChargeStationBack(swerve, vision, coner, cuber, lights));
+		autoSelector.addOption("GOAT", () -> new ConeDoubleCube().setupWith(this));
+		ChoicedAuto.handleReqs(ConeDoubleCube.requirements);
+		autoSelector.addOption("Three Cube", () -> new ThreeCube().setupWith(this));
+		ChoicedAuto.handleReqs(ThreeCube.requirements);
+		autoSelector.addOption("Two Cube + Balance", () -> new TwoCubeBalance().setupWith(this));
+		ChoicedAuto.handleReqs(TwoCubeBalance.requirements);
+
 		configureButtonBindings();
 		setDefaults();
+		reloader = tab.add("Reload", false)
+            .withSize(2, 1)
+			.withPosition(2, 0)
+            .withWidget(BuiltInWidgets.kToggleSwitch);
+		tab.addBoolean("Has auto", () -> currentAuto != null)
+			.withSize(1, 1)
+			.withPosition(4, 0);
+
+		
+	}
+	public void loadAuto() {
+		if(reloader.getEntry().getBoolean(false)) {
+			if(currentAuto == null) {
+				currentAuto = autoSelector.getSelected().get();
+			}
+		} else {
+			currentAuto = null;
+		}
 	}
 	private void generateHub() {
 		if(!madeHub) {
@@ -137,17 +161,12 @@ public class RobotContainer {
 			swerve.usingCones = !swerve.usingCones;
 			lights.off(swerve);
 		}));
-		leftTriggerCodriver.whileTrue(new AutoBalance(swerve, lights));
+		leftTriggerCodriver.whileTrue(new AutoBalance(swerve, lights, vision, -1));
 		rightTriggerCodriver.whileTrue(Commands.runEnd(cuber::runIntake, () -> cuber.stop(TargetHeights.LOW), cuber.subsystem()));
 		aButtonCodriver.whileTrue(Commands.run(() -> coner.shoot(TargetHeights.INTAKE)));
 		aButtonCodriver.onFalse(new SlightOutake(coner));
 		yButtonCodriver.onTrue(new ResetGyro(swerve, 180.0));
 		leftBumperCodriver.onTrue(Commands.runOnce(() -> swerve.autoShoot = !swerve.autoShoot));
-	}
-
-	public Command getAutonomousCommand() {
-		SequentialCommandGroup res = autoSelector.getSelected();
-		return res;
 	}
 
 	public void useVision(boolean use) {

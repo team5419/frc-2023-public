@@ -16,7 +16,7 @@ import frc.robot.subsystems.Swerve;
 import frc.robot.subsystems.Vision;
 // P
 public class PreloadOnly extends SequentialCommandGroup { // basic routine for diff drive
-    public PreloadOnly(Swerve drivetrain, Vision vision, Coner coneShooter, Cuber cubeShooter, boolean _short, Lights lights) {
+    public PreloadOnly(Swerve drivetrain, Vision vision, Coner coneShooter, Cuber cubeShooter, Lights lights) {
         addCommands(
             new UseVision(drivetrain, false), // disable vision
             Commands.runOnce(() -> { // reset position and drop cone intake

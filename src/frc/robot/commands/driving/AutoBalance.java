@@ -2,21 +2,27 @@ package frc.robot.commands.driving;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Lights;
+import frc.robot.subsystems.Vision;
 import frc.robot.subsystems.Swerve;
 import frc.robot.Util;
 import frc.robot.Constants.SwerveDriveConstants;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 public class AutoBalance extends CommandBase {
     private Swerve drivetrain;
     private Lights lights;
     private double targetYaw;
     private Timer timer;
     private int hasShiftedBack;
-    public AutoBalance(Swerve drivetrain, Lights lights) {
+    private int turnToTag;
+    private Vision vision;
+    public AutoBalance(Swerve drivetrain, Lights lights, Vision vision, int turnToTag) {
         this.drivetrain = drivetrain;
+        this.vision = vision;
         this.targetYaw = 0.0;
         this.lights = lights;
         hasShiftedBack = 0;
         this.timer = new Timer();
+        this.turnToTag = turnToTag;
         addRequirements(drivetrain);
     }
     public void initialize() {
@@ -28,10 +34,15 @@ public class AutoBalance extends CommandBase {
         lights.rainbow();
     }
     public void execute() { 
+        double yawDiff = 0.0;
+        if(turnToTag == -1) {
+            yawDiff = Util.deadband(targetYaw - drivetrain.angle(), SwerveDriveConstants.epsilonYawBalance); //how far to turn (rotate) into correct postion
+        } else {
+            yawDiff = vision.getHorizontalToTarget(vision.team() == Alliance.Blue ? (9 - turnToTag) : turnToTag);
+        }
         
-        double yawDiff = Util.deadband(targetYaw - drivetrain.angle(), SwerveDriveConstants.epsilonYawBalance); //how far to turn (rotate) into correct postion
         double pitchDiff = -Util.deadband(drivetrain.anglePitch(), SwerveDriveConstants.epsilonBalance);  //how far to get balanced
-        double yawChange = -SwerveDriveConstants.yawBalanceController.calculate(yawDiff);
+        double yawChange = -SwerveDriveConstants.pTheta * (Math.PI / 180.0) * yawDiff;
         double pitchChange = 0.0;
         if(hasShiftedBack == -1) { // 9 and 14 degrees
             if(Math.abs(pitchDiff) > 10.0) { // 12.5

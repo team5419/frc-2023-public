@@ -20,14 +20,7 @@ import frc.robot.subsystems.Swerve;
 import frc.robot.subsystems.Vision;
 // PcK
 public class ChargeOnly extends SequentialCommandGroup { // basic routine for diff drive
-    private Translation2d createTranslation(Translation2d original, double multiplier) {
-        if(multiplier == 1.0) {
-            return original;
-        }
-        return new Translation2d(original.getX(), original.getY() * multiplier);
-    }
-    public ChargeOnly(Swerve drivetrain, Vision vision, Coner coneShooter, Cuber cubeShooter, boolean _short, Lights lights) {
-        double multiplier = _short ? -1.0 : 1.0;
+    public ChargeOnly(Swerve drivetrain, Vision vision, Coner coneShooter, Cuber cubeShooter, Lights lights) {
         addCommands(
             new UseVision(drivetrain, false), // disable vision
             Commands.runOnce(() -> { // reset position and drop cone intake
@@ -41,8 +34,8 @@ public class ChargeOnly extends SequentialCommandGroup { // basic routine for di
             Commands.runOnce(() -> { // drop cube intake and start spinning intake
                 drivetrain.resetOdometry(new Pose2d(0.0, 0.0, Rotation2d.fromDegrees(180.0)));
             }),
-            new RamseteSwerve(drivetrain, vision, new Pose2d(createTranslation(new Translation2d(1.8, 0.0), multiplier), Rotation2d.fromDegrees(180.0)), new RamseteOptions(true,  false, false, 4.0, -1, -1.0, 0.0)),
-            new AutoBalance(drivetrain, lights)
+            new RamseteSwerve(drivetrain, vision, new Pose2d(new Translation2d(1.8, 0.0), Rotation2d.fromDegrees(180.0)), new RamseteOptions(true,  false, false, 4.0, -1, -1.0, 0.0)),
+            new AutoBalance(drivetrain, lights, vision, -1)
         );
     }
 }

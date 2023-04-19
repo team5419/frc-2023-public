@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 // import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import frc.robot.RobotContainer;
 import frc.robot.Constants.TargetHeights;
 import frc.robot.classes.RamseteOptions;
 import frc.robot.commands.*;
@@ -20,56 +21,57 @@ import frc.robot.subsystems.Vision;
 // SP12CK or P12CK for 2 cubes, SP1CK or P1CK for one cube
 
 
-public class TwoCubeBalance extends SequentialCommandGroup { // basic routine for diff drive
+public class TwoCubeBalance extends ChoicedAuto { // basic routine for diff drive
     private static double shootX = 0.78;
-    public TwoCubeBalance(Swerve drivetrain, Vision vision, Coner coneShooter, Cuber cubeShooter, Lights lights, boolean balance, boolean red) {
-
+    public SequentialCommandGroup setupWith(RobotContainer container) {
+        boolean engage = getKey("engage");
         addCommands(
-            new UseVision(drivetrain, false), // disable vision
+            new UseVision(container.swerve, false), // disable container.vision
             Commands.runOnce(() -> { // reset position and drop cone intake
-                drivetrain.resetGyro(0.0);
-                drivetrain.usingCones = false; // just to set lights to purple :)))
-                drivetrain.currentHeight = 1;
-                cubeShooter.runPercentOutput(1, 0.7);
+                container.swerve.resetGyro(0.0);
+                container.swerve.usingCones = false; // just to set container.lights to purple :)))
+                container.swerve.currentHeight = 1;
+                container.cuber.runPercentOutput(1, 0.7);
             }),
             new WaitCommand(0.5),
             Commands.runOnce(() -> {
-                cubeShooter.runPercentOutput(0, 1.0);
-                cubeShooter.runPercentOutput(1, 0.7);
+                container.cuber.runPercentOutput(0, 1.0);
+                container.cuber.runPercentOutput(1, 0.7);
             }),
             new WaitCommand(0.8),
-            //new Shoot(cubeShooter, cubeShooter, drivetrain, 1.5, TargetHeights.FAR, lights), // shoot pre-load cone and retract cone intake
+            //new Shoot(container.cuber, container.cuber, container.swerve, 1.5, TargetHeights.FAR, container.lights), // shoot pre-load cone and retract cone intake
             Commands.runOnce(() -> { // drop cube intake and start spinning intake
-                drivetrain.resetOdometry(new Pose2d(0.0, 0.0, Rotation2d.fromDegrees(0.0)));
-                cubeShooter.state = cubeShooter.down;
-                cubeShooter.runPercentOutput(0, -0.4);
-                cubeShooter.runPercentOutput(1, -0.65);
+                container.swerve.resetOdometry(new Pose2d(0.0, 0.0, Rotation2d.fromDegrees(0.0)));
+                container.cuber.state = container.cuber.down;
+                container.cuber.runPercentOutput(0, -0.4);
+                container.cuber.runPercentOutput(1, -0.65);
             }),
-            //new MessyRamsete(drivetrain, vision, new Pose2d(new Translation2d(0.75, -0.18), Rotation2d.fromDegrees(0.0)), 4.0),
-            new RamseteSwerve(drivetrain, vision, new Pose2d(new Translation2d(0.75, -0.18), Rotation2d.fromDegrees(0.0)), new RamseteOptions(true, false, false, 10.0, -1, -1.0, 0.0)),
-            //new MessyRamsete(drivetrain, vision, new Pose2d(new Translation2d(1.5, -0.18), Rotation2d.fromDegrees(180.0)), 4.0), 
-            new RamseteSwerve(drivetrain, vision, new Pose2d(new Translation2d(1.5, -0.13), Rotation2d.fromDegrees(180.0)), new RamseteOptions(true, false, false, 10.0, -1, -1.0, 0.0)),
-            new AutoGetCube(drivetrain, cubeShooter, coneShooter, vision, new Translation2d(2.5, -0.13), new Translation2d(shootX, 0.75), -1, lights, false),
+            //new MessyRamsete(container.swerve, container.vision, new Pose2d(new Translation2d(0.75, -0.18), Rotation2d.fromDegrees(0.0)), 4.0),
+            new RamseteSwerve(container.swerve, container.vision, new Pose2d(new Translation2d(0.75, -0.18), Rotation2d.fromDegrees(0.0)), new RamseteOptions(true, false, false, 10.0, -1, -1.0, 0.0)),
+            //new MessyRamsete(container.swerve, container.vision, new Pose2d(new Translation2d(1.5, -0.18), Rotation2d.fromDegrees(180.0)), 4.0), 
+            new RamseteSwerve(container.swerve, container.vision, new Pose2d(new Translation2d(1.5, -0.13), Rotation2d.fromDegrees(180.0)), new RamseteOptions(true, false, false, 10.0, -1, -1.0, 0.0)),
+            new AutoGetCube(container.swerve, container.cuber, container.coner, container.vision, new Translation2d(2.5, -0.13), new Translation2d(shootX, 0.75), -1, container.lights, false),
             Commands.runOnce(() -> {
-                cubeShooter.state = cubeShooter.down;
-                cubeShooter.runPercentOutput(0, -0.4);
-                cubeShooter.runPercentOutput(1, -0.65);
+                container.cuber.state = container.cuber.down;
+                container.cuber.runPercentOutput(0, -0.4);
+                container.cuber.runPercentOutput(1, -0.65);
             }),
-            //new MessyRamsete(drivetrain, vision, new Pose2d(new Translation2d(1.1, 0.75), Rotation2d.fromDegrees(0.0)), 4.0),
-            new RamseteSwerve(drivetrain, vision, new Pose2d(new Translation2d(1.4, 0.75), Rotation2d.fromDegrees(0.0)), new RamseteOptions(true, false, false, 5.0, -1, -1.0, 0.0)),
-            //new MessyRamsete(drivetrain, vision, new Pose2d(new Translation2d(1.65, 1.15), Rotation2d.fromDegrees(180.0)), 4.0),
-            new RamseteSwerve(drivetrain, vision, new Pose2d(new Translation2d(1.6,  0.99), Rotation2d.fromDegrees(180.0)), new RamseteOptions(true, false, false, 3.0, -1, -1.0, 0.0)),
-            new AutoGetCube(drivetrain, cubeShooter, coneShooter, vision, new Translation2d(2.5, 0.99), new Translation2d(shootX, 1.2), -1, lights, false),
+            //new MessyRamsete(container.swerve, container.vision, new Pose2d(new Translation2d(1.1, 0.75), Rotation2d.fromDegrees(0.0)), 4.0),
+            new RamseteSwerve(container.swerve, container.vision, new Pose2d(new Translation2d(1.4, 0.75), Rotation2d.fromDegrees(0.0)), new RamseteOptions(true, false, false, 5.0, -1, -1.0, 0.0)),
+            //new MessyRamsete(container.swerve, container.vision, new Pose2d(new Translation2d(1.65, 1.15), Rotation2d.fromDegrees(180.0)), 4.0),
+            new RamseteSwerve(container.swerve, container.vision, new Pose2d(new Translation2d(1.6,  0.99), Rotation2d.fromDegrees(180.0)), new RamseteOptions(true, false, false, 3.0, -1, -1.0, 0.0)),
+            new AutoGetCube(container.swerve, container.cuber, container.coner, container.vision, new Translation2d(2.5, 0.99), new Translation2d(shootX, 1.2), -1, container.lights, false),
             Commands.runOnce(() -> {
-                cubeShooter.stop(TargetHeights.INTAKE);
-            }));
-            if(balance) {
-                addCommands(new RamseteSwerve(drivetrain, vision, new Pose2d(new Translation2d(-0.4, 1.2), new Rotation2d(0.0)), new RamseteOptions(true,  false, false, 4.0, -1, -1.0, 0.0)),
-                new AutoBalance(drivetrain, lights));
-            } else {
-                addCommands(new RamseteSwerve(drivetrain, vision, new Pose2d(new Translation2d(1.25, 1.2), new Rotation2d(0.0)), new RamseteOptions(true,  false, false, 4.0, -1, -1.0, 0.0)));
-            }
-            // new RamseteSwerve(drivetrain, vision, new Pose2d(new Translation2d(2, 1.2), new Rotation2d(0.0)), new RamseteOptions(false, 4.0))
-            
+                container.cuber.stop(TargetHeights.INTAKE);
+            })
+        );
+        if(engage) {
+            addCommands(new RamseteSwerve(container.swerve, container.vision, new Pose2d(new Translation2d(-0.4, 1.2), new Rotation2d(0.0)), new RamseteOptions(true,  false, false, 4.0, -1, -1.0, 0.0)),
+            new AutoBalance(container.swerve, container.lights, container.vision, -1));
+        } else {
+            addCommands(new RamseteSwerve(container.swerve, container.vision, new Pose2d(new Translation2d(1.25, 1.2), new Rotation2d(0.0)), new RamseteOptions(true,  false, false, 4.0, -1, -1.0, 0.0)));
+        }
+        return this;
     }
+    public static String[] requirements = { "engage" };
 }
