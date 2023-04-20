@@ -34,33 +34,34 @@ public class AutoBalance extends CommandBase {
         lights.rainbow();
     }
     public void execute() { 
+        double pitchDiff = -Util.deadband(drivetrain.anglePitch(), SwerveDriveConstants.epsilonBalance);
         double yawDiff = 0.0;
-        if(turnToTag == -1) {
-            yawDiff = Util.deadband(targetYaw - drivetrain.angle(), SwerveDriveConstants.epsilonYawBalance); //how far to turn (rotate) into correct postion
-        } else {
+        if(turnToTag != -1) {
             yawDiff = vision.getHorizontalToTarget(vision.team() == Alliance.Blue ? (9 - turnToTag) : turnToTag);
         }
-        
-        double pitchDiff = -Util.deadband(drivetrain.anglePitch(), SwerveDriveConstants.epsilonBalance);  //how far to get balanced
-        double yawChange = -SwerveDriveConstants.pTheta * (Math.PI / 180.0) * yawDiff;
+        if(turnToTag == -1 || !vision.seesTag || Math.abs(pitchDiff) > 5) {
+            yawDiff = Util.deadband(targetYaw - drivetrain.angle(), SwerveDriveConstants.epsilonYawBalance);
+        }
+          //how far to get balanced
+        double yawChange = SwerveDriveConstants.pTheta * (Math.PI / 180.0) * yawDiff;
         double pitchChange = 0.0;
         if(hasShiftedBack == -1) { // 9 and 14 degrees
-            if(Math.abs(pitchDiff) > 10.0) { // 12.5
+            if(Math.abs(pitchDiff) > 13.0) { // 12.5, 10.0 ours
                 hasShiftedBack = 0;
             }
             pitchChange = 1.0 * Math.signum(pitchDiff); // 3.0
         }
         if(hasShiftedBack == 0) {
-            if(Math.abs(pitchDiff) < 9.5) { // 11.5
+            if(Math.abs(pitchDiff) < 12.5) { // 11.5, 9.5 ours
                 hasShiftedBack = 3;
             }
-            pitchChange = 0.75 * Math.signum(pitchDiff); // 0.5
+            pitchChange = 0.5 * Math.signum(pitchDiff); // 0.5
         } 
         if(hasShiftedBack == 3) {
             if(Math.abs(pitchDiff) < 2.0) {
-                pitchChange = Math.signum(pitchDiff) * 0.075;
+                pitchChange = Math.signum(pitchDiff) * 0.11;
             } else {
-                pitchChange = pitchDiff * 0.012;
+                pitchChange = pitchDiff * 0.023;
             }
         }
         drivetrain.drive(pitchChange, 0.0, yawChange, false, true);

@@ -60,11 +60,9 @@ public class Coner extends TesterSubsystem implements GenericShootIntake {
         timestamp = Timer.getFPGATimestamp();
     }
     public void shoot(String height) {
-        if(height == TargetHeights.FAR) {
-            run(TargetHeights.HIGH);
-        } else {
+
             run(height);
-        }
+
         timestamp = -1.0;
     }
     public void stop(String height) {
@@ -73,7 +71,7 @@ public class Coner extends TesterSubsystem implements GenericShootIntake {
         elevator.state = Elevator.down;
     }
     public void setup(String height) {
-        if(height != TargetHeights.INTAKE && height != TargetHeights.LOW) {
+        if(height != TargetHeights.INTAKE && height != TargetHeights.LOW && height != TargetHeights.FAR) {
             run(TargetHeights.INTAKE);
             if(timestamp == -1.0) {
                 timestamp = Timer.getFPGATimestamp();
@@ -82,7 +80,7 @@ public class Coner extends TesterSubsystem implements GenericShootIntake {
         elevator.state = Elevator.heights.get(height);
     }
     public boolean donePrepping(String height) {
-        return (height == TargetHeights.LOW) || (timestamp >= 0.0 && Timer.getFPGATimestamp() - timestamp >= 0.4 && elevator.closeEnough());
+        return (height == TargetHeights.LOW) || (height == TargetHeights.FAR && elevator.position() > 13000.0) || (timestamp >= 0.0 && Timer.getFPGATimestamp() - timestamp >= 0.4 && elevator.closeEnough());
     }
     public SubsystemBase subsystem() {return this;}
     public final double getAngle() {
@@ -92,7 +90,7 @@ public class Coner extends TesterSubsystem implements GenericShootIntake {
         return false;
     }
     public final double getLimelightDistance(String height) {
-        return height == TargetHeights.MID ? 1.096 : 4.27;
+        return height == TargetHeights.MID ? 0.92 : 1.128;
     }
     public void simulationPeriodic() {
 
@@ -105,13 +103,15 @@ public class Coner extends TesterSubsystem implements GenericShootIntake {
     // CONSTANTS
     private static final Map<String, TesterSetting[]> percents = Map.of(
     TargetHeights.LOW, new TesterSetting[] {
-        new TesterSetting(0.50), new TesterSetting(1.00)
+        new TesterSetting(0.10), new TesterSetting(0.16)
     }, TargetHeights.MID, new TesterSetting[] {
-        new TesterSetting(0.12), new TesterSetting(0.34)//0.445
+        new TesterSetting(0.075), new TesterSetting(0.28)//0.445
     }, TargetHeights.HIGH, new TesterSetting[] {
-        new TesterSetting(0.13), new TesterSetting(0.43)
+        new TesterSetting(0.23), new TesterSetting(0.685)
     }, TargetHeights.INTAKE, new TesterSetting[] {
         new TesterSetting(-0.2), new TesterSetting(-0.2)
+    }, TargetHeights.FAR, new TesterSetting[] {
+        new TesterSetting(1.0), new TesterSetting(1.0)
     });
 
     private static final Map<String, TesterSetting[]> neoVelocities = Map.of(

@@ -150,17 +150,17 @@ public class Constants {
         public static final double desiredAngle = 180.0;
         public static final double desiredDistance = 0.0;
         public static final double horizontalOffset = -1.65; // 1.65
-        public static final double linHorizontalOffset = 0.024; //0.166 before theo left 0.008; // -0.023
-        public static final double linHorizontalOffsetHigh = 0.2;
+        public static final double linHorizontalOffset = 0.09; //0.166 before theo left 0.008; // -0.023
+        public static final double linHorizontalOffsetHigh = 0.09;
 
 
-        public static final PIDController linHorizontalPIDHigh = new PIDController(0.75, 0.0, 0.0);
-        public static final PIDController forawrdPIDHigh = new PIDController(0.28, 0.0, 0.0);
+        public static final PIDController linHorizontalPIDHigh = new PIDController(3.8, 0.0, 0.0);
+        public static final PIDController forawrdPIDHigh = new PIDController(1.2, 0.0, 0.0);
 
         public static final double epsilonTurn = 1.0;
         public static final double epsilonHorizontal = 0.5;
-        public static final double epsilonLinHorizontal = .08; //0.01; // 0.007 //temp .02
-        public static final double epsilonForward = .20; // .005 //.02 //good: .2
+        public static final double epsilonLinHorizontal = .04; //0.01; // 0.007 //temp .02
+        public static final double epsilonForward = .10; // .005 //.02 //good: .2
 
         public static final double limelightYawAngle = 11.5 * Math.PI / 180.0;
         public static final double cosYaw = Math.cos(limelightYawAngle);
@@ -189,8 +189,8 @@ public class Constants {
             4.4244, // top cube
             4.9832 // top pole
         };
-
-            public static final double targetYOffset = 2.549 - 2.748;
+        public static final double targetYOffsetRed = 1.0747 - 1.0716;
+            public static final double targetYOffset = 4.261 - 4.4244;
         public static final double xPosBeforeBarriers = 1.6; // to be measured
         public static final double xEndOfChargingStation = 2.55; // to be measured
         public static final double yOutsideRightChargingStation = -1.0;

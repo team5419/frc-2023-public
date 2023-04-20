@@ -21,10 +21,10 @@ public class Elevator extends SubsystemBase {
     private static final PID PID = new PID(0.2, 0.0, 0.0);
     public static final Map<String, Double> heights = Map.of(
         TargetHeights.LOW, 0.0,
-        TargetHeights.MID, 32000.2,
+        TargetHeights.MID, 42292.2, // 32000
         TargetHeights.HIGH, 42292.0,
-        TargetHeights.FAR, 0.0, 
-        TargetHeights.INTAKE, 12500.0
+        TargetHeights.FAR, 42292.0, 
+        TargetHeights.INTAKE, 9500.0 // 12500
     );
     private static final PIDController additionalPID = new PIDController(0.00005, 0, 0);
     public static final double down = 0.0;
@@ -44,6 +44,9 @@ public class Elevator extends SubsystemBase {
         tab.addNumber("position", controller::getSelectedSensorPosition);
         tab.addNumber("setpoint", () -> state);
         timestamp = -1.0;
+    }
+    public double position() {
+        return controller.getSelectedSensorPosition();
     }
     public void periodic() {
         double sensor = controller.getSelectedSensorPosition();

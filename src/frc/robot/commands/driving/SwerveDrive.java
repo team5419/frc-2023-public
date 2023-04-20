@@ -37,7 +37,6 @@ public class SwerveDrive extends CommandBase {
             letGo = false;
             if((pov <= SwerveDriveConstants.dPadInputRange || pov >= 360 - SwerveDriveConstants.dPadInputRange) && drivetrain.currentHeight < 3) {
                 drivetrain.currentHeight++;
-                vision.setPipelineToHigh(true);
             }
             if(pov >= 90 - SwerveDriveConstants.dPadInputRange && pov <= 90 + SwerveDriveConstants.dPadInputRange && cuber.offset < 2) {
                 cuber.offset++;
@@ -47,7 +46,6 @@ public class SwerveDrive extends CommandBase {
             }
             if(pov >= 180 - SwerveDriveConstants.dPadInputRange && pov <= 180 + SwerveDriveConstants.dPadInputRange && drivetrain.currentHeight > 0) {
                 drivetrain.currentHeight--;
-                vision.setPipelineToHigh(false);
             }
         } 
         drivetrain.drive(

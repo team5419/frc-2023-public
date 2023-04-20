@@ -169,9 +169,9 @@ public class Cuber extends TesterSubsystem implements GenericShootIntake {
     }
     public final double getDistance(String height) {
         if(height == TargetHeights.HIGH) {
-            return 2.25;
+            return 2.374;//2.25;
         }
-        return 1.94;
+        return 2.274;//1.94;
         //return 1.84;
     }
     public final double getLimelightDistance(String height) {
@@ -205,9 +205,9 @@ public class Cuber extends TesterSubsystem implements GenericShootIntake {
     TargetHeights.LOW, new TesterSetting[] {
         new TesterSetting(1.0), new TesterSetting(0.13)
     }, TargetHeights.MID, new TesterSetting[] {
-        new TesterSetting(1.0), new TesterSetting(true, 3300.0)//0.14, -0.36
+        new TesterSetting(1.0), new TesterSetting(true, 4200.0)//3300
     }, TargetHeights.HIGH, new TesterSetting[] {
-        new TesterSetting(1.0), new TesterSetting(true, 7500.0)
+        new TesterSetting(1.0), new TesterSetting(true, 8300.0)
     }, TargetHeights.INTAKE, new TesterSetting[] {
         new TesterSetting(-0.35), new TesterSetting(-0.60)
     }, TargetHeights.FAR, new TesterSetting[] {

@@ -38,8 +38,12 @@ public class Swerve extends SubsystemBase { // our swerve drive subsystem
     public boolean slowMode; // whether the swerve drive is in slowmode
     public AlignState isAligning;
     public boolean autoShoot;
+    public boolean alwaysUseMid;
+    public double matchStartTimestamp;
     public Swerve(Vision vision, boolean pigeon) { // the pigeon parameter tells the code whether we are using a pigeon
         autoShoot = true;
+        alwaysUseMid = true;
+        matchStartTimestamp = -1.0;
         isAligning = AlignState.NOT;
         drivers = new SwerveModule[SwerveDriveConstants.info.length]; // instantiate the module array
         usingVision = true;
@@ -97,6 +101,7 @@ public class Swerve extends SubsystemBase { // our swerve drive subsystem
         .withSize(2, 1).withPosition(6, 0);
 
         selectionTab.addBoolean("Auto Shoot", () -> autoShoot).withSize(2, 1).withPosition(6, 1);
+        selectionTab.addBoolean("ALWAYS MID", () -> alwaysUseMid).withSize(2, 1).withPosition(6, 2);
         //selectionTab.addBoolean("Thinks is aligning", () -> isAligning != AlignState.NOT).withPosition(9, 3).withSize(1, 1);
     }
     private SwerveModulePosition[] getPositions() { // get the total lengths driven by each module as an array

@@ -34,7 +34,6 @@ public class CustomShoot extends CommandBase {
         cubeShooter.state = cubeShooter.shotSetpoint;
     }
     public void execute() {
-        drivetrain.brake();
         if(cubeShooter.donePrepping(setpoint)) {
             hasBeenReady = true;
             if(time != 0.0) {

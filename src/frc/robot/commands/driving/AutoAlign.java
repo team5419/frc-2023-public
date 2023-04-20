@@ -42,6 +42,8 @@ public class AutoAlign extends CommandBase {
             timer.start();
         }
         shooter.elevatorOut(convertedHeight);
+        
+        vision.setPipelineToHigh(convertedHeight == TargetHeights.HIGH && !drivetrain.alwaysUseMid);
     }
     public void execute() {
         double theta = drivetrain.angle();
@@ -79,9 +81,6 @@ public class AutoAlign extends CommandBase {
         double forward85 = forward * LimelightConstants.cosYaw - left * LimelightConstants.sinYaw;
         double left15 = forward * LimelightConstants.sinYaw + left * LimelightConstants.cosYaw;
 
-        System.out.println("Forward 85: " + forward85);
-        System.out.println("Left 15: " + left15);
-
         forward = forward85;
         left = left15;
         
@@ -99,7 +98,7 @@ public class AutoAlign extends CommandBase {
             //shooter.setup(TargetHeights.heights[height]);
             drivetrain.stop();
         }
-        double epsilonMultiplier = convertedHeight == TargetHeights.HIGH ? 1.0 : 0.50; // first number is high multiplier, second number is everything else multiplier
+        double epsilonMultiplier = convertedHeight == TargetHeights.HIGH ? 0.5 : 1.0; // first number is high multiplier, second number is everything else multiplier
         if(Math.abs(turnDiff) <= LimelightConstants.epsilonTurn * epsilonMultiplier && Math.abs(leftDiff) <= LimelightConstants.epsilonLinHorizontal * epsilonMultiplier && Math.abs(forwardDiff) <= LimelightConstants.epsilonForward * epsilonMultiplier && found) {
             lights.setColor(0, 255, 0);
             if(drivetrain.getAverageSpeed() <= 0.1) {

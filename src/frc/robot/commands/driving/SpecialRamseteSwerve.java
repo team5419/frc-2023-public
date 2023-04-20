@@ -44,7 +44,7 @@ public class SpecialRamseteSwerve extends RamseteSwerve {
             }
         Rotation2d converted = Rotation2d.fromDegrees(0.0);
         this.targetX = shooter.getDistance(TargetHeights.heights[height]);
-        this.targetY = AprilTagConstants.yPositions[closestNum] + shooter.getOffset() + AprilTagConstants.targetYOffset;
+        this.targetY = AprilTagConstants.yPositions[closestNum] + shooter.getOffset() + (team == Alliance.Red ? AprilTagConstants.targetYOffsetRed : AprilTagConstants.targetYOffset);
         if(team == Alliance.Red) {
             this.targetY = AprilTagConstants.totalY - targetY;
         }

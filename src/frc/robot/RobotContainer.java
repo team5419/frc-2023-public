@@ -6,6 +6,7 @@ import frc.robot.commands.*;
 import frc.robot.commands.driving.AutoBalance;
 import frc.robot.commands.driving.SpecialRamseteTurn;
 import frc.robot.commands.driving.SwerveDrive;
+import frc.robot.commands.shooting.CustomConeIntake;
 // import frc.robot.commands.driving.TeleopBalance;
 import frc.robot.commands.shooting.Prep;
 import frc.robot.commands.shooting.RunIntake;
@@ -149,11 +150,13 @@ public class RobotContainer {
 		aButtonDriver.whileTrue(new Prep(coner, cuber, swerve, null));
 		bButtonDriver.whileTrue(new Shoot(coner, cuber, swerve, lights));
 		yButtonDriver.onTrue(new ResetGyro(swerve));
-		leftTrigger.whileTrue(new RunIntake(coner));
+		leftTrigger.onTrue(new CustomConeIntake(leftTrigger, coner));
+		//leftTrigger.whileTrue(new RunIntake(coner));
 		rightTrigger.whileTrue(new RunIntake(cuber));
 
 		// codriver controls
 		Trigger aButtonCodriver = new Trigger(codriver::getAButton);
+		Trigger xButtonCodriver = new Trigger(codriver::getXButton);
 		Trigger yButtonCodriver = new Trigger(codriver::getYButton);
 		Trigger leftBumperCodriver = new Trigger(codriver::getLeftBumper);
 		Trigger rightBumperCodriver = new Trigger(codriver::getRightBumper);
@@ -169,6 +172,7 @@ public class RobotContainer {
 		aButtonCodriver.onFalse(new SlightOutake(coner));
 		yButtonCodriver.onTrue(new ResetGyro(swerve, 180.0));
 		leftBumperCodriver.onTrue(Commands.runOnce(() -> swerve.autoShoot = !swerve.autoShoot));
+		xButtonCodriver.onTrue(Commands.runOnce(() -> swerve.alwaysUseMid = !swerve.alwaysUseMid));
 	}
 
 	public void useVision(boolean use) {

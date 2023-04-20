@@ -27,8 +27,8 @@ import java.util.Optional;
 
 public class Vision extends SubsystemBase { // this keeps track of our limelight and photon camera
     private static final double yAdjustment0 = -0.75;
-    private static final double xAdjustment0 = 0.0;
-    private static final double yAdjustment1 = 0.0;
+    private static final double xAdjustment0 = -0.25;
+    private static final double yAdjustment1 = 0.87;
     private static final double xAdjustment1 = 0.0;
 
 
@@ -61,6 +61,11 @@ public class Vision extends SubsystemBase { // this keeps track of our limelight
             layout.addBoolean("Sees target", this::isTargetFound);
             layout.add("Limelight on", Commands.runOnce(this::on));
             layout.add("Limelight off", Commands.runOnce(this::off));
+            layout.add("Limelight high", Commands.runOnce(() -> {
+                setPipelineToHigh(true);
+            }));layout.add("Limelight mid", Commands.runOnce(() -> {
+                setPipelineToHigh(false);
+            }));
             this.off();
         } else {
             limelight = null;
