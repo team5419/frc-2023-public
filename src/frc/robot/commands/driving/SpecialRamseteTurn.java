@@ -71,7 +71,7 @@ public class SpecialRamseteTurn extends CommandBase {
         swerve.drive(
             Util.deadband(driver == null ? 0.0 : -driver.getLeftY(), SwerveDriveConstants.controllerDeadband) * SwerveDriveConstants.speedMultiplier,
             Util.deadband(driver == null ? 0.0 : -driver.getLeftX(), SwerveDriveConstants.controllerDeadband) * SwerveDriveConstants.speedMultiplier, 
-            dtheta, true, true);
+            dtheta, false, true, true);
         if(vision.seesTag) {
             hasSeenTag = true;
         }

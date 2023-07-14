@@ -145,7 +145,7 @@ public class RobotContainer {
 			swerve.isAligning = Swerve.AlignState.CONTROLLEROFF;
 		}));
 		dpad.onTrue(new Snap(swerve, vision, driver, 4));
-		leftBumper.whileTrue(Commands.runEnd(() -> { swerve.slowMode = true; }, () -> { swerve.slowMode = false; }));
+		leftBumper.whileTrue(Commands.runEnd(() -> { swerve.slowMode = true; }, () -> { swerve.slowMode = true; }));
 		rightBumper.onTrue(new SpecialRamseteTurn(swerve, vision, driver, coner, cuber, lights));
 		aButtonDriver.whileTrue(new Prep(coner, cuber, swerve, null));
 		bButtonDriver.whileTrue(new Shoot(coner, cuber, swerve, lights));
@@ -166,7 +166,7 @@ public class RobotContainer {
 			swerve.usingCones = !swerve.usingCones;
 			lights.off(swerve);
 		}));
-		leftTriggerCodriver.whileTrue(new AutoBalance(swerve, lights, vision, -1));
+		leftTriggerCodriver.whileTrue(Commands.run(() -> swerve.brake(), swerve));
 		rightTriggerCodriver.whileTrue(Commands.runEnd(cuber::runIntake, () -> cuber.stop(TargetHeights.LOW), cuber.subsystem()));
 		aButtonCodriver.whileTrue(Commands.run(() -> coner.shoot(TargetHeights.INTAKE)));
 		aButtonCodriver.onFalse(new SlightOutake(coner));

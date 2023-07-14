@@ -64,7 +64,7 @@ public class AutoBalance extends CommandBase {
                 pitchChange = pitchDiff * 0.023;
             }
         }
-        drivetrain.drive(pitchChange, 0.0, yawChange, false, true);
+        drivetrain.drive(pitchChange, 0.0, yawChange, false, false, true);
     }
     public boolean isFinished() {
         return false;

@@ -120,12 +120,12 @@ public class Waypointer extends CommandBase {
         controller.calculate(swerve.pose(), desiredState, desiredRotation == null ? desiredState.poseMeters.getRotation() : desiredRotation);
     SwerveModuleState[] targetModuleStates = kinematics.toSwerveModuleStates(targetChassisSpeeds);
     SwerveDriveKinematics.desaturateWheelSpeeds(targetModuleStates, SwerveDriveConstants.maxVelocity);
-    swerve.updateMotors(targetModuleStates, true, false);
+    swerve.updateMotors(targetModuleStates, false, true, false);
   }
 
   public void end(boolean interrupted) {
     timer.stop();
-    swerve.drive(0.0, 0.0, 0.0, true, true);
+    swerve.drive(0.0, 0.0, 0.0, false, true, true);
   }
 
   public Pose2d getInitialPose() {

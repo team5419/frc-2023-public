@@ -150,7 +150,7 @@ public class Constants {
         public static final double desiredAngle = 180.0;
         public static final double desiredDistance = 0.0;
         public static final double horizontalOffset = -1.65; // 1.65
-        public static final double linHorizontalOffset = 0.09; //0.166 before theo left 0.008; // -0.023
+        public static final double linHorizontalOffset = 0.105; //0.09
         public static final double linHorizontalOffsetHigh = 0.09;
 
 
@@ -190,7 +190,7 @@ public class Constants {
             4.9832 // top pole
         };
         public static final double targetYOffsetRed = 1.0747 - 1.0716;
-            public static final double targetYOffset = 4.261 - 4.4244;
+            public static final double targetYOffset = 2.627 - 2.748;
         public static final double xPosBeforeBarriers = 1.6; // to be measured
         public static final double xEndOfChargingStation = 2.55; // to be measured
         public static final double yOutsideRightChargingStation = -1.0;

@@ -74,7 +74,7 @@ public class RamseteSwerve extends CommandBase {
         double dtheta = 1 * SwerveDriveConstants.pTheta * (Math.PI / 180.0) * thetaDiff;
         //System.out.println(dtheta);
         //System.out.println("theta: ${DriveConstants.pTheta * (Math.PI / 180) * (target - theta)}");
-        drivetrain.drive(dx , dy , dtheta, true, true);
+        drivetrain.drive(dx , dy , dtheta, false, true, true);
 
         isFinished = (options.preventDrive || (Math.abs(xdiff) <= SwerveDriveConstants.epsilonXY * options.epsilonMultiplier && Math.abs(ydiff) <= SwerveDriveConstants.epsilonXY * options.epsilonMultiplier)) && (Math.abs(thetaDiff) <= SwerveDriveConstants.epsilonTheta * options.epsilonMultiplier || (options.time != 0.0 && timer.get() >= options.time)) && (!options.speedLimit || drivetrain.getAverageSpeed() < 0.1) && (options.turnToTag == -1 || vision.seesTag);
     }

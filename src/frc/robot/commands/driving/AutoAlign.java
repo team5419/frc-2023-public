@@ -88,17 +88,16 @@ public class AutoAlign extends CommandBase {
         boolean found = vision.isTargetFound();
         if(found) {
             if(!secondPhase) {
-                drivetrain.drive(forward ,-left , -turn, false, true);
+                drivetrain.drive(forward ,-left , -turn, false, false, true);
             }
             if(Math.abs(forwardDiff) < 0.25) {
                 shooter.setup(convertedHeight);
             }
         }
         if(secondPhase) {
-            //shooter.setup(TargetHeights.heights[height]);
             drivetrain.stop();
         }
-        double epsilonMultiplier = convertedHeight == TargetHeights.HIGH ? 0.5 : 1.0; // first number is high multiplier, second number is everything else multiplier
+        double epsilonMultiplier = convertedHeight == TargetHeights.HIGH ? 0.9 : 1.0; // first number is high multiplier, second number is everything else multiplier
         if(Math.abs(turnDiff) <= LimelightConstants.epsilonTurn * epsilonMultiplier && Math.abs(leftDiff) <= LimelightConstants.epsilonLinHorizontal * epsilonMultiplier && Math.abs(forwardDiff) <= LimelightConstants.epsilonForward * epsilonMultiplier && found) {
             lights.setColor(0, 255, 0);
             if(drivetrain.getAverageSpeed() <= 0.1) {

@@ -57,15 +57,22 @@ public class Cuber extends TesterSubsystem implements GenericShootIntake {
                 new TalonFX(Ports.intake), false, true
             )).configurePID(CubeShooterConstants.upPID)
         }, velocityControl ? velocities : percents);
+
+        cancoder = new CANCoder(Ports.lifterCancoder, "canivore"); 
+        CANCoderConfiguration config = new CANCoderConfiguration();
+        
+        config.sensorTimeBase = SensorTimeBase.PerSecond;
+        cancoder.configAllSettings(config, 100);
+        cancoder.setPositionToAbsolute(100);
         
         lifter = new TalonFX(Ports.lifter, "canivore");
         TalonFXConfiguration tconfig = new TalonFXConfiguration();
         tconfig.remoteFilter0.remoteSensorDeviceID = Ports.lifterCancoder;
         tconfig.remoteFilter0.remoteSensorSource = RemoteSensorSource.CANCoder;
-        lifter.configAllSettings(tconfig);
+        lifter.configAllSettings(tconfig, 200);
         //Util.setUpMotor(lifter, false, false);
         lifter.setSensorPhase(true);
-        lifter.configSelectedFeedbackSensor(TalonFXFeedbackDevice.RemoteSensor0, 0, 0);
+        lifter.configSelectedFeedbackSensor(TalonFXFeedbackDevice.RemoteSensor0, 0, 200);
         lifter.configMotionCruiseVelocity(3200.0);
         lifter.configMotionAcceleration(9600.0 * 4);
         lifter.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 40.0, 0.0, 0.0));
@@ -73,12 +80,7 @@ public class Cuber extends TesterSubsystem implements GenericShootIntake {
         lifter.config_kI(0, lifterPID.i);
         lifter.config_kD(0, lifterPID.d);
         state = up;
-        cancoder = new CANCoder(Ports.lifterCancoder, "canivore"); 
-        CANCoderConfiguration config = new CANCoderConfiguration();
         
-        config.sensorTimeBase = SensorTimeBase.PerSecond;
-        cancoder.configAllSettings(config, 100);
-        cancoder.setPositionToAbsolute(100);
         
         
     

@@ -90,7 +90,7 @@ public class Coner extends TesterSubsystem implements GenericShootIntake {
         return false;
     }
     public final double getLimelightDistance(String height) {
-        return height == TargetHeights.MID ? 0.92 : 1.128;
+        return height == TargetHeights.MID ? 0.92 : 0.92;
     }
     public void simulationPeriodic() {
 
@@ -107,7 +107,7 @@ public class Coner extends TesterSubsystem implements GenericShootIntake {
     }, TargetHeights.MID, new TesterSetting[] {
         new TesterSetting(0.075), new TesterSetting(0.28)//0.445
     }, TargetHeights.HIGH, new TesterSetting[] {
-        new TesterSetting(0.23), new TesterSetting(0.685)
+        new TesterSetting(0.19), new TesterSetting(0.71)
     }, TargetHeights.INTAKE, new TesterSetting[] {
         new TesterSetting(-0.2), new TesterSetting(-0.2)
     }, TargetHeights.FAR, new TesterSetting[] {

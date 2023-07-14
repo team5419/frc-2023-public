@@ -39,7 +39,7 @@ public class TeleopBalance extends CommandBase {
             pitchChange *= -1.0;
             leftRight *= 1.0;
         }
-        drivetrain.drive(pitchChange, leftRight, yawChange, false, true);
+        drivetrain.drive(pitchChange, leftRight, yawChange, false, false, true);
     }
     public boolean isFinished() {
         return false;

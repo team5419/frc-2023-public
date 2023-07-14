@@ -6,7 +6,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import java.util.Map;
 
 public class TesterSubsystem extends SubsystemBase {
-    public static boolean usingShuffleboard = false;
+    public static boolean usingShuffleboard = true;
     private Map<String, TesterSetting[]> stateMap;
     protected TesterMotor[] motors;
     public TesterSubsystem(String name, TesterMotor[] motors, Map<String, TesterSetting[]> states) {

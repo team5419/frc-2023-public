@@ -64,7 +64,7 @@ public class MessyRamsete extends CommandBase {
             dx *= (maxSpeed / magnitude); // straight line ? idk
             dy *= (maxSpeed / magnitude);
         }  
-        drivetrain.drive(dx , dy , dtheta, true, true);
+        drivetrain.drive(dx , dy , dtheta, false, true, true);
     }
     public boolean isFinished() {
         return xdir == 0 && ydir == 0 && tdir == 0;

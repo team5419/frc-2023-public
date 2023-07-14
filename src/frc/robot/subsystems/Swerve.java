@@ -50,7 +50,7 @@ public class Swerve extends SubsystemBase { // our swerve drive subsystem
         for(int i = 0; i < drivers.length; i++)  {
             drivers[i] = new SwerveModule(SwerveDriveConstants.info[i], i, true); // for each module, instantiate the module with predefined constant module info
         }
-        slowMode = false; // slow mode starts off
+        slowMode = true; // slow mode starts off
         previousMove = new ChassisSpeeds(); // the last chassisspeeds were zero
         
         if(pigeon) { // if the gyro is used, set it up and set it to zero
@@ -138,7 +138,7 @@ public class Swerve extends SubsystemBase { // our swerve drive subsystem
             }
         }
     }
-    public void drive(double forward, double left, double rotation, boolean fieldCentric, boolean pid) {
+    public void drive(double forward, double left, double rotation, boolean slow, boolean fieldCentric, boolean pid) {
         //System.out.println("driving: " + forward + ", " + left + ", " + rotation);
         // drive the robot at a certain speed forward, a certain speed to the left, and rotating at a certain speed
         // if fieldCentric is false, this will drive forward/left from the perspective of the robot. otherwise, it uses the perspective of the field
@@ -148,7 +148,7 @@ public class Swerve extends SubsystemBase { // our swerve drive subsystem
         this.previousMove = speeds;
         SwerveModuleState[] states = SwerveDriveConstants.kinematics.toSwerveModuleStates(speeds); // convert the chassis speed to individual states for each module
         SwerveDriveKinematics.desaturateWheelSpeeds(states, SwerveDriveConstants.maxVelocity); // make sure that the states conform to our max velocity
-        updateMotors(states, pid, forward == 0.0 && left == 0.0 && rotation == 0.0);
+        updateMotors(states, slow, pid, forward == 0.0 && left == 0.0 && rotation == 0.0);
         // if the driver isn't touching the controller, don't just turn to 0 for no reason. instead, don't move at all
     }
     public Pose2d pose() { // get the current position based on the estimator, or 0 if the position hasn't been estimated yet
@@ -170,7 +170,7 @@ public class Swerve extends SubsystemBase { // our swerve drive subsystem
         drivers[3].setDesiredState(new SwerveModuleState(0.0, Rotation2d.fromDegrees(225.0)), false, false, true);
     }
     public void stop() { // stop the robot from moving
-        this.drive(0.0, 0.0, 0.0, true, false);
+        this.drive(0.0, 0.0, 0.0, false, true, false);
     }
     public double getAverageSpeed() { // get the average absolute speed of the swerve modules, in meters per second
         double total = 0.0;
@@ -179,9 +179,9 @@ public class Swerve extends SubsystemBase { // our swerve drive subsystem
         };
         return total / drivers.length;
     }
-    public void updateMotors(SwerveModuleState[] myStates, boolean pid, boolean preventTurn) { // update each motor based on desired swerve module states
+    public void updateMotors(SwerveModuleState[] myStates, boolean slow, boolean pid, boolean preventTurn) { // update each motor based on desired swerve module states
         for(int i = 0; i < drivers.length; i++) {
-            drivers[i].setDesiredState(myStates[i], preventTurn, this.slowMode, pid); // iterate through the array and set each motor
+            drivers[i].setDesiredState(myStates[i], preventTurn, slow, pid); // iterate through the array and set each motor
         }
     }
 }
